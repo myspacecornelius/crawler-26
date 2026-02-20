@@ -1,0 +1,31 @@
+# ──────────────────────────────────────────────────
+#  CRAWL — Proxy Configuration
+#  Configure residential proxy rotation
+# ──────────────────────────────────────────────────
+
+# Set enabled: true and fill in credentials to activate
+enabled: false
+
+# Provider: brightdata | smartproxy | custom
+provider: "brightdata"
+
+# Provider credentials
+credentials:
+  host: ""
+  port: 22225
+  username: ""
+  password: ""
+
+# Rotation settings
+rotation:
+  mode: "per_request" # per_request | per_site | sticky_session
+  sticky_duration_sec: 300 # Only used with sticky_session mode
+  country_targets:
+    - "US"
+    - "GB"
+    - "CA"
+
+# Fallback: list of free/backup proxies (less reliable)
+fallback_proxies: []
+  # - "http://user:pass@proxy1.example.com:8080"
+  # - "http://user:pass@proxy2.example.com:8080"

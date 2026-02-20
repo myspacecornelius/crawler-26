@@ -1,0 +1,90 @@
+# ──────────────────────────────────────────────────
+#  CRAWL — Target Site Definitions
+#  Each entry defines a scraping target with its
+#  URL, adapter class, CSS selectors, and pagination.
+# ──────────────────────────────────────────────────
+
+sites:
+  openvc:
+    enabled: true
+    url: "https://www.openvc.app/"
+    adapter: "openvc"
+    description: "Open investor directory — no login required"
+    selectors:
+      card: "#tableCont table tbody tr"
+      name: ".nameCell #invOverflow"
+      email: ""
+      role: ".nameCell a.VClink div:not(#invOverflow)"
+      fund: ".nameCell #invOverflow"
+      focus_areas: "td[data-label='Targeted industries']"
+      stage: "td[data-label='Funding stages']"
+      check_size: "td[data-label='Check size']"
+      location: "td[data-label='Target countries']"
+      linkedin: ""
+      website: ""
+    pagination:
+      type: "infinite_scroll"
+      scroll_count: 25
+      scroll_delay_ms: 1500
+      load_indicator: ".loading-spinner"
+
+  angelmatch:
+    enabled: true
+    url: "https://angelmatch.io/investors"
+    adapter: "angelmatch"
+    description: "Angel investor matching platform — freemium"
+    selectors:
+      card: "table tbody tr"
+      name: "td:nth-child(1)"
+      email: "td:nth-child(6) a"
+      role: "td:nth-child(2)"
+      fund: ""
+      focus_areas: "td:nth-child(4)"
+      stage: ""
+      check_size: ""
+      location: "td:nth-child(3)"
+      linkedin: "td:nth-child(5) a"
+      website: ""
+    pagination:
+      type: "load_more_button"
+      button_selector: "button.load-more"
+      max_clicks: 30
+      click_delay_ms: 2000
+
+  signal_nfx:
+    enabled: false
+    url: "https://signal.nfx.com/investors"
+    adapter: "signal"
+    description: "NFX Signal — requires login (disabled until auth flow built)"
+    selectors:
+      card: ".investor-row"
+      name: ".investor-name a"
+      email: ""
+      role: ".investor-role"
+      fund: ".fund-name"
+      focus_areas: ".market-tags .tag"
+      stage: ".stage"
+      check_size: ".check-size"
+      location: ".location"
+      linkedin: "a[href*='linkedin.com']"
+      website: ""
+    pagination:
+      type: "numbered_pages"
+      next_button: "a.next-page"
+      max_pages: 50
+    auth:
+      required: true
+      login_url: "https://signal.nfx.com/login"
+      email_field: "input[name='email']"
+      password_field: "input[name='password']"
+      submit_button: "button[type='submit']"
+
+# ──────────────────────────────────────────────────
+#  Global Defaults
+# ──────────────────────────────────────────────────
+defaults:
+  timeout_ms: 60000
+  initial_wait_ms: 5000
+  headless: false
+  screenshots: true
+  screenshot_dir: "data/screenshots"

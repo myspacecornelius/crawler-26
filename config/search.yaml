@@ -1,0 +1,46 @@
+# ──────────────────────────────────────────────────
+#  CRAWL — Search & Discovery Configuration
+#  Defines queries and filters for finding generic
+#  VC fund websites through search engines.
+# ──────────────────────────────────────────────────
+
+discovery:
+  target_domains_count: 500
+  search_engine: "google" # "google" or "bing"
+
+  queries:
+    - '"early stage VC fund" OR "pre-seed venture capital" "team" -"crunchbase" -"angelist"'
+    - '"venture capital firm" "portfolio" "contact us" "check size"'
+    - '"seed fund" "founders" "thesis" "team"'
+    - 'intitle:"team" "venture capital" OR "vc fund" "san francisco" OR "new york"'
+    - '"micro vc" OR "boutique venture capital" "team" -directory'
+    - '"b2b saas" "venture fund" "people" "team"'
+    - '"climate tech" "venture capital" "team"'
+    - '"healthtech" "vc fund" "team" "focus"'
+    - '"fintech" "early stage fund" "contact"'
+
+  # Domains to explicitly discard (aggregators, directories, social networks)
+  ignore_domains:
+    - "linkedin.com"
+    - "twitter.com"
+    - "crunchbase.com"
+    - "angellist.com"
+    - "angel.co"
+    - "pitchbook.com"
+    - "dealroom.co"
+    - "openvc.app"
+    - "angelmatch.io"
+    - "nfx.com/signal"
+    - "vcstack.io"
+    - "medium.com"
+    - "substack.com"
+    - "forbes.com"
+    - "techcrunch.com"
+    - "bloomberg.com"
+    - "ycombinator.com"
+    - "techstars.com"
+    - "500.co"
+    - "facebook.com"
+    - "instagram.com"
+    - "wikipedia.org"
+    - "youtube.com"

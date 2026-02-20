@@ -1,0 +1,53 @@
+# ──────────────────────────────────────────────────
+#  CRAWL — Lead Scoring Configuration
+#  Weights and rules for ranking investor leads
+# ──────────────────────────────────────────────────
+
+# Your startup's profile (used for matching)
+startup_profile:
+  stage: "pre-seed" # pre-seed | seed | series-a | series-b | growth
+  sectors:
+    - "AI"
+    - "SaaS"
+    - "developer tools"
+    - "automation"
+  target_check_size_min: 50000 # $50K
+  target_check_size_max: 500000 # $500K
+  location_preference:
+    - "United States"
+    - "Remote"
+    - "Global"
+
+# Scoring weights (must sum to 100)
+weights:
+  stage_match: 30 # Does the investor invest at your stage?
+  sector_match: 25 # Do their focus areas overlap with your sectors?
+  check_size_fit: 20 # Is their typical check size in your range?
+  portfolio_relevance: 15 # Have they backed similar companies?
+  recency: 10 # How recently have they been active?
+
+# Score thresholds
+tiers:
+  hot:
+    min_score: 80
+    label: "🔴 HOT"
+    action: "Warm intro or direct cold outreach"
+  warm:
+    min_score: 60
+    label: "🟡 WARM"
+    action: "Research, then personalized outreach"
+  cool:
+    min_score: 40
+    label: "🟢 COOL"
+    action: "Add to drip email sequence"
+  cold:
+    min_score: 0
+    label: "⚪ COLD"
+    action: "Archive for later"
+
+# Bonus/penalty modifiers
+modifiers:
+  has_email: 10 # +10 if we have a verified email
+  has_linkedin: 5 # +5 if we have their LinkedIn
+  no_email: -15 # -15 if no contact info at all
+  stale_fund: -10 # -10 if last investment > 2 years ago

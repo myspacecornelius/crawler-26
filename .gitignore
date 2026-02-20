@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Debug files
+debug_ddg.html
+am_dom.html
+
+# Data (large/generated)
+data/screenshots/
+data/vc_contacts.csv
+
+# OS
+.DS_Store
