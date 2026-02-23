@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import { createCampaign, listVerticals, importCSV } from '@/lib/api';
@@ -38,6 +38,9 @@ export default function CampaignWizard() {
 
   /* Step tracking */
   const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  const [animating, setAnimating] = useState(false);
+  const stepContentRef = useRef<HTMLDivElement>(null);
 
   /* Step 1 — Basics */
   const [mode, setMode] = useState<'scratch' | 'import'>('scratch');
@@ -114,6 +117,15 @@ export default function CampaignWizard() {
     return true;
   };
 
+  const animateStep = (newStep: number, dir: 'forward' | 'back') => {
+    setDirection(dir);
+    setAnimating(true);
+    setTimeout(() => {
+      setStep(newStep);
+      setAnimating(false);
+    }, 200);
+  };
+
   const next = () => {
     setError('');
     if (!canAdvance()) {
@@ -122,12 +134,12 @@ export default function CampaignWizard() {
       else if (step === 0 && mode === 'import' && !csvFile) setError('Upload a CSV file');
       return;
     }
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    animateStep(Math.min(step + 1, STEPS.length - 1), 'forward');
   };
 
   const back = () => {
     setError('');
-    setStep((s) => Math.max(s - 1, 0));
+    animateStep(Math.max(step - 1, 0), 'back');
   };
 
   /* ---------- Build config ---------- */
@@ -201,7 +213,7 @@ export default function CampaignWizard() {
             {i < STEPS.length - 1 && (
               <div
                 className={clsx(
-                  'w-16 sm:w-24 h-0.5 mx-2 mt-[-18px]',
+                  'w-16 sm:w-24 h-0.5 mx-2 mt-[-18px] transition-colors duration-500',
                   i < step ? 'bg-brand-600' : 'bg-gray-200',
                 )}
               />
@@ -567,10 +579,21 @@ export default function CampaignWizard() {
       </div>
 
       {/* Step content */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        {step === 0 && renderStep1()}
-        {step === 1 && renderStep2()}
-        {step === 2 && renderStep3()}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 overflow-hidden">
+        <div
+          ref={stepContentRef}
+          className={`transition-all duration-200 ease-in-out ${
+            animating
+              ? direction === 'forward'
+                ? 'opacity-0 translate-x-8'
+                : 'opacity-0 -translate-x-8'
+              : 'opacity-100 translate-x-0'
+          }`}
+        >
+          {step === 0 && renderStep1()}
+          {step === 1 && renderStep2()}
+          {step === 2 && renderStep3()}
+        </div>
       </div>
 
       {/* Navigation */}

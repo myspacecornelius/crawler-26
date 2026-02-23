@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import StatsCard from '@/components/StatsCard';
+import { useToast } from '@/components/ui/Toast';
 import { getOutreachStats, startOutreach, pauseOutreach } from '@/lib/api';
 
 interface OutreachStatsData {
@@ -19,6 +20,7 @@ interface OutreachStatsData {
 }
 
 export default function OutreachDetailPage() {
+  const { toast } = useToast();
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params.id as string;
@@ -51,7 +53,7 @@ export default function OutreachDetailPage() {
       await startOutreach(provider, id);
       await loadStats();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to start');
+      toast({ title: 'Failed to start', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
     setActionLoading(false);
   };
@@ -62,7 +64,7 @@ export default function OutreachDetailPage() {
       await pauseOutreach(provider, id);
       await loadStats();
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to pause');
+      toast({ title: 'Failed to pause', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
     setActionLoading(false);
   };

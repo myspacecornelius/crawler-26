@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { Mail, Send, Users, Eye, MessageSquare, ChevronDown } from 'lucide-react';
 import StatsCard from '@/components/StatsCard';
+import ProviderCard from '@/components/outreach/ProviderCard';
+import OutreachStatsChart from '@/components/outreach/OutreachStatsChart';
+import CollapsibleSection from '@/components/ui/CollapsibleSection';
+import { useToast } from '@/components/ui/Toast';
+import { TableSkeleton } from '@/components/DataTable';
+import EmptyState from '@/components/EmptyState';
 import {
   listCampaigns,
   launchOutreach,
@@ -76,6 +83,8 @@ const providers = [
 const tiers = ['HOT', 'WARM', 'COOL'] as const;
 
 export default function OutreachPage() {
+  const { toast } = useToast();
+
   // Launch form state
   const [showForm, setShowForm] = useState(false);
   const [provider, setProvider] = useState('instantly');
@@ -197,7 +206,7 @@ export default function OutreachPage() {
       await startOutreach(rec.provider, rec.provider_campaign_id, useSavedKey ? undefined : apiKey || undefined);
       fetchAllStats(records);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to start');
+      toast({ title: 'Failed to start', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
   };
 
@@ -206,12 +215,24 @@ export default function OutreachPage() {
       await pauseOutreach(rec.provider, rec.provider_campaign_id, useSavedKey ? undefined : apiKey || undefined);
       fetchAllStats(records);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to pause');
+      toast({ title: 'Failed to pause', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
   };
 
   if (loading) {
-    return <div className="animate-pulse text-gray-400 py-12 text-center">Loading outreach...</div>;
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Outreach</h1>
+            <p className="text-sm text-gray-500 mt-1">Launch and monitor email outreach campaigns</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <TableSkeleton columns={8} rows={3} />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -240,18 +261,14 @@ export default function OutreachPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Provider</label>
             <div className="grid grid-cols-2 gap-3">
               {providers.map((p) => (
-                <button
+                <ProviderCard
                   key={p.id}
+                  id={p.id}
+                  label={p.label}
+                  description={p.desc}
+                  selected={provider === p.id}
                   onClick={() => setProvider(p.id)}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${
-                    provider === p.id
-                      ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="font-medium text-gray-900">{p.label}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{p.desc}</div>
-                </button>
+                />
               ))}
             </div>
           </div>
@@ -440,92 +457,112 @@ export default function OutreachPage() {
         </div>
       )}
 
-      {/* Active Campaigns Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Active Campaigns</h2>
+      {/* Active Campaigns */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Active Campaigns
+            {records.length > 0 && <span className="text-sm font-normal text-gray-400 ml-2">{records.length} campaigns</span>}
+          </h2>
           {statsLoading && <span className="text-xs text-gray-400 animate-pulse">Fetching stats...</span>}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Name</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Provider</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Leads</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Sent</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Opens</th>
-                <th className="text-left px-6 py-3 font-medium text-gray-500">Replies</th>
-                <th className="text-right px-6 py-3 font-medium text-gray-500">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {records.map((rec) => {
-                const s = statsMap[rec.provider_campaign_id] || {};
-                return (
-                  <tr key={rec.provider_campaign_id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <Link
-                        href={`/dashboard/outreach/${rec.provider_campaign_id}?provider=${rec.provider}`}
-                        className="font-medium text-gray-900 hover:text-brand-600"
-                      >
+
+        {records.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200">
+            <EmptyState
+              icon={<Mail className="h-12 w-12" />}
+              title="No outreach campaigns yet"
+              description="Launch one above to get started."
+              action={{ label: 'Launch Campaign', onClick: () => setShowForm(true) }}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {records.map((rec) => {
+              const s = statsMap[rec.provider_campaign_id] || {};
+              return (
+                <Link
+                  key={rec.provider_campaign_id}
+                  href={`/dashboard/outreach/${rec.provider_campaign_id}?provider=${rec.provider}`}
+                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-gray-300 transition-all group"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 group-hover:text-brand-600 transition-colors">
                         {rec.name}
-                      </Link>
-                      <p className="text-xs text-gray-400 mt-0.5">{new Date(rec.launched_at).toLocaleDateString()}</p>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 capitalize">{rec.provider}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full ${
-                        s.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                        s.status === 'paused' ? 'bg-amber-100 text-amber-700' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {s.status || 'unknown'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">{s.total_leads?.toLocaleString() ?? '—'}</td>
-                    <td className="px-6 py-4 text-gray-600">{s.emails_sent?.toLocaleString() ?? '—'}</td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {s.opens != null ? s.opens.toLocaleString() : '—'}
-                      {s.open_rate != null && <span className="text-xs text-gray-400 ml-1">({s.open_rate}%)</span>}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">
-                      {s.replies != null ? s.replies.toLocaleString() : '—'}
-                      {s.reply_rate != null && <span className="text-xs text-gray-400 ml-1">({s.reply_rate}%)</span>}
-                    </td>
-                    <td className="px-6 py-4 text-right space-x-2">
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-0.5 capitalize">{rec.provider} &middot; {new Date(rec.launched_at).toLocaleDateString()}</p>
+                    </div>
+                    <span className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full flex-shrink-0 ${
+                      s.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                      s.status === 'paused' ? 'bg-amber-100 text-amber-700' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      {s.status || 'unknown'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <Send className="w-3.5 h-3.5 text-gray-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">{s.emails_sent?.toLocaleString() ?? '—'}</p>
+                      <p className="text-[10px] text-gray-500">Sent</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <Eye className="w-3.5 h-3.5 text-blue-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {s.open_rate != null ? `${s.open_rate}%` : '—'}
+                      </p>
+                      <p className="text-[10px] text-gray-500">Open Rate</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {s.reply_rate != null ? `${s.reply_rate}%` : '—'}
+                      </p>
+                      <p className="text-[10px] text-gray-500">Reply Rate</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      {s.total_leads?.toLocaleString() ?? '—'} leads
+                    </span>
+                    <div className="flex gap-1">
                       {s.status !== 'active' && (
-                        <button onClick={() => handleStart(rec)} className="text-xs font-medium text-emerald-600 hover:text-emerald-700">
+                        <button
+                          onClick={(e) => { e.preventDefault(); handleStart(rec); }}
+                          className="text-xs font-medium text-emerald-600 hover:text-emerald-700 px-2 py-0.5 rounded hover:bg-emerald-50"
+                        >
                           Start
                         </button>
                       )}
                       {s.status === 'active' && (
-                        <button onClick={() => handlePause(rec)} className="text-xs font-medium text-amber-600 hover:text-amber-700">
+                        <button
+                          onClick={(e) => { e.preventDefault(); handlePause(rec); }}
+                          className="text-xs font-medium text-amber-600 hover:text-amber-700 px-2 py-0.5 rounded hover:bg-amber-50"
+                        >
                           Pause
                         </button>
                       )}
-                      <Link
-                        href={`/dashboard/outreach/${rec.provider_campaign_id}?provider=${rec.provider}`}
-                        className="text-xs font-medium text-gray-500 hover:text-gray-700"
-                      >
-                        Stats
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-              {records.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-gray-400">
-                    No outreach campaigns yet. Launch one above to get started.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Performance Chart */}
+      {records.length > 0 && (
+        <OutreachStatsChart records={records} statsMap={statsMap} />
+      )}
     </div>
   );
 }

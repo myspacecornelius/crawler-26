@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Megaphone, LayoutGrid, List, Users, Mail, Calendar } from 'lucide-react';
+import { DataTable } from '@/components/DataTable';
+import { useToast } from '@/components/ui/Toast';
 import { listCampaigns, runCampaign, deleteCampaign } from '@/lib/api';
+import type { Column } from '@/components/DataTable';
 
 interface Campaign {
   id: string;
@@ -25,10 +29,17 @@ const statusColor: Record<string, string> = {
 };
 
 export default function CampaignsPage() {
+  const { toast } = useToast();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [sortKey, setSortKey] = useState<string | undefined>();
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [view, setView] = useState<'table' | 'cards'>('table');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const STATUS_TABS = ['all', 'running', 'completed', 'pending', 'failed'] as const;
 
   const load = async (p = 1) => {
     setLoading(true);
@@ -46,9 +57,10 @@ export default function CampaignsPage() {
   const handleRun = async (id: string) => {
     try {
       await runCampaign(id);
+      toast({ title: 'Campaign started', variant: 'success' });
       load(page);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to run campaign');
+      toast({ title: 'Failed to run campaign', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
   };
 
@@ -56,11 +68,108 @@ export default function CampaignsPage() {
     if (!confirm(`Delete campaign "${name}" and all its leads?`)) return;
     try {
       await deleteCampaign(id);
+      toast({ title: 'Campaign deleted', variant: 'success' });
       load(page);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to delete');
+      toast({ title: 'Failed to delete', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
   };
+
+  const handleSort = (key: string, direction: 'asc' | 'desc') => {
+    setSortKey(key);
+    setSortDir(direction);
+  };
+
+  const filteredCampaigns = statusFilter === 'all'
+    ? campaigns
+    : campaigns.filter((c) => c.status === statusFilter);
+
+  const sortedCampaigns = sortKey
+    ? [...filteredCampaigns].sort((a, b) => {
+        const aVal = (a as unknown as Record<string, unknown>)[sortKey];
+        const bVal = (b as unknown as Record<string, unknown>)[sortKey];
+        if (typeof aVal === 'number' && typeof bVal === 'number') {
+          return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+        }
+        const aStr = String(aVal ?? '');
+        const bStr = String(bVal ?? '');
+        return sortDir === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+      })
+    : filteredCampaigns;
+
+  const columns: Column<Campaign>[] = [
+    {
+      key: 'name',
+      label: 'Name',
+      sortable: true,
+      render: (c) => (
+        <div>
+          <Link href={`/dashboard/campaigns/${c.id}`} className="font-medium text-gray-900 hover:text-brand-600">
+            {c.name}
+          </Link>
+          {c.error_message && (
+            <p className="text-xs text-red-500 mt-0.5 truncate max-w-xs">{c.error_message}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'vertical',
+      label: 'Vertical',
+      sortable: true,
+      render: (c) => <span className="text-gray-600 capitalize">{c.vertical.replace('_', ' ')}</span>,
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      render: (c) => (
+        <span className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColor[c.status] || statusColor.pending}`}>
+          {c.status}
+        </span>
+      ),
+    },
+    {
+      key: 'total_leads',
+      label: 'Leads',
+      sortable: true,
+      render: (c) => <span className="text-gray-600">{c.total_leads.toLocaleString()}</span>,
+    },
+    {
+      key: 'total_emails',
+      label: 'Emails',
+      sortable: true,
+      render: (c) => <span className="text-gray-600">{c.total_emails.toLocaleString()}</span>,
+    },
+    {
+      key: 'created_at',
+      label: 'Created',
+      sortable: true,
+      render: (c) => <span className="text-gray-500">{new Date(c.created_at).toLocaleDateString()}</span>,
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      className: 'text-right',
+      render: (c) => (
+        <div className="text-right space-x-2">
+          {c.status === 'pending' && (
+            <button onClick={() => handleRun(c.id)} className="text-xs font-medium text-brand-600 hover:text-brand-700">
+              Run
+            </button>
+          )}
+          <Link href={`/dashboard/campaigns/${c.id}`} className="text-xs font-medium text-gray-500 hover:text-gray-700">
+            View
+          </Link>
+          {c.status !== 'running' && (
+            <button onClick={() => handleDelete(c.id, c.name)} className="text-xs font-medium text-red-500 hover:text-red-700">
+              Delete
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -77,83 +186,131 @@ export default function CampaignsPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center text-gray-400 animate-pulse">Loading campaigns...</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Name</th>
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Vertical</th>
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Status</th>
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Leads</th>
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Emails</th>
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Created</th>
-                  <th className="text-right px-6 py-3 font-medium text-gray-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {campaigns.map((c) => (
-                  <tr key={c.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <Link href={`/dashboard/campaigns/${c.id}`} className="font-medium text-gray-900 hover:text-brand-600">
-                        {c.name}
-                      </Link>
-                      {c.error_message && (
-                        <p className="text-xs text-red-500 mt-0.5 truncate max-w-xs">{c.error_message}</p>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 capitalize">{c.vertical.replace('_', ' ')}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColor[c.status] || statusColor.pending}`}>
-                        {c.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600">{c.total_leads.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-gray-600">{c.total_emails.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-gray-500">{new Date(c.created_at).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
-                      {c.status === 'pending' && (
-                        <button onClick={() => handleRun(c.id)} className="text-xs font-medium text-brand-600 hover:text-brand-700">
-                          Run
-                        </button>
-                      )}
-                      <Link href={`/dashboard/campaigns/${c.id}`} className="text-xs font-medium text-gray-500 hover:text-gray-700">
-                        View
-                      </Link>
-                      {c.status !== 'running' && (
-                        <button onClick={() => handleDelete(c.id, c.name)} className="text-xs font-medium text-red-500 hover:text-red-700">
-                          Delete
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-                {campaigns.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
-                      No campaigns yet.{' '}
-                      <Link href="/dashboard/campaigns/new" className="text-brand-600 hover:underline">Create one</Link>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {total > 20 && (
-          <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-gray-50">
-            <p className="text-sm text-gray-500">Page {page} of {Math.ceil(total / 20)}</p>
-            <div className="flex gap-1">
-              <button onClick={() => load(page - 1)} disabled={page <= 1} className="px-3 py-1 text-sm rounded border border-gray-300 hover:bg-white disabled:opacity-40">Prev</button>
-              <button onClick={() => load(page + 1)} disabled={page >= Math.ceil(total / 20)} className="px-3 py-1 text-sm rounded border border-gray-300 hover:bg-white disabled:opacity-40">Next</button>
-            </div>
-          </div>
-        )}
+      {/* Status Filter Tabs */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setStatusFilter(tab)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-colors ${
+                statusFilter === tab
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab}
+              {tab !== 'all' && (
+                <span className="ml-1 text-gray-400">
+                  {campaigns.filter((c) => c.status === tab).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
+          <button
+            onClick={() => setView('table')}
+            className={`p-1.5 rounded-md transition-colors ${view === 'table' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+            title="Table view"
+          >
+            <List className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setView('cards')}
+            className={`p-1.5 rounded-md transition-colors ${view === 'cards' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+            title="Card view"
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </button>
+        </div>
       </div>
+
+      {/* Card View */}
+      {view === 'cards' ? (
+        sortedCampaigns.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <Megaphone className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-base font-semibold text-gray-900 mb-1">No campaigns found</h3>
+            <p className="text-sm text-gray-500 mb-4">Try a different filter or create a new campaign.</p>
+            <Link
+              href="/dashboard/campaigns/new"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 transition-colors"
+            >
+              Create Campaign
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sortedCampaigns.map((c) => (
+              <Link
+                key={c.id}
+                href={`/dashboard/campaigns/${c.id}`}
+                className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-gray-300 transition-all group"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="font-semibold text-gray-900 group-hover:text-brand-600 transition-colors truncate pr-2">
+                    {c.name}
+                  </h3>
+                  <span className={`inline-block px-2.5 py-0.5 text-xs font-medium rounded-full flex-shrink-0 ${statusColor[c.status] || statusColor.pending}`}>
+                    {c.status}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 capitalize mb-4">{c.vertical.replace('_', ' ')}</p>
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <Users className="w-3.5 h-3.5" />
+                    {c.total_leads.toLocaleString()} leads
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Mail className="w-3.5 h-3.5" />
+                    {c.total_emails.toLocaleString()} emails
+                  </span>
+                </div>
+                {/* Mini progress bar */}
+                <div className="mt-3">
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-brand-500 rounded-full transition-all"
+                      style={{ width: `${c.total_leads > 0 ? Math.min((c.total_emails / c.total_leads) * 100, 100) : 0}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-1.5">
+                    <span className="text-[10px] text-gray-400">{c.total_leads > 0 ? Math.round((c.total_emails / c.total_leads) * 100) : 0}% email rate</span>
+                    <span className="flex items-center gap-1 text-[10px] text-gray-400">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(c.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+                {c.error_message && (
+                  <p className="text-xs text-red-500 mt-2 truncate">{c.error_message}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        )
+      ) : (
+
+      <DataTable<Campaign>
+        columns={columns}
+        data={sortedCampaigns}
+        total={total}
+        page={page}
+        perPage={20}
+        loading={loading}
+        onPageChange={(p) => load(p)}
+        onSort={handleSort}
+        sortKey={sortKey}
+        sortDirection={sortDir}
+        rowKey={(c) => c.id}
+        emptyMessage="No campaigns yet"
+        emptyDescription="Create your first campaign to start discovering leads."
+        emptyIcon={<Megaphone className="h-12 w-12" />}
+        emptyAction={{ label: 'Create Campaign', href: '/dashboard/campaigns/new' }}
+      />
+
+      )}
     </div>
   );
 }

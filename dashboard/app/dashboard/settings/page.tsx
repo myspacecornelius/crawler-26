@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useToast } from '@/components/ui/Toast';
 import { getProfile, getCredits, createCheckout, getBillingPortal, getBillingHistory } from '@/lib/api';
 
 export default function SettingsPage() {
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [credits, setCredits] = useState<any>(null);
   const [history, setHistory] = useState<any>(null);
@@ -45,7 +47,7 @@ export default function SettingsPage() {
       const { checkout_url } = await createCheckout(planSlug);
       window.location.href = checkout_url;
     } catch (e: any) {
-      alert(e.message || 'Failed to start checkout');
+      toast({ title: 'Checkout failed', description: e.message || 'Failed to start checkout', variant: 'error' });
     } finally {
       setLoading(null);
     }
@@ -57,7 +59,7 @@ export default function SettingsPage() {
       const { checkout_url } = await createCheckout(undefined, packSlug);
       window.location.href = checkout_url;
     } catch (e: any) {
-      alert(e.message || 'Failed to start checkout');
+      toast({ title: 'Checkout failed', description: e.message || 'Failed to start checkout', variant: 'error' });
     } finally {
       setLoading(null);
     }
@@ -69,7 +71,7 @@ export default function SettingsPage() {
       const { portal_url } = await getBillingPortal();
       window.location.href = portal_url;
     } catch (e: any) {
-      alert(e.message || 'Failed to open billing portal');
+      toast({ title: 'Portal error', description: e.message || 'Failed to open billing portal', variant: 'error' });
     } finally {
       setLoading(null);
     }

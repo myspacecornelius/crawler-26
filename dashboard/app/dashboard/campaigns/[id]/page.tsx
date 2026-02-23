@@ -3,8 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import StatsCard from '@/components/StatsCard';
+import { ChevronDown } from 'lucide-react';
+import CampaignStatsPanel from '@/components/campaign/CampaignStatsPanel';
+import LeadScoreDistribution from '@/components/campaign/LeadScoreDistribution';
+import EmailStatusDonut from '@/components/charts/EmailStatusDonut';
 import LeadTable from '@/components/LeadTable';
+import { useToast } from '@/components/ui/Toast';
 import { getCampaign, runCampaign, getLeadStats, getFreshness, listLeads, getExportUrl } from '@/lib/api';
 
 interface Campaign {
@@ -34,6 +38,7 @@ interface Stats {
 }
 
 export default function CampaignDetailPage() {
+  const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -76,7 +81,7 @@ export default function CampaignDetailPage() {
       const updated = await runCampaign(id);
       setCampaign(updated);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to run');
+      toast({ title: 'Failed to run campaign', description: err instanceof Error ? err.message : 'Unknown error', variant: 'error' });
     }
   };
 
@@ -131,23 +136,20 @@ export default function CampaignDetailPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatsCard label="Total Leads" value={stats.total_leads} icon="👥" />
-          <StatsCard label="With Email" value={stats.with_email} icon="📧" change={`${stats.email_rate}% rate`} changeType={stats.email_rate > 50 ? 'positive' : 'neutral'} />
-          <StatsCard label="Verified" value={stats.verified_emails} icon="✅" change={`${stats.total_leads > 0 ? Math.round(stats.verified_emails / stats.total_leads * 100) : 0}% rate`} changeType={stats.verified_emails > 0 ? 'positive' : 'neutral'} />
-          <StatsCard label="HOT Leads" value={stats.hot_leads} icon="🔥" />
-          <StatsCard label="Avg Score" value={stats.avg_score} icon="📊" />
-          {freshness && (
-            <StatsCard
-              label="Data Freshness"
-              value={`${freshness?.freshness_pct ?? 0}%`}
-              icon="🔄"
-              change={`${freshness?.verified_last_7d ?? 0} verified this week`}
-              changeType={freshness?.freshness_pct > 70 ? 'positive' : 'neutral'}
-            />
-          )}
+      {/* Stats Panel */}
+      {stats && <CampaignStatsPanel stats={stats} freshness={freshness} />}
+
+      {/* Charts Row */}
+      {stats && leads.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <LeadScoreDistribution leads={leads} />
+          <EmailStatusDonut
+            data={[
+              { name: 'Verified', value: stats.verified_emails, color: '#10b981' },
+              { name: 'With Email', value: Math.max(stats.with_email - stats.verified_emails, 0), color: '#f59e0b' },
+              { name: 'No Email', value: Math.max(stats.total_leads - stats.with_email, 0), color: '#9ca3af' },
+            ]}
+          />
         </div>
       )}
 
