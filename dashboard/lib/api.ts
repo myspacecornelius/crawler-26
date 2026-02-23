@@ -182,3 +182,44 @@ export async function getOutreachStats(provider: string, providerCampaignId: str
 export async function listOutreachTemplates() {
   return fetchAPI('/outreach/templates');
 }
+
+// Portfolio
+export async function getFundPortfolio(fund: string, params: Record<string, string> = {}) {
+  const searchParams = new URLSearchParams(params);
+  return fetchAPI(`/funds/${encodeURIComponent(fund)}/portfolio?${searchParams}`);
+}
+
+// CRM
+export async function pushToCRM(data: {
+  provider: string;
+  campaign_id: string;
+  test_mode?: boolean;
+  min_score?: number;
+  tiers?: string[];
+  field_mapping?: Record<string, string>;
+  custom_fields?: Record<string, string>;
+  api_key?: string;
+  sf_client_id?: string;
+  sf_client_secret?: string;
+  sf_instance_url?: string;
+  sf_access_token?: string;
+}) {
+  return fetchAPI('/crm/push', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function getCRMStatus(data: {
+  provider: string;
+  crm_ids: string[];
+  test_mode?: boolean;
+  api_key?: string;
+}) {
+  return fetchAPI('/crm/status', { method: 'POST', body: JSON.stringify(data) });
+}
+
+export async function getCRMFields(provider: string, testMode = true) {
+  return fetchAPI(`/crm/fields/${provider}?test_mode=${testMode}`);
+}
+
+export async function getDefaultFieldMapping() {
+  return fetchAPI('/crm/field-mapping/defaults');
+}

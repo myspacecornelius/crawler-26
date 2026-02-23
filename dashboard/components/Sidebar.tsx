@@ -8,7 +8,9 @@ const nav = [
   { href: '/dashboard', label: 'Overview', icon: '📊' },
   { href: '/dashboard/campaigns', label: 'Campaigns', icon: '🚀' },
   { href: '/dashboard/outreach', label: 'Outreach', icon: '📨' },
+  { href: '/dashboard/crm', label: 'CRM', icon: '🔗' },
   { href: '/dashboard/verticals', label: 'Verticals', icon: '🏢' },
+  { href: '/dashboard/portfolio', label: 'Portfolio', icon: '📁' },
   { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
 ];
 

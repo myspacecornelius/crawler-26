@@ -258,8 +258,9 @@ export default function OutreachPage() {
 
           {/* Source Campaign */}
           <div className="mb-5">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Source Campaign</label>
+            <label htmlFor="source-campaign" className="block text-sm font-medium text-gray-700 mb-2">Source Campaign</label>
             <select
+              id="source-campaign"
               value={campaignId}
               onChange={(e) => setCampaignId(e.target.value)}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 bg-white"
@@ -325,6 +326,7 @@ export default function OutreachPage() {
                   value={minScore}
                   onChange={(e) => setMinScore(Number(e.target.value))}
                   className="w-full accent-brand-600"
+                  aria-label="Minimum Score"
                 />
               </div>
               <div>

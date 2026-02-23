@@ -5,6 +5,8 @@ and extract contact information (names, roles, emails, LinkedIn).
 """
 
 import asyncio
+import csv
+import os
 import random
 import re
 import logging
@@ -229,7 +231,7 @@ def _clean_role_text(raw: str) -> str:
     # Remove common structural prefixes from team page HTML
     noise_patterns = [
         r'Based\s+In\s*', r'Specialty\s*', r'Specialists?\s*',
-        r'Focus\s*', r'Location\s*', r'Office\s*', r'Region\s*',
+        r'Focus\s*', r'Location\s*', r'Office\b\s*:?\s*', r'Region\s*',
     ]
     for pat in noise_patterns:
         text = _re.sub(pat, ' ', text, flags=_re.IGNORECASE)
@@ -502,6 +504,44 @@ class DeepCrawler:
         self.scorer = LeadScorer("config/scoring.yaml")
         self.csv_writer = CSVWriter("data")
 
+    def _checkpoint_path(self) -> str:
+        return self.output_file.replace('.csv', '_checkpoint.csv')
+
+    def _save_checkpoint(self):
+        """Write all contacts to a checkpoint CSV after each batch."""
+        path = self._checkpoint_path()
+        os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+        with open(path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['name', 'role', 'email', 'linkedin', 'fund_name', 'fund_url', 'source_page'])
+            for c in self.all_contacts:
+                writer.writerow([
+                    c.name, c.role, c.email, c.linkedin,
+                    c.fund, c.website, getattr(c, 'source', ''),
+                ])
+        logger.info(f"  💾 Checkpoint: {len(self.all_contacts)} contacts → {path}")
+
+    def _load_checkpoint(self):
+        """Load contacts from checkpoint CSV (crash recovery)."""
+        path = self._checkpoint_path()
+        if not os.path.exists(path):
+            return
+        recovered = []
+        with open(path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                lead = InvestorLead(
+                    name=row.get('name', ''),
+                    role=row.get('role', ''),
+                    email=row.get('email', 'N/A'),
+                    linkedin=row.get('linkedin', 'N/A'),
+                    fund=row.get('fund_name', ''),
+                    website=row.get('fund_url', ''),
+                )
+                recovered.append(lead)
+        self.all_contacts = recovered
+        logger.info(f"  🔄 Recovered {len(recovered)} contacts from checkpoint")
+
     def _load_seen(self) -> set:
         """Load previously crawled domains from seen_domains.txt (legacy)."""
         seen = set()
@@ -517,7 +557,6 @@ class DeepCrawler:
 
     def _save_seen(self, domains: List[str]):
         """Write freshly crawled domains to seen file (replaces, not appends)."""
-        import os
         os.makedirs("data", exist_ok=True)
         # Merge with existing so we don't lose history
         existing = self._load_seen()
@@ -923,7 +962,14 @@ class DeepCrawler:
                 contacts_so_far = len(self.all_contacts)
                 logger.info(f"  📊 Running total: {contacts_so_far} contacts")
 
+                # Incremental checkpoint — save raw contacts after each batch
+                self._save_checkpoint()
+
             await browser.close()
+
+        # Recover from checkpoint if all_contacts is empty (crash recovery)
+        if not self.all_contacts:
+            self._load_checkpoint()
 
         # Persist seen domains so next run skips them
         self._save_seen(targets)
