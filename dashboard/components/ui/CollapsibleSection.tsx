@@ -63,6 +63,7 @@ export default function CollapsibleSection({
         className="transition-[height] duration-200 ease-in-out overflow-hidden"
       >
         <div className="px-5 pb-4">{children}</div>
+        
       </div>
     </div>
   );

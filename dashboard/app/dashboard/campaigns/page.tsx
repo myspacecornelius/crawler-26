@@ -271,8 +271,8 @@ export default function CampaignsPage() {
                 <div className="mt-3">
                   <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-brand-500 rounded-full transition-all"
-                      style={{ width: `${c.total_leads > 0 ? Math.min((c.total_emails / c.total_leads) * 100, 100) : 0}%` }}
+                      className="h-full bg-brand-500 rounded-full transition-all campaign-progress-fill"
+                      style={{ '--progress-width': `${c.total_leads > 0 ? Math.min((c.total_emails / c.total_leads) * 100, 100) : 0}%` } as React.CSSProperties}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-1.5">

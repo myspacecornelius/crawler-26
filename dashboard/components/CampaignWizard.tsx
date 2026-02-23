@@ -327,6 +327,7 @@ export default function CampaignWizard() {
                 ref={fileInputRef}
                 type="file"
                 accept=".csv"
+                aria-label="Upload CSV file"
                 className="hidden"
                 onChange={(e) => handleFileSelect(e.target.files?.[0])}
               />
