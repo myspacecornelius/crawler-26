@@ -1,0 +1,831 @@
+2026-02-21 18:47:51,973 -   📂  Seed database: loaded 578 VC firms from data/seed/vc_firms.csv
+2026-02-21 18:47:52,095 -   🐙  GitHub VC lists: 0 total entries from 3 sources
+2026-02-21 18:47:52,096 -   🎯  Generated 573 target fund URLs → data/target_funds.txt
+2026-02-21 18:49:24,336 -   ⏭️  Skipping 322 already-crawled domains (use --force-recrawl to override)
+2026-02-21 18:49:24,336 - 
+╔══════════════════════════════════════════╗
+║   🕷️  DEEP CRAWLER v1                    ║
+║   VC Contact Extraction Engine           ║
+╚══════════════════════════════════════════╝
+
+  ⏰  2026-02-21 18:49:24
+  🎯  Target funds: 251
+  🖥️  Headless: YES
+  📁  Output: data/vc_contacts.csv
+
+2026-02-21 18:49:24,697 -   🌐 Visiting https://www.lakestar.com
+2026-02-21 18:49:24,701 -   🌐 Visiting https://www.magmapartners.com
+2026-02-21 18:49:24,703 -   🌐 Visiting https://nautacapital.com
+2026-02-21 18:49:24,706 -   🌐 Visiting https://www.elaia.com
+2026-02-21 18:49:24,707 -   🌐 Visiting https://verdane.com
+2026-02-21 18:49:24,707 -   🌐 Visiting https://www.qedinvestors.com
+2026-02-21 18:49:24,711 -   🌐 Visiting https://partechpartners.com
+2026-02-21 18:49:24,719 -   🌐 Visiting https://www.nextcorps.org
+2026-02-21 18:49:24,721 -   🌐 Visiting https://www.deshaw.com
+2026-02-21 18:49:24,723 -   🌐 Visiting https://www.portlandseedfund.com
+2026-02-21 18:49:27,074 -   📄 Found 5 potential team pages
+2026-02-21 18:49:27,091 -   📄 Found 2 potential team pages
+2026-02-21 18:49:27,122 -   📄 Found 6 potential team pages
+2026-02-21 18:49:27,131 -   📄 Found 1 potential team pages
+2026-02-21 18:49:27,321 -   📄 Found 5 potential team pages
+2026-02-21 18:49:27,330 -   📄 Found 6 potential team pages
+2026-02-21 18:49:27,953 -   📄 Found 73 potential team pages
+2026-02-21 18:49:28,302 -   📄 Found 6 potential team pages
+2026-02-21 18:49:28,419 -   📄 Found 4 potential team pages
+2026-02-21 18:49:28,556 -   ✅ Extracted 21 contacts from https://www.magmapartners.com/team
+2026-02-21 18:49:28,695 -   ✅ Extracted 34 contacts from https://www.qedinvestors.com/team
+2026-02-21 18:49:28,703 -   🌐 Visiting https://www.konvoy.vc
+2026-02-21 18:49:28,770 -   🌐 Visiting https://www.sapphiresport.com
+2026-02-21 18:49:29,038 -   ✅ Extracted 2 contacts from https://verdane.com/verdane-partners-with-tom/
+2026-02-21 18:49:29,092 -   🌐 Visiting https://www.flyingfish.vc
+2026-02-21 18:49:29,135 -   ✅ Extracted 3 contacts from https://www.deshaw.com/who-we-are/our-people
+2026-02-21 18:49:29,174 -   🌐 Visiting https://www.kbpartners.com
+2026-02-21 18:49:29,222 -   ✅ Extracted 1 contacts from https://www.portlandseedfund.com/team
+2026-02-21 18:49:29,266 -   🌐 Visiting https://www.prologis.com/ventures
+2026-02-21 18:49:29,465 -   ✅ Extracted 1 contacts from https://www.lakestar.com/team/henriett-bozzay
+2026-02-21 18:49:29,548 -   🌐 Visiting https://www.creandum.com
+2026-02-21 18:49:29,865 -   📄 Found 3 potential team pages
+2026-02-21 18:49:30,052 -   ✅ Extracted 14 contacts from https://nautacapital.com/team
+2026-02-21 18:49:31,410 -   📄 Found 1 potential team pages
+2026-02-21 18:49:31,435 -   ⚠️ Failed to extract from https://www.elaia.com/wp-content/uploads/2025/06/Elaia-Partners-ESG-Global-Policy.pdf: Page.goto: Download is starting
+Call log:
+  - navigating to "https://www.elaia.com/wp-content/uploads/2025/06/Elaia-Partners-ESG-Global-Policy.pdf", waiting until "domcontentloaded"
+
+2026-02-21 18:49:32,313 -   📄 Found 17 potential team pages
+2026-02-21 18:49:32,462 -   📄 Found 12 potential team pages
+2026-02-21 18:49:32,725 -   📄 Found 1 potential team pages
+2026-02-21 18:49:32,746 -   📄 Found 2 potential team pages
+2026-02-21 18:49:33,143 -   🌐 Visiting https://cathayinnovation.com/asia
+2026-02-21 18:49:33,703 -   🌐 Visiting https://www.chicagoventures.com
+2026-02-21 18:49:33,758 -   🌐 Visiting https://www.pointnine.com
+2026-02-21 18:49:34,113 -   ⏳ Timeout on https://www.sapphiresport.com, continuing...
+2026-02-21 18:49:34,138 -   ✅ Extracted 1 contacts from https://www.flyingfish.vc/team/heather-gorham
+2026-02-21 18:49:34,182 -   🌐 Visiting https://www.usvp.com
+2026-02-21 18:49:34,184 -   🌐 Visiting https://www.adamsstreetpartners.com
+2026-02-21 18:49:34,651 -   ✅ Extracted 4 contacts from https://www.prologis.com/about/our-story
+2026-02-21 18:49:34,696 -   🌐 Visiting https://goldengatevectures.com
+2026-02-21 18:49:34,747 -   ✅ Extracted 10 contacts from https://www.kbpartners.com/team
+2026-02-21 18:49:34,765 -   ⏳ Timeout on https://goldengatevectures.com, continuing...
+2026-02-21 18:49:34,886 -   🌐 Visiting https://www.trilogyequity.com
+2026-02-21 18:49:34,921 -   🌐 Visiting https://www.twosigmaventures.com
+2026-02-21 18:49:34,943 -   🌐 Visiting https://www.2150.vc
+2026-02-21 18:49:35,297 -   📄 Found 1 potential team pages
+2026-02-21 18:49:36,098 -   📄 Found 1 potential team pages
+2026-02-21 18:49:36,148 -   🌐 Visiting https://www.samaipata.vc
+2026-02-21 18:49:36,270 -   ✅ Extracted 7 contacts from https://www.chicagoventures.com/team
+2026-02-21 18:49:36,345 -   📄 Found 3 potential team pages
+2026-02-21 18:49:36,376 -   📄 Found 1 potential team pages
+2026-02-21 18:49:37,207 -   📄 Found 5 potential team pages
+2026-02-21 18:49:37,230 -   📄 Found 5 potential team pages
+2026-02-21 18:49:37,463 -   ✅ Extracted 39 contacts from https://cathayinnovation.com/people/
+2026-02-21 18:49:37,663 -   🌐 Visiting https://www.deerfieldmgmt.com
+2026-02-21 18:49:37,735 -   ⏳ Timeout on https://www.deerfieldmgmt.com, continuing...
+2026-02-21 18:49:37,835 -   📄 Found 1 potential team pages
+2026-02-21 18:49:37,849 -   🌐 Visiting https://www.stormventures.com
+2026-02-21 18:49:37,850 -   🌐 Visiting https://www.summitpartners.com
+2026-02-21 18:49:38,457 -   📄 Found 4 potential team pages
+2026-02-21 18:49:38,686 -   ✅ Extracted 8 contacts from https://www.twosigmaventures.com/team
+2026-02-21 18:49:38,706 -   ✅ Extracted 1 contacts from https://www.2150.vc/team
+2026-02-21 18:49:38,817 -   🌐 Visiting https://www.keenventurepartners.com
+2026-02-21 18:49:38,822 -   🌐 Visiting https://www.hillhousecap.com
+2026-02-21 18:49:39,101 -   📄 Found 2 potential team pages
+2026-02-21 18:49:39,504 -   ✅ Extracted 25 contacts from https://www.samaipata.vc/samaipata-team
+2026-02-21 18:49:39,595 -   🌐 Visiting https://coralcap.co
+2026-02-21 18:49:40,045 -   📄 Found 6 potential team pages
+2026-02-21 18:49:40,384 -   📄 Found 13 potential team pages
+2026-02-21 18:49:40,559 -   ✅ Extracted 11 contacts from https://www.usvp.com/team/
+2026-02-21 18:49:40,596 -   🌐 Visiting https://www.techsquareventures.com
+2026-02-21 18:49:41,088 -   ✅ Extracted 7 contacts from https://www.trilogyequity.com/team/
+2026-02-21 18:49:41,127 -   🌐 Visiting https://www.bonfirevc.com
+2026-02-21 18:49:41,468 -   📄 Found 11 potential team pages
+2026-02-21 18:49:41,516 -   ✅ Extracted 5 contacts from https://www.summitpartners.com/news/summit-partners-2025-year-in-review
+2026-02-21 18:49:41,577 -   🌐 Visiting https://www.b2venture.vc
+2026-02-21 18:49:42,130 -   ✅ Extracted 1 contacts from https://www.keenventurepartners.com/about-us
+2026-02-21 18:49:42,206 -   🌐 Visiting https://congruentvc.com
+2026-02-21 18:49:42,283 -   ✅ Extracted 3 contacts from https://www.adamsstreetpartners.com/news/adams-street-partners-raises-350-million-for-inaugural-public-clo/
+2026-02-21 18:49:42,317 -   🌐 Visiting https://www.fiveelms.com
+2026-02-21 18:49:43,184 -   📄 Found 5 potential team pages
+2026-02-21 18:49:43,337 -   📄 Found 5 potential team pages
+2026-02-21 18:49:43,886 -   📄 Found 1 potential team pages
+2026-02-21 18:49:44,366 -   📄 Found 2 potential team pages
+2026-02-21 18:49:44,610 -   ✅ Extracted 12 contacts from https://www.techsquareventures.com/team
+2026-02-21 18:49:44,824 -   📄 Found 3 potential team pages
+2026-02-21 18:49:44,930 -   📄 Found 1 potential team pages
+2026-02-21 18:49:45,110 -   ✅ Extracted 2 contacts from https://www.hillhousecap.com/team
+2026-02-21 18:49:45,212 -   🌐 Visiting https://www.nextworldcap.com
+2026-02-21 18:49:45,287 -   ✅ Extracted 1 contacts from https://www.bonfirevc.com/team
+2026-02-21 18:49:45,321 -   📄 Found 1 potential team pages
+2026-02-21 18:49:45,368 -   🌐 Visiting https://biomaticscapital.com
+2026-02-21 18:49:46,152 -   🌐 Visiting https://www.atomico.com
+2026-02-21 18:49:46,204 -   ✅ Extracted 1 contacts from https://congruentvc.com/team
+2026-02-21 18:49:46,260 -   🌐 Visiting https://www.actoncapital.com
+2026-02-21 18:49:46,944 -   ✅ Extracted 1 contacts from https://coralcap.co/2026/01/stop-talking-about-japans-fertility-rate/
+2026-02-21 18:49:47,513 -   ✅ Extracted 1 contacts from https://www.b2venture.vc/about-old
+2026-02-21 18:49:47,536 -   📄 Found 1 potential team pages
+2026-02-21 18:49:47,597 -   🌐 Visiting https://www.kimaventures.com
+2026-02-21 18:49:47,696 -   🌐 Visiting https://www.preludeventures.com
+2026-02-21 18:49:48,022 -   📄 Found 13 potential team pages
+2026-02-21 18:49:48,345 -   📄 Found 6 potential team pages
+2026-02-21 18:49:48,461 -   ✅ Extracted 1 contacts from https://biomaticscapital.com/team/
+2026-02-21 18:49:48,541 -   🌐 Visiting https://www.thomabravo.com
+2026-02-21 18:49:49,032 -   📄 Found 2 potential team pages
+2026-02-21 18:49:49,544 -   ✅ Extracted 1 contacts from https://www.actoncapital.com/team
+2026-02-21 18:49:49,592 -   ✅ Extracted 3 contacts from https://www.atomico.com/partners/hinge-health
+2026-02-21 18:49:49,613 -   🌐 Visiting https://www.pritzkergroup.com/venture-capital
+2026-02-21 18:49:49,639 -   🌐 Visiting https://panoramic.vc
+2026-02-21 18:49:49,903 -   📄 Found 2 potential team pages
+2026-02-21 18:49:49,959 -   ⏳ Timeout on https://panoramic.vc, continuing...
+2026-02-21 18:49:50,004 -   🌐 Visiting https://www.mathvp.com
+2026-02-21 18:49:50,081 -   📄 Found 5 potential team pages
+2026-02-21 18:49:50,312 -   ⏳ Timeout on https://www.mathvp.com, continuing...
+2026-02-21 18:49:50,354 -   🌐 Visiting https://www.dfj.com
+2026-02-21 18:49:50,505 -   📄 Found 1 potential team pages
+2026-02-21 18:49:50,695 -   🌐 Visiting https://www.hoxtonventures.com
+2026-02-21 18:49:51,326 -   ✅ Extracted 11 contacts from https://www.preludeventures.com/team
+2026-02-21 18:49:51,375 -   🌐 Visiting https://www.1upventures.com
+2026-02-21 18:49:51,646 -   ✅ Extracted 2 contacts from https://www.thomabravo.com/team
+2026-02-21 18:49:51,682 -   🌐 Visiting https://www.indiaquotient.in
+2026-02-21 18:49:52,447 -   📄 Found 5 potential team pages
+2026-02-21 18:49:52,486 -   🌐 Visiting https://www.franciscopartners.com
+2026-02-21 18:49:53,297 -   📄 Found 5 potential team pages
+2026-02-21 18:49:53,332 -   📄 Found 1 potential team pages
+2026-02-21 18:49:53,663 -   📄 Found 5 potential team pages
+2026-02-21 18:49:54,353 -   🌐 Visiting https://www.rethinkeducation.com
+2026-02-21 18:49:54,633 -   ⏱️ Hard timeout (30s) reached for https://nautacapital.com, skipping
+2026-02-21 18:49:54,663 -   🌐 Visiting https://www.tcv.com
+2026-02-21 18:49:54,665 -   ✅ Extracted 1 contacts from https://www.dfj.com/team
+2026-02-21 18:49:54,700 -   🌐 Visiting https://www.mangrove.vc
+2026-02-21 18:49:55,285 -   📄 Found 12 potential team pages
+2026-02-21 18:49:55,383 -   ✅ Extracted 1 contacts from https://www.hoxtonventures.com/team
+2026-02-21 18:49:55,429 -   🌐 Visiting https://500.co/southeast-asia
+2026-02-21 18:49:56,247 -   🌐 Visiting https://www.s3vc.com
+2026-02-21 18:49:56,403 -   📄 Found 3 potential team pages
+2026-02-21 18:49:56,732 -   📄 Found 5 potential team pages
+2026-02-21 18:49:57,160 -   📄 Found 5 potential team pages
+2026-02-21 18:49:57,189 -   📄 Found 1 potential team pages
+2026-02-21 18:49:57,935 -   📄 Found 2 potential team pages
+2026-02-21 18:49:57,989 -   ✅ Extracted 3 contacts from https://www.tcv.com/partnerships/genesys
+2026-02-21 18:49:58,082 -   🌐 Visiting https://www.greathillpartners.com
+2026-02-21 18:49:58,448 -   📄 Found 3 potential team pages
+2026-02-21 18:49:58,512 -   🌐 Visiting https://www.sgep.com
+2026-02-21 18:49:58,701 -   🌐 Visiting https://www.socialimpactcapital.com
+2026-02-21 18:49:58,755 -   ✅ Extracted 1 contacts from https://www.rethinkeducation.com/team
+2026-02-21 18:49:58,800 -   🌐 Visiting https://www.shv.com
+2026-02-21 18:49:58,947 -   ✅ Extracted 2 contacts from https://www.mangrove.vc/initiatives
+2026-02-21 18:49:59,001 -   🌐 Visiting https://floridafunders.com
+2026-02-21 18:49:59,218 -   ✅ Extracted 1 contacts from https://www.franciscopartners.com/team
+2026-02-21 18:49:59,279 -   🌐 Visiting https://fuelventurecapital.com
+2026-02-21 18:50:00,461 -   ✅ Extracted 1 contacts from https://www.s3vc.com/abouts3
+2026-02-21 18:50:00,472 -   📄 Found 2 potential team pages
+2026-02-21 18:50:00,498 -   📄 Found 5 potential team pages
+2026-02-21 18:50:00,504 -   🌐 Visiting https://silversmith.com
+2026-02-21 18:50:00,738 -   📄 Found 4 potential team pages
+2026-02-21 18:50:01,199 -   📄 Found 5 potential team pages
+2026-02-21 18:50:01,478 -   📄 Found 2 potential team pages
+2026-02-21 18:50:02,032 -   📄 Found 1 potential team pages
+2026-02-21 18:50:02,867 -   ✅ Extracted 4 contacts from https://www.sgep.com#
+2026-02-21 18:50:02,881 -   🌐 Visiting https://www.springlanecapital.com
+2026-02-21 18:50:02,917 -   🌐 Visiting https://www.comcastventures.com
+2026-02-21 18:50:03,090 -   📄 Found 3 potential team pages
+2026-02-21 18:50:03,206 -   ✅ Extracted 1 contacts from https://floridafunders.com/about
+2026-02-21 18:50:03,246 -   🌐 Visiting https://www.polarispartners.com/life-sciences
+2026-02-21 18:50:03,342 -   ✅ Extracted 1 contacts from https://www.greathillpartners.com/media/great-hill-partners-appoints-jonathan-bank-as-head-of-revenue-operations
+2026-02-21 18:50:03,359 -   ⏳ Timeout on https://www.comcastventures.com, continuing...
+2026-02-21 18:50:03,390 -   🌐 Visiting https://www.nycapartners.com
+2026-02-21 18:50:03,397 -   🌐 Visiting https://northzone.com
+2026-02-21 18:50:03,989 -   🌐 Visiting https://wavemaker.vc
+2026-02-21 18:50:04,476 -   ✅ Extracted 1 contacts from https://silversmith.com/news/silversmith-capital-partners-closes-1-7-billion-fifth-fund
+2026-02-21 18:50:04,516 -   🌐 Visiting https://www.gobipartners.com
+2026-02-21 18:50:04,836 -   📄 Found 6 potential team pages
+2026-02-21 18:50:05,730 -   🌐 Visiting https://www.byfounders.com
+2026-02-21 18:50:05,806 -   📄 Found 5 potential team pages
+2026-02-21 18:50:06,018 -   📄 Found 5 potential team pages
+2026-02-21 18:50:06,731 -   🌐 Visiting https://www.salesforceventures.com
+2026-02-21 18:50:06,926 -   📄 Found 5 potential team pages
+2026-02-21 18:50:06,956 -   ✅ Extracted 5 contacts from https://www.springlanecapital.com/partnerships/
+2026-02-21 18:50:06,995 -   🌐 Visiting https://www.nxtpventures.com
+2026-02-21 18:50:07,040 -   ⏳ Timeout on https://www.nxtpventures.com, continuing...
+2026-02-21 18:50:07,071 -   🌐 Visiting https://www.playventures.com
+2026-02-21 18:50:07,176 -   📄 Found 5 potential team pages
+2026-02-21 18:50:07,757 -   ⏳ Timeout on https://www.playventures.com, continuing...
+2026-02-21 18:50:07,801 -   🌐 Visiting https://petersonventures.com
+2026-02-21 18:50:07,897 -   📄 Found 1 potential team pages
+2026-02-21 18:50:07,943 -   📄 Found 5 potential team pages
+2026-02-21 18:50:08,863 -   🌐 Visiting https://www.k1im.com
+2026-02-21 18:50:08,875 -   ✅ Extracted 1 contacts from https://www.polarispartners.com/about
+2026-02-21 18:50:08,908 -   🌐 Visiting https://www.playground.vc
+2026-02-21 18:50:09,158 -   🌐 Visiting https://lsvp.com/india
+2026-02-21 18:50:09,525 -   📄 Found 5 potential team pages
+2026-02-21 18:50:09,954 -   📄 Found 5 potential team pages
+2026-02-21 18:50:11,035 -   🌐 Visiting https://underscore.vc
+2026-02-21 18:50:11,067 -   📄 Found 2 potential team pages
+2026-02-21 18:50:13,912 -   📄 Found 2 potential team pages
+2026-02-21 18:50:13,935 -   📄 Found 3 potential team pages
+2026-02-21 18:50:13,963 -   ✅ Extracted 2 contacts from https://www.salesforceventures.com/team
+2026-02-21 18:50:14,123 -   🌐 Visiting https://www.business.hsbc.com/ventures
+2026-02-21 18:50:15,074 -   ✅ Extracted 1 contacts from https://lsvp.com/lightspeed-team/
+2026-02-21 18:50:15,300 -   🌐 Visiting https://www.episode1.com
+2026-02-21 18:50:15,821 -   ✅ Extracted 3 contacts from https://www.k1im.com/about/
+2026-02-21 18:50:15,860 -   📄 Found 1 potential team pages
+2026-02-21 18:50:15,931 -   🌐 Visiting https://www.inventure.fi
+2026-02-21 18:50:15,941 -   🌐 Visiting https://www.are.com/venture
+2026-02-21 18:50:15,943 -   🌐 Visiting https://www.playfaircapital.com
+2026-02-21 18:50:16,525 -   🌐 Visiting https://www.townhallventures.com
+2026-02-21 18:50:16,625 -   🌐 Visiting https://www.serentcapital.com
+2026-02-21 18:50:17,957 -   📄 Found 5 potential team pages
+2026-02-21 18:50:18,158 -   📄 Found 1 potential team pages
+2026-02-21 18:50:18,427 -   ✅ Extracted 1 contacts from https://wavemaker.vc/our-partnership-approach/
+2026-02-21 18:50:18,479 -   🌐 Visiting https://www.stride.vc
+2026-02-21 18:50:18,521 -   📄 Found 1 potential team pages
+2026-02-21 18:50:18,544 -   📄 Found 1 potential team pages
+2026-02-21 18:50:18,642 -   ⏳ Timeout on https://www.stride.vc, continuing...
+2026-02-21 18:50:18,675 -   🌐 Visiting https://www.worldfund.vc
+2026-02-21 18:50:19,013 -   📄 Found 5 potential team pages
+2026-02-21 18:50:19,238 -   🌐 Visiting https://www.longridge.com
+2026-02-21 18:50:19,634 -   🌐 Visiting https://east.vc
+2026-02-21 18:50:19,791 -   ✅ Extracted 1 contacts from https://www.townhallventures.com/team
+2026-02-21 18:50:19,833 -   🌐 Visiting https://www.zhenfund.com
+2026-02-21 18:50:20,096 -   🌐 Visiting https://seedcamp.com
+2026-02-21 18:50:20,124 -   📄 Found 5 potential team pages
+2026-02-21 18:50:20,521 -   📄 Found 2 potential team pages
+2026-02-21 18:50:20,573 -   📄 Found 2 potential team pages
+2026-02-21 18:50:21,518 -   ✅ Extracted 30 contacts from https://www.worldfund.vc/about
+2026-02-21 18:50:22,051 -   📄 Found 5 potential team pages
+2026-02-21 18:50:22,316 -   ✅ Extracted 9 contacts from https://www.serentcapital.com/team
+2026-02-21 18:50:22,419 -   ✅ Extracted 21 contacts from https://underscore.vc/team/
+2026-02-21 18:50:22,421 -   🌐 Visiting https://www.industrifonden.com
+2026-02-21 18:50:22,485 -   📄 Found 1 potential team pages
+2026-02-21 18:50:22,486 -   🌐 Visiting https://www.omidyarnetwork.in
+2026-02-21 18:50:22,814 -   ⏳ Timeout on https://www.omidyarnetwork.in, continuing...
+2026-02-21 18:50:22,847 -   🌐 Visiting https://www.softbank.com/latam
+2026-02-21 18:50:23,496 -   📄 Found 5 potential team pages
+2026-02-21 18:50:23,766 -   ✅ Extracted 18 contacts from https://seedcamp.com/our-team/
+2026-02-21 18:50:23,806 -   🌐 Visiting https://www.elevationcapital.com
+2026-02-21 18:50:25,139 -   🌐 Visiting https://www.mayfield.com
+2026-02-21 18:50:25,723 -   🌐 Visiting https://www.singular.vc
+2026-02-21 18:50:26,264 -   ✅ Extracted 1 contacts from https://east.vc/about-us/
+2026-02-21 18:50:26,313 -   🌐 Visiting https://www.londonvp.com
+2026-02-21 18:50:26,376 -   📄 Found 1 potential team pages
+2026-02-21 18:50:26,599 -   📄 Found 1 potential team pages
+2026-02-21 18:50:26,667 -   📄 Found 5 potential team pages
+2026-02-21 18:50:27,206 -   🌐 Visiting https://www.passioncapital.com
+2026-02-21 18:50:27,476 -   🌐 Visiting https://www.dawncapital.com
+2026-02-21 18:50:27,661 -   ✅ Extracted 1 contacts from https://www.elevationcapital.com/team
+2026-02-21 18:50:27,703 -   🌐 Visiting https://www.kindredcapital.vc
+2026-02-21 18:50:28,345 -   ✅ Extracted 12 contacts from https://www.zhenfund.com/Team
+2026-02-21 18:50:28,396 -   📄 Found 1 potential team pages
+2026-02-21 18:50:28,432 -   🌐 Visiting https://www.adaventures.com
+2026-02-21 18:50:28,536 -   📄 Found 5 potential team pages
+2026-02-21 18:50:28,789 -   ✅ Extracted 23 contacts from https://www.industrifonden.com/team
+2026-02-21 18:50:28,831 -   🌐 Visiting https://www.silvertonpartners.com
+2026-02-21 18:50:30,000 -   📄 Found 5 potential team pages
+2026-02-21 18:50:30,416 -   📄 Found 1 potential team pages
+2026-02-21 18:50:30,500 -   📄 Found 5 potential team pages
+2026-02-21 18:50:30,736 -   📄 Found 2 potential team pages
+2026-02-21 18:50:31,164 -   ✅ Extracted 9 contacts from https://www.mayfield.com/meet-our-team/
+2026-02-21 18:50:31,244 -   🌐 Visiting https://www.icebreaker.vc
+2026-02-21 18:50:31,438 -   📄 Found 2 potential team pages
+2026-02-21 18:50:31,722 -   📄 Found 5 potential team pages
+2026-02-21 18:50:32,772 -   ✅ Extracted 12 contacts from https://www.silvertonpartners.com/team/
+2026-02-21 18:50:32,867 -   ✅ Extracted 7 contacts from https://www.passioncapital.com/about
+2026-02-21 18:50:32,930 -   🌐 Visiting https://www.jungleventures.com
+2026-02-21 18:50:32,965 -   🌐 Visiting https://www.flagshippioneering.com
+2026-02-21 18:50:33,130 -   ✅ Extracted 1 contacts from https://www.dawncapital.com/team
+2026-02-21 18:50:33,174 -   🌐 Visiting https://www.cleanenergyventures.com
+2026-02-21 18:50:33,863 -   🌐 Visiting https://www.zanevf.com
+2026-02-21 18:50:33,865 -   🌐 Visiting https://www.naval.com
+2026-02-21 18:50:33,930 -   ⏳ Timeout on https://www.zanevf.com, continuing...
+2026-02-21 18:50:34,015 -   🌐 Visiting https://www.slow.co
+2026-02-21 18:50:34,139 -   📄 Found 1 potential team pages
+2026-02-21 18:50:34,887 -   ✅ Extracted 4 contacts from https://www.icebreaker.vc/about
+2026-02-21 18:50:35,608 -   📄 Found 9 potential team pages
+2026-02-21 18:50:35,613 -   📄 Found 5 potential team pages
+2026-02-21 18:50:35,739 -   📄 Found 5 potential team pages
+2026-02-21 18:50:35,957 -   📄 Found 5 potential team pages
+2026-02-21 18:50:37,055 -   ✅ Extracted 2 contacts from https://www.flagshippioneering.com/pioneering-partnerships
+2026-02-21 18:50:37,108 -   🌐 Visiting https://www.targetglobal.vc
+2026-02-21 18:50:37,719 -   🌐 Visiting https://www.sigmapartners.com
+2026-02-21 18:50:37,848 -   ⏳ Timeout on https://www.softbank.com/latam, continuing...
+2026-02-21 18:50:37,880 -   🌐 Visiting https://www.raptorgroup.com
+2026-02-21 18:50:39,585 -   📄 Found 2 potential team pages
+2026-02-21 18:50:40,282 -   📄 Found 1 potential team pages
+2026-02-21 18:50:40,346 -   ✅ Extracted 5 contacts from https://www.cleanenergyventures.com/about
+2026-02-21 18:50:40,383 -   🌐 Visiting https://www.dcm.com
+2026-02-21 18:50:40,584 -   🌐 Visiting https://www.galaxyinteractive.io
+2026-02-21 18:50:40,618 -   📄 Found 5 potential team pages
+2026-02-21 18:50:40,750 -   🌐 Visiting https://www.finchcapital.com
+2026-02-21 18:50:40,821 -   ⏳ Timeout on https://www.galaxyinteractive.io, continuing...
+2026-02-21 18:50:40,852 -   🌐 Visiting https://www.guidepostgrowth.com
+2026-02-21 18:50:41,419 -   🌐 Visiting https://www.bluehaveninitiative.com
+2026-02-21 18:50:41,783 -   🌐 Visiting https://www.voltaventures.eu
+2026-02-21 18:50:42,115 -   🌐 Visiting https://www.gv.com
+2026-02-21 18:50:43,173 -   📄 Found 2 potential team pages
+2026-02-21 18:50:43,243 -   📄 Found 2 potential team pages
+2026-02-21 18:50:44,208 -   ✅ Extracted 10 contacts from https://www.finchcapital.com/team
+2026-02-21 18:50:44,257 -   📄 Found 5 potential team pages
+2026-02-21 18:50:44,268 -   🌐 Visiting https://www.3one4.com
+2026-02-21 18:50:44,380 -   ✅ Extracted 4 contacts from https://www.dcm.com/about
+2026-02-21 18:50:44,415 -   🌐 Visiting https://usa.visa.com/about-visa/visa-ventures.html
+2026-02-21 18:50:45,147 -   📄 Found 12 potential team pages
+2026-02-21 18:50:45,148 -   🌐 Visiting https://learncapital.com
+2026-02-21 18:50:45,410 -   ✅ Extracted 2 contacts from https://www.guidepostgrowth.com/team
+2026-02-21 18:50:45,447 -   🌐 Visiting https://www.dcvc.com/bio
+2026-02-21 18:50:45,476 -   📄 Found 5 potential team pages
+2026-02-21 18:50:46,358 -   🌐 Visiting https://www.primevp.in
+2026-02-21 18:50:46,623 -   ✅ Extracted 3 contacts from https://www.bluehaveninitiative.com/about-us/partners/
+2026-02-21 18:50:46,659 -   🌐 Visiting https://www.bluventureinvestors.com
+2026-02-21 18:50:46,751 -   ✅ Extracted 1 contacts from https://www.gv.com/team/crystal-huang
+2026-02-21 18:50:46,751 -   🌐 Visiting https://www.section32.com
+2026-02-21 18:50:47,132 -   📄 Found 1 potential team pages
+2026-02-21 18:50:47,692 -   📄 Found 16 potential team pages
+2026-02-21 18:50:47,931 -   ⏳ Timeout on https://www.jungleventures.com, continuing...
+2026-02-21 18:50:47,968 -   🌐 Visiting https://www.levelequity.com
+2026-02-21 18:50:48,086 -   🌐 Visiting https://www.lifelineventures.com
+2026-02-21 18:50:48,166 -   📄 Found 2 potential team pages
+2026-02-21 18:50:49,249 -   📄 Found 5 potential team pages
+2026-02-21 18:50:49,431 -   📄 Found 3 potential team pages
+2026-02-21 18:50:49,499 -   ✅ Extracted 1 contacts from https://learncapital.com/about
+2026-02-21 18:50:49,553 -   🌐 Visiting https://www.serviceprovider.capital
+2026-02-21 18:50:49,587 -   ⏳ Timeout on https://www.serviceprovider.capital, continuing...
+2026-02-21 18:50:49,624 -   🌐 Visiting https://a16z.com/games
+2026-02-21 18:50:49,771 -   📄 Found 1 potential team pages
+2026-02-21 18:50:49,956 -   📄 Found 1 potential team pages
+2026-02-21 18:50:50,167 -   📄 Found 12 potential team pages
+2026-02-21 18:50:50,945 -   ✅ Extracted 2 contacts from https://www.levelequity.com/our-people/
+2026-02-21 18:50:50,997 -   🌐 Visiting https://www.speedinvest.com
+2026-02-21 18:50:51,235 -   🌐 Visiting https://www.project-a.com
+2026-02-21 18:50:51,413 -   📄 Found 1 potential team pages
+2026-02-21 18:50:52,104 -   🌐 Visiting https://www.monashees.com.br
+2026-02-21 18:50:53,104 -   ✅ Extracted 16 contacts from https://www.voltaventures.eu/about
+2026-02-21 18:50:53,408 -   ✅ Extracted 2 contacts from https://www.bluventureinvestors.com/people
+2026-02-21 18:50:53,428 -   ✅ Extracted 9 contacts from https://www.lifelineventures.com/contact-our-team/
+2026-02-21 18:50:53,478 -   🌐 Visiting https://wavemaker.vc/la
+2026-02-21 18:50:53,680 -   📄 Found 5 potential team pages
+2026-02-21 18:50:53,805 -   ⏳ Timeout on https://www.monashees.com.br, continuing...
+2026-02-21 18:50:53,894 -   🌐 Visiting https://www.warburgpincus.com
+2026-02-21 18:50:54,039 -   📄 Found 3 potential team pages
+2026-02-21 18:50:54,450 -   🌐 Visiting https://www.ac.vc
+2026-02-21 18:50:54,589 -   ✅ Extracted 5 contacts from https://www.primevp.in/about-us
+2026-02-21 18:50:54,654 -   🌐 Visiting https://www.paleblue.vc
+2026-02-21 18:50:54,900 -   ✅ Extracted 1 contacts from https://www.project-a.com/team
+2026-02-21 18:50:55,286 -   📄 Found 6 potential team pages
+2026-02-21 18:50:55,668 -   ✅ Extracted 4 contacts from https://www.speedinvest.com/middle-east-africa-and-beyond
+2026-02-21 18:50:55,726 -   🌐 Visiting https://www.powerhouse.fund
+2026-02-21 18:50:56,307 -   📄 Found 1 potential team pages
+2026-02-21 18:50:56,566 -   📄 Found 5 potential team pages
+2026-02-21 18:50:57,081 -   📄 Found 2 potential team pages
+2026-02-21 18:50:57,789 -   📄 Found 5 potential team pages
+2026-02-21 18:50:57,866 -   ✅ Extracted 18 contacts from https://www.warburgpincus.com/team/
+2026-02-21 18:50:57,916 -   🌐 Visiting https://www.bregalsagemount.com
+2026-02-21 18:50:58,001 -   ✅ Extracted 1 contacts from https://a16z.com/strategic-partnerships/
+2026-02-21 18:50:58,040 -   🌐 Visiting https://www.portag3.com
+2026-02-21 18:50:58,166 -   ⏳ Timeout on https://www.portag3.com, continuing...
+2026-02-21 18:50:58,197 -   🌐 Visiting https://www.serenacapital.com
+2026-02-21 18:50:58,385 -   ✅ Extracted 7 contacts from https://www.paleblue.vc/team
+2026-02-21 18:50:58,433 -   🌐 Visiting https://appworks.tw
+2026-02-21 18:50:58,547 -   ⏳ Timeout on https://www.bregalsagemount.com, continuing...
+2026-02-21 18:50:58,586 -   🌐 Visiting https://www.luminafoundation.org
+2026-02-21 18:50:59,270 -   ⏳ Timeout on https://www.3one4.com, continuing...
+2026-02-21 18:50:59,317 -   🌐 Visiting https://www.allvp.vc
+2026-02-21 18:51:00,844 -   📄 Found 9 potential team pages
+2026-02-21 18:51:00,845 -   🌐 Visiting https://www.oakhcft.com
+2026-02-21 18:51:02,013 -   🌐 Visiting https://www.samsung.com/us/about-us/samsung-catalyst-fund
+2026-02-21 18:51:02,694 -   📄 Found 1 potential team pages
+2026-02-21 18:51:02,704 -   📄 Found 1 potential team pages
+2026-02-21 18:51:02,735 -   ✅ Extracted 2 contacts from https://www.luminafoundation.org/about/
+2026-02-21 18:51:02,781 -   🌐 Visiting https://www.mohrdavidow.com
+2026-02-21 18:51:02,828 -   ⏳ Timeout on https://www.mohrdavidow.com, continuing...
+2026-02-21 18:51:02,859 -   🌐 Visiting https://www.slausonco.com
+2026-02-21 18:51:02,918 -   ⏳ Timeout on https://www.slausonco.com, continuing...
+2026-02-21 18:51:02,951 -   🌐 Visiting https://www.moonfire.com
+2026-02-21 18:51:03,112 -   📄 Found 1 potential team pages
+2026-02-21 18:51:03,762 -   🌐 Visiting https://www.vistaequitypartners.com
+2026-02-21 18:51:04,046 -   ✅ Extracted 48 contacts from https://www.oakhcft.com/team
+2026-02-21 18:51:04,117 -   🌐 Visiting https://www.breakthroughenergy.org
+2026-02-21 18:51:04,273 -   🌐 Visiting https://www.hvcapital.com
+2026-02-21 18:51:05,244 -   📄 Found 10 potential team pages
+2026-02-21 18:51:05,338 -   📄 Found 8 potential team pages
+2026-02-21 18:51:05,454 -   ✅ Extracted 1 contacts from https://appworks.tw/team/
+2026-02-21 18:51:05,508 -   🌐 Visiting https://www.mindworks.vc
+2026-02-21 18:51:05,923 -   📄 Found 5 potential team pages
+2026-02-21 18:51:06,146 -   📄 Found 1 potential team pages
+2026-02-21 18:51:06,189 -   ✅ Extracted 2 contacts from https://www.moonfire.com/stories/reintroducing-moonfire/
+2026-02-21 18:51:06,260 -   🌐 Visiting https://www.chiratae.com
+2026-02-21 18:51:06,790 -   📄 Found 11 potential team pages
+2026-02-21 18:51:07,266 -   ✅ Extracted 2 contacts from https://www.samsung.com/us/about-us/samsung-catalyst-fund#content
+2026-02-21 18:51:07,383 -   🌐 Visiting https://www.pillar.vc
+2026-02-21 18:51:07,480 -   ✅ Extracted 5 contacts from https://www.hvcapital.com/team
+2026-02-21 18:51:07,533 -   🌐 Visiting https://www.techstars.com
+2026-02-21 18:51:08,337 -   📄 Found 1 potential team pages
+2026-02-21 18:51:08,481 -   ⏳ Timeout on https://wavemaker.vc/la, continuing...
+2026-02-21 18:51:08,540 -   🌐 Visiting https://www.capitalfactory.com
+2026-02-21 18:51:09,840 -   ✅ Extracted 4 contacts from https://www.vistaequitypartners.com/wealth-professionals/private-equity/
+2026-02-21 18:51:10,391 -   ✅ Extracted 1 contacts from https://www.breakthroughenergy.org/team
+2026-02-21 18:51:10,684 -   ✅ Extracted 17 contacts from https://www.mindworks.vc/team
+2026-02-21 18:51:11,076 -   📄 Found 2 potential team pages
+2026-02-21 18:51:11,151 -   📄 Found 1 potential team pages
+2026-02-21 18:51:11,173 -   🌐 Visiting https://www.monkshill.com
+2026-02-21 18:51:11,251 -   🌐 Visiting https://maki.vc
+2026-02-21 18:51:11,384 -   🌐 Visiting https://www.inveready.com
+2026-02-21 18:51:11,767 -   ⏱️ Hard timeout (30s) reached for https://www.voltaventures.eu, skipping
+2026-02-21 18:51:11,974 -   🌐 Visiting https://www.nexusvp.com
+2026-02-21 18:51:12,848 -   ✅ Extracted 4 contacts from https://www.pillar.vc/team/
+2026-02-21 18:51:13,192 -   📄 Found 5 potential team pages
+2026-02-21 18:51:13,210 -   ⏳ Timeout on https://www.serenacapital.com, continuing...
+2026-02-21 18:51:13,574 -   ✅ Extracted 10 contacts from https://www.techstars.com/about
+2026-02-21 18:51:13,580 -   🌐 Visiting https://www.felixcap.com
+2026-02-21 18:51:13,633 -   📄 Found 4 potential team pages
+2026-02-21 18:51:13,658 -   🌐 Visiting https://www.mastercardstartpath.com
+2026-02-21 18:51:13,683 -   🌐 Visiting https://vestigoventures.com
+2026-02-21 18:51:14,429 -   ✅ Extracted 18 contacts from https://www.monkshill.com/team
+2026-02-21 18:51:14,482 -   🌐 Visiting https://www.highalphainnovation.com
+2026-02-21 18:51:14,908 -   📄 Found 2 potential team pages
+2026-02-21 18:51:14,928 -   ⏳ Timeout on https://www.mastercardstartpath.com, continuing...
+2026-02-21 18:51:14,970 -   🌐 Visiting https://www.aifund.ai
+2026-02-21 18:51:15,408 -   📄 Found 3 potential team pages
+2026-02-21 18:51:15,509 -   📄 Found 2 potential team pages
+2026-02-21 18:51:16,451 -   📄 Found 5 potential team pages
+2026-02-21 18:51:16,828 -   📄 Found 1 potential team pages
+2026-02-21 18:51:17,169 -   📄 Found 1 potential team pages
+2026-02-21 18:51:17,246 -   ⚠️ Failed to extract from https://www.highalphainnovation.com/team: Page.title: Execution context was destroyed, most likely because of a navigation
+2026-02-21 18:51:17,406 -   ✅ Extracted 3 contacts from https://maki.vc/insights/meet-jani-hellstrom
+2026-02-21 18:51:17,433 -   ✅ Extracted 2 contacts from https://www.capitalfactory.com/team
+2026-02-21 18:51:17,475 -   🌐 Visiting https://www.matrixpartners.in
+2026-02-21 18:51:17,508 -   🌐 Visiting https://www.capnamic.com
+2026-02-21 18:51:17,924 -   📄 Found 1 potential team pages
+2026-02-21 18:51:18,045 -   ✅ Extracted 1 contacts from https://www.felixcap.com/felix-team
+2026-02-21 18:51:18,046 -   ⏱️ Hard timeout (30s) reached for https://www.lifelineventures.com, skipping
+2026-02-21 18:51:18,113 -   🌐 Visiting https://www.s2gventures.com
+2026-02-21 18:51:18,116 -   🌐 Visiting https://www.svangel.com
+2026-02-21 18:51:18,635 -   ⏳ Timeout on https://www.svangel.com, continuing...
+2026-02-21 18:51:18,759 -   ✅ Extracted 2 contacts from https://vestigoventures.com#team
+2026-02-21 18:51:18,818 -   🌐 Visiting https://notion.vc
+2026-02-21 18:51:18,825 -   🌐 Visiting https://sosv.com
+2026-02-21 18:51:19,279 -   📄 Found 2 potential team pages
+2026-02-21 18:51:19,535 -   ✅ Extracted 2 contacts from https://www.inveready.com/our-firm
+2026-02-21 18:51:19,719 -   ✅ Extracted 34 contacts from https://www.aifund.ai/our-team/
+2026-02-21 18:51:19,803 -   🌐 Visiting https://www.pelionvp.com
+2026-02-21 18:51:19,804 -   🌐 Visiting https://m12.vc
+2026-02-21 18:51:20,100 -   📄 Found 2 potential team pages
+2026-02-21 18:51:20,715 -   📄 Found 1 potential team pages
+2026-02-21 18:51:20,860 -   📄 Found 6 potential team pages
+2026-02-21 18:51:20,942 -   ✅ Extracted 1 contacts from https://www.matrixpartners.in/team
+2026-02-21 18:51:21,285 -   🌐 Visiting https://www.accomplice.co
+2026-02-21 18:51:21,611 -   🌐 Visiting https://www.aixventures.com
+2026-02-21 18:51:21,957 -   📄 Found 6 potential team pages
+2026-02-21 18:51:22,545 -   📄 Found 4 potential team pages
+2026-02-21 18:51:22,713 -   ✅ Extracted 2 contacts from https://www.capnamic.com/post/new-team-addition-investment-manager-benjamin-kleinschnitz
+2026-02-21 18:51:22,802 -   ✅ Extracted 6 contacts from https://www.s2gventures.com/team/careers/open-positions
+2026-02-21 18:51:22,803 -   🌐 Visiting https://www.psgequity.com
+2026-02-21 18:51:22,920 -   🌐 Visiting https://www.7wireventures.com
+2026-02-21 18:51:22,972 -   ✅ Extracted 20 contacts from https://notion.vc/team
+2026-02-21 18:51:23,016 -   🌐 Visiting https://martinventures.com
+2026-02-21 18:51:23,068 -   📄 Found 3 potential team pages
+2026-02-21 18:51:23,609 -   📄 Found 5 potential team pages
+2026-02-21 18:51:24,043 -   ✅ Extracted 1 contacts from https://www.nexusvp.com/about
+2026-02-21 18:51:24,055 -   📄 Found 5 potential team pages
+2026-02-21 18:51:24,105 -   📄 Found 2 potential team pages
+2026-02-21 18:51:24,116 -   🌐 Visiting https://www.insignia.vc
+2026-02-21 18:51:24,704 -   ✅ Extracted 3 contacts from https://m12.vc/team/
+2026-02-21 18:51:24,767 -   🌐 Visiting https://www.flarecapital.com
+2026-02-21 18:51:25,185 -   📄 Found 5 potential team pages
+2026-02-21 18:51:25,728 -   📄 Found 2 potential team pages
+2026-02-21 18:51:25,998 -   ✅ Extracted 51 contacts from https://sosv.com/team
+2026-02-21 18:51:26,052 -   🌐 Visiting https://www.clocktowertech.com
+2026-02-21 18:51:26,069 -   ✅ Extracted 8 contacts from https://www.aixventures.com/team
+2026-02-21 18:51:26,104 -   🌐 Visiting https://www.ocaventures.com
+2026-02-21 18:51:26,805 -   ✅ Extracted 5 contacts from https://www.7wireventures.com/about-us/
+2026-02-21 18:51:26,825 -   ✅ Extracted 1 contacts from https://www.psgequity.com/team
+2026-02-21 18:51:26,849 -   🌐 Visiting https://rockhealth.com
+2026-02-21 18:51:26,868 -   🌐 Visiting https://www.eclipticcapital.com
+2026-02-21 18:51:27,054 -   📄 Found 5 potential team pages
+2026-02-21 18:51:27,196 -   📄 Found 2 potential team pages
+2026-02-21 18:51:27,658 -   📄 Found 2 potential team pages
+2026-02-21 18:51:28,538 -   📄 Found 1 potential team pages
+2026-02-21 18:51:28,658 -   ✅ Extracted 6 contacts from https://www.flarecapital.com/about
+2026-02-21 18:51:28,659 -   ⚠️ Failed to extract from https://www.chiratae.com/team/: Page.goto: Timeout 10000ms exceeded.
+Call log:
+  - navigating to "https://www.chiratae.com/team/", waiting until "domcontentloaded"
+
+2026-02-21 18:51:28,700 -   🌐 Visiting https://www.buffaloventures.com
+2026-02-21 18:51:28,975 -   📄 Found 1 potential team pages
+2026-02-21 18:51:29,331 -   ✅ Extracted 1 contacts from https://www.insignia.vc/team
+2026-02-21 18:51:29,367 -   🌐 Visiting https://ttvcapital.com
+2026-02-21 18:51:29,406 -   📄 Found 5 potential team pages
+2026-02-21 18:51:29,695 -   🌐 Visiting https://www.sbinvestment.co.jp
+2026-02-21 18:51:30,053 -   ✅ Extracted 14 contacts from https://www.ocaventures.com/about/
+2026-02-21 18:51:30,093 -   🌐 Visiting https://www.osagepartners.com
+2026-02-21 18:51:30,135 -   🌐 Visiting https://www.elfo.ai
+2026-02-21 18:51:30,417 -   📄 Found 3 potential team pages
+2026-02-21 18:51:31,024 -   🌐 Visiting https://www.ecosystemintegrity.com
+2026-02-21 18:51:31,179 -   ✅ Extracted 26 contacts from https://www.chiratae.com/team/#advisoryboard
+2026-02-21 18:51:31,211 -   📄 Found 2 potential team pages
+2026-02-21 18:51:31,612 -   ✅ Extracted 3 contacts from https://www.clocktowertech.com/about-us/
+2026-02-21 18:51:31,668 -   🌐 Visiting https://theimpactengine.com
+2026-02-21 18:51:32,427 -   📄 Found 5 potential team pages
+2026-02-21 18:51:32,573 -   📄 Found 5 potential team pages
+2026-02-21 18:51:32,609 -   ✅ Extracted 4 contacts from https://ttvcapital.com/team/
+2026-02-21 18:51:32,653 -   🌐 Visiting https://www.makersfund.com
+2026-02-21 18:51:32,821 -   ✅ Extracted 1 contacts from https://rockhealth.com/team
+2026-02-21 18:51:32,890 -   🌐 Visiting https://www.jmiequity.com
+2026-02-21 18:51:33,844 -   📄 Found 5 potential team pages
+2026-02-21 18:51:34,545 -   📄 Found 3 potential team pages
+2026-02-21 18:51:34,569 -   📄 Found 1 potential team pages
+2026-02-21 18:51:34,993 -   📄 Found 5 potential team pages
+2026-02-21 18:51:36,052 -   ✅ Extracted 16 contacts from https://theimpactengine.com/team
+2026-02-21 18:51:36,097 -   🌐 Visiting https://liveoakvp.com
+2026-02-21 18:51:36,201 -   ⏱️ Hard timeout (30s) reached for https://www.chiratae.com, skipping
+2026-02-21 18:51:36,230 -   🌐 Visiting https://www.archventure.com
+2026-02-21 18:51:36,278 -   ✅ Extracted 1 contacts from https://www.makersfund.com/team
+2026-02-21 18:51:36,310 -   🌐 Visiting https://www.intelcapital.com
+2026-02-21 18:51:37,759 -   ⚠️ Failed to extract from https://martinventures.com/about: Page.goto: Timeout 10000ms exceeded.
+Call log:
+  - navigating to "https://martinventures.com/about", waiting until "domcontentloaded"
+
+2026-02-21 18:51:37,823 -   ✅ Extracted 11 contacts from https://www.ecosystemintegrity.com/team
+2026-02-21 18:51:37,886 -   🌐 Visiting https://www.lowercarboncapital.com
+2026-02-21 18:51:38,200 -   🌐 Visiting https://www.welshcarson.com
+2026-02-21 18:51:38,530 -   📄 Found 5 potential team pages
+2026-02-21 18:51:38,550 -   ⏳ Timeout on https://www.welshcarson.com, continuing...
+2026-02-21 18:51:38,581 -   🌐 Visiting https://www.schoonercapital.com
+2026-02-21 18:51:38,790 -   📄 Found 4 potential team pages
+2026-02-21 18:51:39,210 -   🌐 Visiting https://www.courtsidevc.com
+2026-02-21 18:51:39,278 -   📄 Found 5 potential team pages
+2026-02-21 18:51:39,890 -   📄 Found 5 potential team pages
+2026-02-21 18:51:40,418 -   ✅ Extracted 2 contacts from https://www.archventure.com/about/
+2026-02-21 18:51:40,460 -   🌐 Visiting https://www.cisco.com/c/en/us/about/csr/investments.html
+2026-02-21 18:51:40,532 -   🌐 Visiting https://www.sequoiacap.com/southeast-asia
+2026-02-21 18:51:40,910 -   📄 Found 1 potential team pages
+2026-02-21 18:51:41,144 -   📄 Found 2 potential team pages
+2026-02-21 18:51:42,094 -   ✅ Extracted 6 contacts from https://www.courtsidevc.com/team
+2026-02-21 18:51:42,294 -   ✅ Extracted 1 contacts from https://www.schoonercapital.com/team
+2026-02-21 18:51:42,336 -   🌐 Visiting https://www.stellarisvp.com
+2026-02-21 18:51:42,511 -   ✅ Extracted 2 contacts from https://liveoakvp.com/about
+2026-02-21 18:51:42,550 -   🌐 Visiting https://www.newmarketsventurepartners.com
+2026-02-21 18:51:42,643 -   ⏳ Timeout on https://www.newmarketsventurepartners.com, continuing...
+2026-02-21 18:51:42,676 -   🌐 Visiting https://www.romuluscap.com
+2026-02-21 18:51:43,165 -   📄 Found 10 potential team pages
+2026-02-21 18:51:43,576 -   🌐 Visiting https://www.kaszek.com
+2026-02-21 18:51:43,682 -   🌐 Visiting https://www.bitkraft.vc
+2026-02-21 18:51:43,700 -   ⏳ Timeout on https://www.buffaloventures.com, continuing...
+2026-02-21 18:51:43,734 -   🌐 Visiting https://www.tencentcloud.com
+2026-02-21 18:51:43,883 -   📄 Found 1 potential team pages
+2026-02-21 18:51:43,926 -   📄 Found 1 potential team pages
+2026-02-21 18:51:45,010 -   ✅ Extracted 1 contacts from https://www.stellarisvp.com/team
+2026-02-21 18:51:45,101 -   🌐 Visiting https://playground.global
+2026-02-21 18:51:45,364 -   ✅ Extracted 4 contacts from https://www.cisco.com/site/us/en/partners/360-partner-program/partner-program/index.html
+2026-02-21 18:51:45,368 -   📄 Found 1 potential team pages
+2026-02-21 18:51:45,430 -   🌐 Visiting https://flourishventures.com
+2026-02-21 18:51:45,756 -   ✅ Extracted 17 contacts from https://www.sequoiacap.com/our-team/?_role=seed-early
+2026-02-21 18:51:45,794 -   🌐 Visiting https://www.revolution.com/entity/rise-of-the-rest-seed-fund
+2026-02-21 18:51:46,231 -   📄 Found 5 potential team pages
+2026-02-21 18:51:47,142 -   ✅ Extracted 23 contacts from https://www.kaszek.com/people/
+2026-02-21 18:51:47,198 -   🌐 Visiting https://www.innerloopcapital.com
+2026-02-21 18:51:47,255 -   ⏳ Timeout on https://www.innerloopcapital.com, continuing...
+2026-02-21 18:51:47,300 -   🌐 Visiting https://www.dblpartners.vc
+2026-02-21 18:51:47,614 -   🌐 Visiting https://www.samsungnext.com
+2026-02-21 18:51:47,661 -   📄 Found 5 potential team pages
+2026-02-21 18:51:48,253 -   📄 Found 2 potential team pages
+2026-02-21 18:51:48,259 -   ⏳ Timeout on https://www.jmiequity.com, continuing...
+2026-02-21 18:51:48,656 -   🌐 Visiting https://fly.vc
+2026-02-21 18:51:48,676 -   ✅ Extracted 3 contacts from https://www.tencentcloud.com/partners/details/3061
+2026-02-21 18:51:48,737 -   🌐 Visiting https://www.gsam.com/content/gsam/us/en/advisors/strategies/alternative-investments/growth-equity.html
+2026-02-21 18:51:48,796 -   📄 Found 5 potential team pages
+2026-02-21 18:51:49,034 -   📄 Found 2 potential team pages
+2026-02-21 18:51:49,822 -   ✅ Extracted 2 contacts from https://www.revolution.com/about
+2026-02-21 18:51:49,887 -   🌐 Visiting https://www.mainsailpartners.com
+2026-02-21 18:51:50,084 -   ✅ Extracted 1 contacts from https://flourishventures.com/about-us/
+2026-02-21 18:51:50,129 -   🌐 Visiting https://www.tdfventures.com
+2026-02-21 18:51:50,388 -   📄 Found 5 potential team pages
+2026-02-21 18:51:50,608 -   📄 Found 1 potential team pages
+2026-02-21 18:51:51,045 -   📄 Found 1 potential team pages
+2026-02-21 18:51:51,525 -   🌐 Visiting https://www.pamlicocapital.com
+2026-02-21 18:51:52,152 -   ✅ Extracted 6 contacts from https://fly.vc/team
+2026-02-21 18:51:52,189 -   📄 Found 1 potential team pages
+2026-02-21 18:51:52,221 -   🌐 Visiting https://www.kalaari.com
+2026-02-21 18:51:52,461 -   🌐 Visiting https://www.emerge.education
+2026-02-21 18:51:53,183 -   ✅ Extracted 3 contacts from https://www.bitkraft.vc/people
+2026-02-21 18:51:53,226 -   🌐 Visiting https://www.lasolasvc.com
+2026-02-21 18:51:53,530 -   📄 Found 5 potential team pages
+2026-02-21 18:51:53,963 -   ✅ Extracted 10 contacts from https://www.tdfventures.com/team/
+2026-02-21 18:51:54,022 -   🌐 Visiting https://headline.com/asia
+2026-02-21 18:51:54,732 -   📄 Found 5 potential team pages
+2026-02-21 18:51:54,913 -   📄 Found 1 potential team pages
+2026-02-21 18:51:55,298 -   📄 Found 4 potential team pages
+2026-02-21 18:51:56,203 -   📄 Found 5 potential team pages
+2026-02-21 18:51:56,241 -   ✅ Extracted 1 contacts from https://www.lasolasvc.com/team
+2026-02-21 18:51:56,280 -   🌐 Visiting https://www.seventysixcapital.com
+2026-02-21 18:51:56,601 -   ✅ Extracted 1 contacts from https://www.pamlicocapital.com/working-together
+2026-02-21 18:51:56,603 -   🌐 Visiting https://www.qualcommventures.com
+2026-02-21 18:51:56,645 -   🌐 Visiting https://www.ta.com
+2026-02-21 18:51:57,163 -   ✅ Extracted 2 contacts from https://headline.com/team
+2026-02-21 18:51:57,231 -   🌐 Visiting https://www.sevenpeaksventures.com
+2026-02-21 18:51:57,678 -   ⏳ Timeout on https://www.romuluscap.com, continuing...
+2026-02-21 18:51:57,733 -   🌐 Visiting https://www.idinvest.com
+2026-02-21 18:51:58,204 -   📄 Found 19 potential team pages
+2026-02-21 18:51:58,278 -   📄 Found 5 potential team pages
+2026-02-21 18:51:58,502 -   📄 Found 5 potential team pages
+2026-02-21 18:51:58,868 -   📄 Found 1 potential team pages
+2026-02-21 18:51:59,377 -   ✅ Extracted 51 contacts from https://www.ta.com/team/?office=london#team
+2026-02-21 18:51:59,432 -   🌐 Visiting https://peak.capital
+2026-02-21 18:51:59,723 -   📄 Found 1 potential team pages
+2026-02-21 18:51:59,794 -   ✅ Extracted 1 contacts from https://www.seventysixcapital.com/about-us
+2026-02-21 18:51:59,837 -   🌐 Visiting https://www.actoneventures.com
+2026-02-21 18:52:00,487 -   ✅ Extracted 17 contacts from https://www.qualcommventures.com/team/
+2026-02-21 18:52:00,531 -   🌐 Visiting https://www.vikingventures.vc
+2026-02-21 18:52:00,560 -   ⏳ Timeout on https://www.vikingventures.vc, continuing...
+2026-02-21 18:52:00,593 -   🌐 Visiting https://www.energyimpactpartners.com
+2026-02-21 18:52:00,784 -   ✅ Extracted 3 contacts from https://www.sevenpeaksventures.com/team
+2026-02-21 18:52:01,305 -   🌐 Visiting https://www.m25.vc
+2026-02-21 18:52:01,582 -   ⏳ Timeout on https://www.m25.vc, continuing...
+2026-02-21 18:52:01,629 -   🌐 Visiting https://www.sequoiacap.com/india
+2026-02-21 18:52:02,524 -   📄 Found 1 potential team pages
+2026-02-21 18:52:03,025 -   📄 Found 11 potential team pages
+2026-02-21 18:52:03,761 -   📄 Found 4 potential team pages
+2026-02-21 18:52:03,764 -   ⏳ Timeout on https://www.gsam.com/content/gsam/us/en/advisors/strategies/alternative-investments/growth-equity.html, continuing...
+2026-02-21 18:52:03,822 -   🌐 Visiting https://www.tenonetenventures.com
+2026-02-21 18:52:04,010 -   ✅ Extracted 28 contacts from https://www.kalaari.com/team
+2026-02-21 18:52:04,070 -   🌐 Visiting https://www.americanexpress.com/ventures
+2026-02-21 18:52:04,084 -   🌐 Visiting https://www.horizonsventures.com
+2026-02-21 18:52:04,093 -   📄 Found 1 potential team pages
+2026-02-21 18:52:04,682 -   🌐 Visiting https://www.griffingp.com
+2026-02-21 18:52:04,706 -   ✅ Extracted 1 contacts from https://www.energyimpactpartners.com/join-the-team/
+2026-02-21 18:52:04,744 -   🌐 Visiting https://www.quona.com
+2026-02-21 18:52:05,246 -   ✅ Extracted 12 contacts from https://peak.capital/team
+2026-02-21 18:52:05,800 -   ✅ Extracted 17 contacts from https://www.sequoiacap.com/our-team/?_role=seed-early
+2026-02-21 18:52:05,846 -   🌐 Visiting https://www.augmentum.vc
+2026-02-21 18:52:06,579 -   📄 Found 5 potential team pages
+2026-02-21 18:52:06,646 -   📄 Found 1 potential team pages
+2026-02-21 18:52:07,169 -   🌐 Visiting https://www.blumeventures.com
+2026-02-21 18:52:07,256 -   ⏳ Timeout on https://www.blumeventures.com, continuing...
+2026-02-21 18:52:07,301 -   🌐 Visiting https://www.citigroup.com/ventures
+2026-02-21 18:52:07,526 -   📄 Found 5 potential team pages
+2026-02-21 18:52:07,527 -   🌐 Visiting https://www.greyhoundcap.com
+2026-02-21 18:52:07,596 -   ✅ Extracted 3 contacts from https://www.horizonsventures.com/about
+2026-02-21 18:52:07,645 -   🌐 Visiting https://www.406ventures.com
+2026-02-21 18:52:08,650 -   ⚠️ Failed to extract from https://www.tenonetenventures.com/team: Page.title: Execution context was destroyed, most likely because of a navigation
+2026-02-21 18:52:09,055 -   📄 Found 5 potential team pages
+2026-02-21 18:52:09,492 -   📄 Found 5 potential team pages
+2026-02-21 18:52:09,867 -   📄 Found 3 potential team pages
+2026-02-21 18:52:10,027 -   📄 Found 5 potential team pages
+2026-02-21 18:52:10,300 -   📄 Found 5 potential team pages
+2026-02-21 18:52:10,654 -   📄 Found 5 potential team pages
+2026-02-21 18:52:11,359 -   ✅ Extracted 13 contacts from https://www.406ventures.com/people/
+2026-02-21 18:52:11,407 -   🌐 Visiting https://www.accel.com/india
+2026-02-21 18:52:11,419 -   ✅ Extracted 2 contacts from https://www.citigroup.com/ventures#
+2026-02-21 18:52:11,481 -   🌐 Visiting https://www.stepstoneglobal.com
+2026-02-21 18:52:12,263 -   ✅ Extracted 7 contacts from https://www.americanexpress.com/about
+2026-02-21 18:52:12,306 -   🌐 Visiting https://www.bipcapital.com
+2026-02-21 18:52:12,740 -   ⏳ Timeout on https://www.idinvest.com, continuing...
+2026-02-21 18:52:13,997 -   📄 Found 3 potential team pages
+2026-02-21 18:52:14,275 -   📄 Found 1 potential team pages
+2026-02-21 18:52:14,427 -   📄 Found 1 potential team pages
+2026-02-21 18:52:15,537 -   ✅ Extracted 20 contacts from https://www.bipcapital.com/team
+2026-02-21 18:52:16,106 -   ✅ Extracted 113 contacts from https://www.accel.com/team
+2026-02-21 18:52:27,976 -   🔗 LinkedIn email found for Stefan Bary: marc.jellema@startupbootcamp.org
+2026-02-21 18:52:29,386 -   ⏱️ Hard timeout (30s) reached for https://peak.capital, skipping
+2026-02-21 18:52:29,533 -   📧  Validating 1141 emails...
+2026-02-21 18:52:29,535 -   ✉️  Guessing emails for contacts without one...
+2026-02-21 18:52:29,538 -   ✉️  Email guesser: 1059 leads without email (of 1141 total)
+2026-02-21 18:52:29,538 -   🔑  Patterns learned for 1 domains
+2026-02-21 18:52:33,265 -   ✉️  Email guesser complete: 1059/1059 emails found (0 from patterns, 1059 from brute-force)
+2026-02-21 18:52:33,266 -   ✉️  Guesser: 1059 found / 8472 attempted
+2026-02-21 18:52:33,266 -   📊  Scoring leads...
+2026-02-21 18:52:33,273 -   💾  Writing output...
+2026-02-21 18:52:33,303 - 💾 Saved 1141 contacts via CSVWriter
+2026-02-21 18:52:33,303 - 
+============================================================
+  📊  DEEP CRAWL SUMMARY
+============================================================
+  📝  Total contacts: 1141
+  🏢  Funds with contacts: 144/251
+  📧  Emails found: 1141
+  🔗  LinkedIn profiles: 48
+  📈  Avg score: 45.2
+  🔴  HOT leads: 0
+  ⏱️  Complete
+============================================================
+
+2026-02-21 18:52:44,849 -   ✉️  Email guesser: 585 leads without email (of 1626 total)
+2026-02-21 18:52:44,850 -   🔑  Patterns learned for 109 domains
+2026-02-21 18:52:50,612 -   ✉️  Email guesser complete: 494/585 emails found (106 from patterns, 388 from brute-force)
+
+  ╔══════════════════════════════════════════╗
+  ║   🕷️  CRAWL ENGINE v2                    ║
+  ║   Investor Lead Machine                  ║
+  ╚══════════════════════════════════════════╝
+
+  ⏰  2026-02-21 18:47:51
+  🎯  Sites: ALL
+  👻  Stealth: ON
+  🔒  Proxy: OFF
+  🖥️  Headless: YES
+
+
+============================================================
+  📡  SOURCE AGGREGATOR
+============================================================
+
+  📂  Seed database: 578 leads
+  🐙  GitHub lists: 0 new leads
+
+  ✅  Aggregator complete: 578 unique leads
+      Seed: 578 | GitHub: 0
+  📡  Aggregator added 578 new leads to pipeline
+
+  🌐  Initializing browser for openvc...
+
+============================================================
+  🕷️  CRAWLING: OPENVC
+  📍  https://www.openvc.app/
+============================================================
+
+  📜  Scrolling... (1/100)  [0 leads so far]
+  🏁  No new leads for 3 rounds, stopping scroll at 12/100
+  🔍  Found 6 cards on current page state
+  ➕  0 new unique leads extracted
+
+  ✅  openvc: Extracted 6 leads
+
+  📸  Screenshot saved
+
+  🌐  Initializing browser for angelmatch...
+
+============================================================
+  🕷️  CRAWLING: ANGELMATCH
+  📍  https://angelmatch.io/investors
+============================================================
+
+  🏁  No more 'Load More' button found after 0 clicks
+  🔍  Found 35 cards on current page state
+  ➕  1 new unique leads extracted
+
+  ✅  angelmatch: Extracted 1 leads
+
+  📸  Screenshot saved
+
+  ⏭️  Skipping visible_vc (disabled)
+
+  ⏭️  Skipping landscape_vc (disabled)
+
+  ⏭️  Skipping wellfound (disabled)
+
+  ⏭️  Skipping signal_nfx (disabled)
+
+============================================================
+  🔬  DEEP CRAWL — extracting team members from fund websites
+============================================================
+
+  💾  Saved 1101 leads → data/enriched/investor_leads_master.csv
+  💾  Saved 1101 leads → data/enriched/leads_20260221_185233.csv
+
+  🔬  Deep crawl added 1041 team member leads to pipeline
+  🧬  Enriched 1041/1041 contacts with fund metadata
+  📊  Total leads now: 1626
+
+============================================================
+  🧠  ENRICHMENT PIPELINE
+============================================================
+
+  📧  Validating 1626 emails (+ MX check)...
+  ✉️  Guessing emails for contacts without one...
+  ✉️  Guesser: 388 found / 3104 attempted
+  🔑  Pattern hits: 106 (instant, no brute-force)
+  📊  Scoring leads...
+  🆕  585 new leads detected (delta from master)
+
+  🧪  DRY RUN — no files written
+
+============================================================
+  📊  CRAWL SUMMARY
+============================================================
+  ⏱️  Duration: 298.7s
+  📝  Total leads: 1626
+  📈  Avg score: 52.9
+  🔴  HOT leads: 16
+  🟡  WARM leads: 619
+  🎭  Fingerprints used: 2
+  🔒  Proxy requests: 0
+
+  🏆  TOP 5 LEADS:
+  ──────────────────────────────────────────────────
+  🔴 HOT  Afore Capital (Afore Capital)
+       📧 afore@afore.vc | 🎯 SaaS, Developer
+       💰 N/A | Score: 89
+
+  🔴 HOT  Alchemy Ventures (Alchemy Ventures)
+       📧 alchemy@alchemyventures.com | 🎯 AI, SaaS
+       💰 N/A | Score: 89
+
+  🔴 HOT  K9 Ventures (K9 Ventures)
+       📧 k@k9ventures.com | 🎯 Data, AI
+       💰 N/A | Score: 89
+
+  🔴 HOT  Soma Capital (Soma Capital)
+       📧 soma@somacap.com | 🎯 AI, SaaS
+       💰 N/A | Score: 89
+
+  🔴 HOT  Y Combinator Continuity (Y Combinator Continuity)
+       📧 y@ycombinator.com | 🎯 Enterprise, Consumer
+       💰 N/A | Score: 89
+

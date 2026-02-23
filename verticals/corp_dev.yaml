@@ -1,0 +1,58 @@
+name: "Corporate Development"
+slug: corp_dev
+description: "Corporate M&A and strategic investment teams at Fortune 500 and mid-market companies"
+
+seed_sources:
+  - type: csv
+    path: data/seed/corp_dev.csv
+
+search_queries:
+  - "corporate development VP {sector} acquisitions"
+  - "head of corporate development {sector}"
+  - "strategic investments director {sector}"
+  - "corporate venture capital {sector}"
+  - "M&A director {sector} technology"
+
+team_page_keywords:
+  - team
+  - leadership
+  - about
+  - executives
+  - management
+  - corporate-development
+  - strategic-investments
+
+role_keywords:
+  - corporate development
+  - head of m&a
+  - vp corporate development
+  - director strategic investments
+  - chief strategy officer
+  - cso
+  - business development
+  - vp strategy
+  - svp corporate development
+
+adapters: []
+
+scoring:
+  has_email: 20
+  has_linkedin: 15
+  role_match_bonus: 20
+  priority_roles:
+    - head of corporate development
+    - vp corporate development
+    - svp corporate development
+    - director corporate development
+    - chief strategy officer
+  depriority_roles:
+    - analyst
+    - intern
+    - coordinator
+
+default_sectors:
+  - Technology
+  - Healthcare
+  - Financial Services
+  - Media
+  - Consumer

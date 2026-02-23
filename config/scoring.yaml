@@ -51,3 +51,11 @@ modifiers:
   has_linkedin: 5 # +5 if we have their LinkedIn
   no_email: -15 # -15 if no contact info at all
   stale_fund: -10 # -10 if last investment > 2 years ago
+
+  # Role-based modifiers (higher-seniority contacts are more valuable)
+  role_weights:
+    partner: 15       # Partner, GP, Managing Director, Managing Partner
+    principal: 10     # Principal, VP, Director
+    associate: 5      # Associate, Analyst
+    coordinator: -5   # Coordinator, Admin, Assistant, Intern
+    unknown: 0        # Unknown, N/A, or unrecognized roles

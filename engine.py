@@ -17,8 +17,8 @@
 
 import asyncio
 import argparse
-import sys
 import time
+from urllib.parse import urlparse
 from pathlib import Path
 from datetime import datetime
 
@@ -28,13 +28,23 @@ from playwright.async_api import async_playwright
 # ── Internal modules ──
 from adapters.openvc import OpenVCAdapter
 from adapters.angelmatch import AngelMatchAdapter
+from adapters.visible_vc import VisibleVCAdapter
+from adapters.landscape_vc import LandscapeVCAdapter
+from adapters.wellfound import WellfoundAdapter
 from stealth.fingerprint import FingerprintManager
 from stealth.behavior import HumanBehavior
 from stealth.proxy import ProxyManager
 from enrichment.email_validator import EmailValidator
+from enrichment.email_guesser import EmailGuesser
 from enrichment.scoring import LeadScorer
 from output.csv_writer import CSVWriter
 from output.webhook import WebhookNotifier
+from discovery.searcher import Searcher
+from sources.aggregator import SourceAggregator, generate_target_funds
+from sources.http_discovery import http_discover
+from deep_crawl import DeepCrawler
+from enrichment.portfolio_scraper import PortfolioScraper
+from enrichment.incremental import CrawlStateManager, update_lead_freshness_in_db
 
 
 # ──────────────────────────────────────────────────
@@ -44,6 +54,9 @@ from output.webhook import WebhookNotifier
 ADAPTER_MAP = {
     "openvc": OpenVCAdapter,
     "angelmatch": AngelMatchAdapter,
+    "visible_vc": VisibleVCAdapter,
+    "landscape_vc": LandscapeVCAdapter,
+    "wellfound": WellfoundAdapter,
     # Add new adapters here as you build them:
     # "signal": SignalAdapter,
     # "crunchbase": CrunchbaseAdapter,
@@ -70,6 +83,7 @@ class CrawlEngine:
         self.behavior = HumanBehavior(speed_factor=1.0)
         self.proxy_mgr = ProxyManager("config/proxies.yaml")
         self.email_validator = EmailValidator()
+        self.email_guesser = EmailGuesser(concurrency=10)
         self.scorer = LeadScorer("config/scoring.yaml")
         self.csv_writer = CSVWriter("data")
         self.webhook = WebhookNotifier(
@@ -77,15 +91,243 @@ class CrawlEngine:
             platform=args.webhook_platform or "discord",
         )
         self.all_leads = []
+        self.crawl_state = CrawlStateManager(
+            stale_days=getattr(args, 'stale_days', 7)
+        )
 
     def _load_config(self, path: str) -> dict:
         with open(path) as f:
             return yaml.safe_load(f)
 
+    async def _run_discovery(self):
+        """Run HTTP-based discovery and save results to data/target_funds.txt."""
+        print("\n  🔍  DISCOVERY MODE — finding VC domains via HTTP search...")
+        import yaml
+        with open("config/search.yaml") as f:
+            search_config = yaml.safe_load(f).get("discovery", {})
+
+        queries = search_config.get("queries", [])
+        target_count = search_config.get("target_domains_count", 500)
+        ignore = set(search_config.get("ignore_domains", []))
+
+        domains = await http_discover(queries, target_count=target_count, ignore_domains=ignore)
+
+        target_file = Path("data/target_funds.txt")
+        target_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(target_file, "w") as f:
+            for domain in sorted(domains):
+                f.write(domain + "\n")
+        print(f"  ✅  Discovery complete: {len(domains)} domains → {target_file}")
+        return domains
+
+    async def _run_aggregator(self):
+        """Run the Source Aggregator to collect leads from deterministic sources."""
+        aggregator = SourceAggregator()
+        leads = await aggregator.aggregate()
+
+        # Also generate target_funds.txt for deep_crawl
+        await generate_target_funds(leads)
+
+        # Merge into engine's lead pool
+        existing_names = {lead.name.lower() for lead in self.all_leads}
+        new_count = 0
+        for lead in leads:
+            if lead.name.lower() not in existing_names:
+                self.all_leads.append(lead)
+                existing_names.add(lead.name.lower())
+                new_count += 1
+
+        print(f"  📡  Aggregator added {new_count} new leads to pipeline")
+        return leads
+
+    async def _run_deep_crawl(self):
+        """Run deep crawl on fund websites to extract individual team members."""
+        print(f"\n{'='*60}")
+        print("  🔬  DEEP CRAWL — extracting team members from fund websites")
+        print(f"{'='*60}\n")
+
+        # ── Incremental: load crawl state and filter stale domains ──
+        incremental = getattr(self.args, 'incremental', False)
+        if incremental:
+            await self.crawl_state.load_from_db()
+            summary = self.crawl_state.summary()
+            print(f"  📅  Incremental mode: {summary['stale_domains']}/{summary['total_domains']} domains stale "
+                  f"(>{self.crawl_state.stale_days}d threshold)")
+
+        crawler = DeepCrawler(
+            target_file="data/target_funds.txt",
+            output_file="data/vc_contacts.csv",
+            max_concurrent=10,
+            headless=getattr(self.args, 'headless', True),
+            skip_enrichment=True,  # engine handles enrichment for ALL leads together
+            stale_days=getattr(self.args, 'stale_days', 7),
+        )
+
+        # Pass force_recrawl if set
+        if getattr(self.args, 'force_recrawl', False):
+            crawler.force_recrawl = True
+
+        # Filter target_funds.txt to stale-only when incremental
+        if incremental and not getattr(self.args, 'force_recrawl', False):
+            target_file = Path("data/target_funds.txt")
+            if target_file.exists():
+                all_urls = [
+                    line.strip() for line in target_file.read_text().splitlines()
+                    if line.strip() and not line.strip().startswith("#")
+                ]
+                stale_urls, fresh_urls = self.crawl_state.filter_stale(all_urls)
+                print(f"  ⏭️  Skipping {len(fresh_urls)} fresh domains, crawling {len(stale_urls)} stale")
+                # Write filtered list to temp file for the crawler
+                incremental_file = Path("data/target_funds_incremental.txt")
+                incremental_file.write_text("\n".join(stale_urls) + "\n")
+                crawler.target_file = str(incremental_file)
+
+        await crawler.run()
+
+        # Build fund metadata index from aggregator leads (keyed by domain)
+        fund_meta = {}
+        for lead in self.all_leads:
+            if lead.website and lead.website not in ("N/A", "", "/pricing"):
+                try:
+                    domain = urlparse(lead.website).netloc.lower().replace("www.", "")
+                except Exception:
+                    continue
+                if domain and domain not in fund_meta:
+                    fund_meta[domain] = {
+                        "focus_areas": lead.focus_areas,
+                        "stage": lead.stage,
+                        "check_size": lead.check_size,
+                        "location": lead.location,
+                    }
+
+        # Merge deep_crawl contacts into engine lead pool + inherit fund metadata
+        existing_names = {lead.name.lower() for lead in self.all_leads}
+        new_count = 0
+        enriched_count = 0
+        for contact in crawler.all_contacts:
+            key = contact.name.lower()
+            if key and key not in existing_names and key != "unknown":
+                # Inherit fund metadata from seed/aggregator data
+                if contact.website and contact.website not in ("N/A", ""):
+                    try:
+                        cdomain = urlparse(contact.website).netloc.lower().replace("www.", "")
+                    except Exception:
+                        cdomain = ""
+                    meta = fund_meta.get(cdomain)
+                    if meta:
+                        if not contact.focus_areas or contact.focus_areas == []:
+                            contact.focus_areas = meta["focus_areas"]
+                        if contact.stage in ("N/A", ""):
+                            contact.stage = meta["stage"]
+                        if contact.check_size in ("N/A", ""):
+                            contact.check_size = meta["check_size"]
+                        if contact.location in ("N/A", ""):
+                            contact.location = meta["location"]
+                        enriched_count += 1
+
+                self.all_leads.append(contact)
+                existing_names.add(key)
+                new_count += 1
+
+        print(f"\n  🔬  Deep crawl added {new_count} team member leads to pipeline")
+        print(f"  🧬  Enriched {enriched_count}/{new_count} contacts with fund metadata")
+        print(f"  📊  Total leads now: {len(self.all_leads)}")
+
+        # ── Record crawl state for incremental tracking ──
+        if incremental:
+            # Group new contacts by domain to record per-domain stats
+            domain_counts = {}
+            for contact in crawler.all_contacts:
+                if contact.website and contact.website not in ("N/A", ""):
+                    try:
+                        d = urlparse(contact.website).netloc.lower().replace("www.", "")
+                        domain_counts[d] = domain_counts.get(d, 0) + 1
+                    except Exception:
+                        pass
+            batch = [
+                {"url": f"https://{d}", "leads_found": c, "status": "completed"}
+                for d, c in domain_counts.items()
+            ]
+            await self.crawl_state.mark_batch_crawled(batch)
+            print(f"  📈  Updated crawl state for {len(batch)} domains")
+
+    async def _run_portfolio_scrape(self):
+        """Scrape portfolio pages from fund websites and persist to database."""
+        print(f"\n{'='*60}")
+        print("  📂  PORTFOLIO SCRAPE — extracting portfolio companies")
+        print(f"{'='*60}\n")
+
+        # Load fund URLs from target_funds.txt
+        target_file = Path("data/target_funds.txt")
+        if not target_file.exists():
+            print("  ⚠️  No target_funds.txt found — run aggregator or discovery first")
+            return
+
+        fund_urls = [
+            line.strip() for line in target_file.read_text().splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+
+        if not fund_urls:
+            print("  ⚠️  No fund URLs in target_funds.txt")
+            return
+
+        scraper = PortfolioScraper(
+            max_concurrent=10,
+            headless=getattr(self.args, 'headless', True),
+        )
+
+        companies = await scraper.scrape_funds(fund_urls)
+
+        # Persist to database
+        if companies:
+            try:
+                from api.database import async_session, init_db
+                from api.models import PortfolioCompany as PortfolioCompanyModel
+
+                await init_db()
+
+                from sqlalchemy import select
+                async with async_session() as session:
+                    inserted = 0
+                    for c in companies:
+                        existing = await session.execute(
+                            select(PortfolioCompanyModel).where(
+                                PortfolioCompanyModel.fund_name == c.fund_name,
+                                PortfolioCompanyModel.company_name == c.company_name,
+                            )
+                        )
+                        if existing.scalar_one_or_none():
+                            continue
+                        row = PortfolioCompanyModel(
+                            fund_name=c.fund_name,
+                            company_name=c.company_name,
+                            sector=c.sector,
+                            stage=c.stage,
+                            url=c.url,
+                            year=c.year,
+                        )
+                        session.add(row)
+                        inserted += 1
+
+                    await session.commit()
+                    print(f"  💾  Persisted {inserted} new portfolio companies to database")
+            except Exception as e:
+                print(f"  ❌  Failed to persist portfolio data: {e}")
+
+        print(f"  📊  Total portfolio companies: {len(companies)}")
+
     async def run(self):
         """Execute the full crawl pipeline."""
         start_time = time.time()
         self._print_banner()
+
+        # Always run the Source Aggregator for deterministic lead volume
+        if not self.args.site:  # skip aggregator when targeting a single site
+            await self._run_aggregator()
+
+        if self.args.discover:
+            await self._run_discovery()
 
         sites = self.config.get("sites", {})
         defaults = self.config.get("defaults", {})
@@ -119,6 +361,14 @@ class CrawlEngine:
                     if self.args.verbose:
                         import traceback
                         traceback.print_exc()
+
+        # ── Deep crawl: extract team members from fund websites ──
+        if getattr(self.args, 'deep', False):
+            await self._run_deep_crawl()
+
+        # ── Portfolio scrape: extract portfolio companies ──
+        if getattr(self.args, 'portfolio', False):
+            await self._run_portfolio_scrape()
 
         # ── Post-crawl pipeline ──
         if self.all_leads:
@@ -168,7 +418,7 @@ class CrawlEngine:
                 path=str(ss_dir / f"{site_name}_{timestamp}.png"),
                 full_page=True,
             )
-            print(f"  📸  Screenshot saved")
+            print("  📸  Screenshot saved")
 
         await browser.close()
         return leads
@@ -176,20 +426,106 @@ class CrawlEngine:
     async def _enrich_and_output(self):
         """Run enrichment and output pipeline on collected leads."""
         print(f"\n{'='*60}")
-        print(f"  🧠  ENRICHMENT PIPELINE")
+        print("  🧠  ENRICHMENT PIPELINE")
         print(f"{'='*60}\n")
 
-        # ── Email validation ──
-        print(f"  📧  Validating {len(self.all_leads)} emails...")
-        for lead in self.all_leads:
-            result = self.email_validator.validate(lead.email)
+        # ── Filter fund-level rows FIRST (name == fund name → not a person) ──
+        # Do this early so we don't waste time guessing emails for company names
+        before_filter = len(self.all_leads)
+        self.all_leads = [
+            lead for lead in self.all_leads
+            if lead.name.lower().strip() != lead.fund.lower().strip()
+        ]
+        filtered_out = before_filter - len(self.all_leads)
+        if filtered_out:
+            print(f"  🚫  Filtered {filtered_out} fund-level rows (name == fund name)")
+        print(f"  👤  {len(self.all_leads)} person-level leads remaining")
+
+        # ── Email validation (with MX verification) ──
+        print(f"  📧  Validating {len(self.all_leads)} emails (+ MX check)...")
+        emails = [lead.email for lead in self.all_leads]
+        results = await self.email_validator.validate_batch(emails)
+        for lead, result in zip(self.all_leads, results):
             if result["quality"] == "invalid":
-                lead.email = "N/A (invalid)"
+                lead.email = "N/A"
+            elif not result.get("has_mx", True):
+                lead.email = "N/A"
             elif result["is_disposable"]:
-                lead.email = f"{lead.email} ⚠️ (disposable)"
+                lead.email = "N/A"
+
+        # ── Mark scraped emails ──
+        pre_existing = 0
+        for lead in self.all_leads:
+            if lead.email and lead.email != "N/A" and "@" in lead.email:
+                lead.email_status = "scraped"
+                pre_existing += 1
+        print(f"  📨  Pre-existing emails (scraped from pages): {pre_existing}")
+
+        # ── Email guessing (for leads still missing an email) ──
+        print("  ✉️  Guessing emails for contacts without one...")
+        self.all_leads = await self.email_guesser.guess_batch(self.all_leads)
+        gs = self.email_guesser.stats
+        print(f"  ✉️  Guesser: {gs['found']} found / {gs['attempted']} domains checked")
+        if gs.get("pattern_hits", 0):
+            print(f"  🔑  Pattern hits: {gs['pattern_hits']} (from learned patterns)")
+        if gs.get("default_hits", 0):
+            print(f"  📐  Default pattern (first.last@domain): {gs['default_hits']}")
+        if gs.get("mx_rejects", 0):
+            print(f"  🚫  Domains without MX records: {gs['mx_rejects']}")
+        if gs.get("company_skipped", 0):
+            print(f"  🏢  Company/fund names skipped: {gs['company_skipped']}")
+
+        # Mark guessed emails (those that weren't already scraped)
+        for lead in self.all_leads:
+            if lead.email_status == "unknown" and lead.email and lead.email != "N/A" and "@" in lead.email:
+                lead.email_status = "guessed"
+
+        # Total email summary
+        total_emails = sum(
+            1 for lead in self.all_leads
+            if lead.email and lead.email != "N/A" and "@" in lead.email
+        )
+        print(f"  📧  TOTAL emails: {total_emails}/{len(self.all_leads)} ({100*total_emails//len(self.all_leads) if self.all_leads else 0}%)")
+
+        # ── SMTP batch verification (on by default, skip with --skip-smtp) ──
+        if not getattr(self.args, 'skip_smtp', False):
+            smtp_candidates = [
+                lead for lead in self.all_leads
+                if lead.email and lead.email != "N/A" and "@" in lead.email
+            ]
+            if smtp_candidates:
+                print(f"  📬  SMTP verification on {len(smtp_candidates)} emails...")
+                email_list = [lead.email for lead in smtp_candidates]
+                smtp_results = await self.email_validator.verify_smtp_batch(email_list)
+
+                # Update email_status based on SMTP results
+                verified = undeliverable = catch_all = unknown = 0
+                for lead in smtp_candidates:
+                    result = smtp_results.get(lead.email)
+                    if not result:
+                        unknown += 1
+                        continue
+                    if result["deliverable"] is True:
+                        if result["catch_all"]:
+                            lead.email_status = "catch_all"
+                            catch_all += 1
+                        else:
+                            lead.email_status = "verified"
+                            verified += 1
+                    elif result["deliverable"] is False:
+                        lead.email_status = "undeliverable"
+                        undeliverable += 1
+                    else:
+                        # deliverable is None — indeterminate
+                        unknown += 1
+
+                print(f"  📬  SMTP summary: {verified} verified, {undeliverable} undeliverable, "
+                      f"{catch_all} catch-all, {unknown} unknown")
+        else:
+            print("  ⏭️  SMTP verification skipped (--skip-smtp)")
 
         # ── Lead scoring ──
-        print(f"  📊  Scoring leads...")
+        print("  📊  Scoring leads...")
         self.all_leads = self.scorer.score_batch(self.all_leads)
 
         # ── Delta detection ──
@@ -197,11 +533,11 @@ class CrawlEngine:
 
         # ── Output ──
         if not self.args.dry_run:
-            print(f"\n  💾  Writing output...")
-            master_path = self.csv_writer.write_master(self.all_leads)
+            print("\n  💾  Writing output...")
+            self.csv_writer.write_master(self.all_leads)
 
             # Webhook notifications
-            hot_count = sum(1 for l in self.all_leads if l.lead_score >= 80)
+            hot_count = sum(1 for lead in self.all_leads if lead.lead_score >= 80)
             await self.webhook.notify_hot_leads(self.all_leads)
             await self.webhook.notify_crawl_complete(
                 total=len(self.all_leads),
@@ -209,7 +545,7 @@ class CrawlEngine:
                 hot=hot_count,
             )
         else:
-            print(f"\n  🧪  DRY RUN — no files written")
+            print("\n  🧪  DRY RUN — no files written")
 
     def _print_banner(self):
         print()
@@ -227,7 +563,7 @@ class CrawlEngine:
 
     def _print_summary(self, elapsed: float):
         print(f"\n{'='*60}")
-        print(f"  📊  CRAWL SUMMARY")
+        print("  📊  CRAWL SUMMARY")
         print(f"{'='*60}")
         print(f"  ⏱️  Duration: {elapsed:.1f}s")
         print(f"  📝  Total leads: {len(self.all_leads)}")
@@ -245,7 +581,7 @@ class CrawlEngine:
 
         # Top 5 leads preview
         if self.all_leads:
-            print(f"  🏆  TOP 5 LEADS:")
+            print("  🏆  TOP 5 LEADS:")
             print(f"  {'─'*50}")
             for lead in self.all_leads[:5]:
                 areas = ", ".join(lead.focus_areas[:2]) if lead.focus_areas else "N/A"
@@ -288,6 +624,34 @@ def parse_args():
         "--webhook-platform", type=str, default="discord",
         choices=["discord", "slack"],
         help="Webhook platform (default: discord)",
+    )
+    parser.add_argument(
+        "--discover", action="store_true",
+        help="Run discovery engine first to find VC domains before crawling",
+    )
+    parser.add_argument(
+        "--force-recrawl", action="store_true",
+        help="Ignore seen_domains cache and re-crawl all targets",
+    )
+    parser.add_argument(
+        "--deep", action="store_true",
+        help="Run deep crawl on fund websites to extract individual team members",
+    )
+    parser.add_argument(
+        "--skip-smtp", action="store_true",
+        help="Skip SMTP deliverability checks on emails (faster but less accurate)",
+    )
+    parser.add_argument(
+        "--portfolio", action="store_true",
+        help="Scrape portfolio pages from fund websites to extract portfolio companies",
+    )
+    parser.add_argument(
+        "--incremental", action="store_true",
+        help="Only crawl domains that haven't been visited within --stale-days (default 7)",
+    )
+    parser.add_argument(
+        "--stale-days", type=int, default=7,
+        help="Number of days before a domain is considered stale (default: 7)",
     )
     return parser.parse_args()
 

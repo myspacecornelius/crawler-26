@@ -20,7 +20,7 @@ class CSVWriter:
     """
 
     FIELDNAMES = [
-        "Name", "Email", "Role", "Fund", "Focus Areas", "Stage",
+        "Name", "Email", "Email Status", "Role", "Fund", "Focus Areas", "Stage",
         "Check Size", "Location", "LinkedIn", "Website",
         "Lead Score", "Tier", "Source", "Scraped At",
     ]
@@ -72,6 +72,7 @@ class CSVWriter:
                     "Tier": row.get("tier", ""),
                     "Source": row.get("source", ""),
                     "Scraped At": row.get("scraped_at", ""),
+                    "Email Status": row.get("email_status", "unknown"),
                 }
                 writer.writerow(formatted)
 

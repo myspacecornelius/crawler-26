@@ -1,0 +1,26 @@
+name,website,sectors,check_size,stage,hq
+Google Corporate Development,https://www.google.com,Technology|AI|Cloud,$50M-$10B,Acquisition,Mountain View
+Microsoft M&A,https://www.microsoft.com,Software|AI|Gaming,$100M-$70B,Acquisition,Redmond
+Apple Corporate Development,https://www.apple.com,Hardware|Software|Services,$50M-$5B,Acquisition,Cupertino
+Amazon Corporate Development,https://www.amazon.com,E-commerce|Cloud|Logistics,$50M-$10B,Acquisition,Seattle
+Meta Corporate Development,https://www.meta.com,Social|VR|AI,$50M-$20B,Acquisition,Menlo Park
+Salesforce Corporate Development,https://www.salesforce.com,SaaS|CRM|Enterprise,$50M-$30B,Acquisition,San Francisco
+Cisco M&A,https://www.cisco.com,Networking|Security|Collaboration,$50M-$5B,Acquisition,San Jose
+Oracle Corporate Development,https://www.oracle.com,Cloud|Database|Enterprise,$100M-$30B,Acquisition,Austin
+SAP Corporate Development,https://www.sap.com,Enterprise|Cloud|ERP,$50M-$10B,Acquisition,Walldorf
+Adobe Corporate Development,https://www.adobe.com,Creative|Marketing|Document,$50M-$20B,Acquisition,San Jose
+Intuit Strategic Development,https://www.intuit.com,Fintech|SMB|Tax,$50M-$10B,Acquisition,Mountain View
+ServiceNow Corporate Development,https://www.servicenow.com,SaaS|ITSM|Enterprise,$50M-$1B,Acquisition,Santa Clara
+Snowflake Corporate Development,https://www.snowflake.com,Data|Cloud|Analytics,$25M-$500M,Acquisition,Bozeman
+Palo Alto Networks M&A,https://www.paloaltonetworks.com,Cybersecurity|Cloud|AI,$50M-$1B,Acquisition,Santa Clara
+CrowdStrike Corporate Development,https://www.crowdstrike.com,Cybersecurity|Endpoint|Cloud,$25M-$500M,Acquisition,Austin
+Datadog Corporate Development,https://www.datadoghq.com,Observability|Cloud|DevOps,$25M-$500M,Acquisition,New York
+Stripe Corporate Development,https://www.stripe.com,Fintech|Payments|Infrastructure,$25M-$1B,Acquisition,San Francisco
+Block Corporate Development,https://www.block.xyz,Fintech|Payments|Bitcoin,$25M-$500M,Acquisition,San Francisco
+Shopify Corporate Development,https://www.shopify.com,E-commerce|Payments|SMB,$25M-$500M,Acquisition,Ottawa
+HubSpot Corporate Development,https://www.hubspot.com,Marketing|CRM|SaaS,$25M-$500M,Acquisition,Cambridge
+Twilio Corporate Development,https://www.twilio.com,Communications|API|Cloud,$25M-$3B,Acquisition,San Francisco
+Zoom Corporate Development,https://www.zoom.us,Communications|Video|Collaboration,$25M-$500M,Acquisition,San Jose
+Workday Corporate Development,https://www.workday.com,HCM|Finance|Enterprise,$50M-$1B,Acquisition,Pleasanton
+UiPath Corporate Development,https://www.uipath.com,Automation|AI|Enterprise,$25M-$500M,Acquisition,New York
+MongoDB Corporate Development,https://www.mongodb.com,Database|Cloud|Developer,$25M-$500M,Acquisition,New York

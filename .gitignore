@@ -2,7 +2,12 @@
 __pycache__/
 *.pyc
 .venv/
+venv/
 *.egg-info/
+
+# Node
+node_modules/
+.next/
 
 # Debug files
 debug_ddg.html

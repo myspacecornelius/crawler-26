@@ -15,7 +15,7 @@ sites:
       name: ".nameCell #invOverflow"
       email: ""
       role: ".nameCell a.VClink div:not(#invOverflow)"
-      fund: ".nameCell #invOverflow"
+      fund: ".nameCell a.VClink"
       focus_areas: "td[data-label='Targeted industries']"
       stage: "td[data-label='Funding stages']"
       check_size: "td[data-label='Check size']"
@@ -24,8 +24,9 @@ sites:
       website: ""
     pagination:
       type: "infinite_scroll"
-      scroll_count: 25
-      scroll_delay_ms: 1500
+      scroll_count: 100
+      scroll_delay_ms: 1200
+      extract_interval: 3
       load_indicator: ".loading-spinner"
 
   angelmatch:
@@ -34,22 +35,90 @@ sites:
     adapter: "angelmatch"
     description: "Angel investor matching platform — freemium"
     selectors:
-      card: "table tbody tr"
-      name: "td:nth-child(1)"
-      email: "td:nth-child(6) a"
-      role: "td:nth-child(2)"
+      card: ".investor-card, [class*='investor'] > div, table tbody tr, div[class*='Card'], div[class*='card']"
+      name: "h3, h2, .investor-name, td:nth-child(1) a, [class*='name'], [class*='Name']"
+      email: ""
+      role: ".investor-type, td:nth-child(2), [class*='type'], [class*='role']"
       fund: ""
-      focus_areas: "td:nth-child(4)"
+      focus_areas: ".investor-tags span, .tags span, td:nth-child(4) span, [class*='tag'], [class*='industry']"
       stage: ""
       check_size: ""
-      location: "td:nth-child(3)"
-      linkedin: "td:nth-child(5) a"
-      website: ""
+      location: ".investor-location, td:nth-child(3), [class*='location'], [class*='Location']"
+      linkedin: "a[href*='linkedin.com/in/']"
+      website: "a[href*='http']:not([href*='angelmatch']):not([href*='linkedin']):not([href*='twitter']):not([href*='/pricing'])"
     pagination:
       type: "load_more_button"
-      button_selector: "button.load-more"
-      max_clicks: 30
+      button_selector: "button[class*='load'], button[class*='more'], button[class*='Load'], a[class*='load'], [class*='pagination'] button, button:has-text('Load More'), button:has-text('Show More')"
+      max_clicks: 100
+      click_delay_ms: 1500
+
+  visible_vc:
+    enabled: false  # DISABLED: selectors not verified against live HTML
+    url: "https://visible.vc/investors"
+    adapter: "visible_vc"
+    description: "Visible.vc — public investor directory, no login required"
+    selectors:
+      card: ".investor-card, [data-testid='investor-card'], .card"
+      name: ".investor-name, h3, h2"
+      email: ""
+      role: ".investor-title, .title, .role"
+      fund: ".fund-name, .firm-name, .organization"
+      focus_areas: ".tags .tag, .sectors .sector, .focus-areas span"
+      stage: ".stage, .investment-stage"
+      check_size: ".check-size, .ticket-size"
+      location: ".location, .city"
+      linkedin: "a[href*='linkedin.com/in/']"
+      website: "a[href*='http']:not([href*='linkedin'])"
+    pagination:
+      type: "load_more_button"
+      button_selector: "button[data-testid='load-more'], button.load-more, a.load-more"
+      max_clicks: 50
       click_delay_ms: 2000
+
+  landscape_vc:
+    enabled: false  # DISABLED: selectors not verified against live HTML
+    url: "https://landscape.vc/investors"
+    adapter: "landscape_vc"
+    description: "Landscape.vc — filterable VC directory"
+    selectors:
+      card: ".investor-row, tr[data-investor], .investor-item"
+      name: ".name, td:nth-child(1) a, h3"
+      email: "a[href^='mailto:']"
+      role: ".title, .role, td:nth-child(2)"
+      fund: ".firm, .fund, td:nth-child(3)"
+      focus_areas: ".sectors, .focus, td:nth-child(4)"
+      stage: ".stage, td:nth-child(5)"
+      check_size: ".check, td:nth-child(6)"
+      location: ".location, td:nth-child(7)"
+      linkedin: "a[href*='linkedin.com/in/']"
+      website: ""
+    pagination:
+      type: "numbered_pages"
+      next_button: "a[rel='next'], .pagination .next, button.next-page"
+      max_pages: 50
+
+  wellfound:
+    enabled: false  # DISABLED: requires login, 0 cards in test run
+    url: "https://wellfound.com/investors"
+    adapter: "wellfound"
+    description: "Wellfound (AngelList) — large angel/VC investor database"
+    selectors:
+      card: "[data-test='InvestorRow'], .investor-row, .styles_component__"
+      name: "[data-test='InvestorName'], .investor-name, h3"
+      email: ""
+      role: "[data-test='InvestorTitle'], .investor-title"
+      fund: "[data-test='InvestorFirm'], .investor-firm"
+      focus_areas: "[data-test='InvestorMarkets'] span, .market-tags .tag"
+      stage: "[data-test='InvestorStage'], .stage-tag"
+      check_size: "[data-test='InvestorCheckSize'], .check-size"
+      location: "[data-test='InvestorLocation'], .location"
+      linkedin: "a[href*='linkedin.com/in/']"
+      website: "a[href*='http']:not([href*='wellfound']):not([href*='linkedin'])"
+    pagination:
+      type: "infinite_scroll"
+      scroll_count: 80
+      scroll_delay_ms: 1500
+      load_indicator: ".loading, [data-test='loading']"
 
   signal_nfx:
     enabled: false

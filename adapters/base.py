@@ -35,10 +35,11 @@ class InvestorLead:
     scraped_at: str = ""
     lead_score: int = 0
     tier: str = ""
+    email_status: str = "unknown"
 
     def to_dict(self) -> dict:
         d = asdict(self)
-        d["focus_areas"] = ", ".join(self.focus_areas) if self.focus_areas else "N/A"
+        d["focus_areas"] = "; ".join(self.focus_areas) if self.focus_areas else "N/A"
         return d
 
 
@@ -108,20 +109,25 @@ class BaseSiteAdapter(ABC):
             await self._extract_from_page(page)
 
     async def _handle_infinite_scroll(self, page: Page):
-        """Scroll down repeatedly to trigger lazy-loading content."""
+        """Scroll down repeatedly to trigger lazy-loading content.
+        Extracts after EVERY scroll to capture virtual-DOM pages that only
+        render currently-visible rows (e.g. OpenVC).
+        """
         scroll_count = self.pagination.get("scroll_count", 10)
         scroll_delay = self.pagination.get("scroll_delay_ms", 1500)
         load_indicator = self.pagination.get("load_indicator", "")
+        extract_interval = self.pagination.get("extract_interval", 5)
+        stale_rounds = 0  # stop early if no new leads for N rounds
 
         for i in range(scroll_count):
-            print(f"  📜  Scrolling... ({i+1}/{scroll_count})")
+            if (i + 1) % 20 == 0 or i == 0:
+                print(f"  📜  Scrolling... ({i+1}/{scroll_count})  [{len(self.leads)} leads so far]")
 
             if self.stealth:
                 await self.stealth.human_scroll(page)
             else:
                 await page.mouse.wheel(0, 800)
 
-            # Wait for loading indicator to appear and disappear
             if load_indicator:
                 try:
                     await page.wait_for_selector(load_indicator, state="visible", timeout=2000)
@@ -131,6 +137,21 @@ class BaseSiteAdapter(ABC):
 
             await page.wait_for_timeout(scroll_delay)
 
+            # Extract periodically to catch virtual-DOM rendered rows
+            if (i + 1) % extract_interval == 0:
+                before = len(self.leads)
+                await self._extract_from_page(page, silent=True)
+                gained = len(self.leads) - before
+                if gained == 0:
+                    stale_rounds += 1
+                else:
+                    stale_rounds = 0
+                # Stop early if 3 consecutive extractions yield nothing new
+                if stale_rounds >= 3 and len(self.leads) > 0:
+                    print(f"  🏁  No new leads for {stale_rounds} rounds, stopping scroll at {i+1}/{scroll_count}")
+                    break
+
+        # Final extraction to catch anything remaining
         await self._extract_from_page(page)
 
     async def _handle_load_more(self, page: Page):
@@ -190,14 +211,24 @@ class BaseSiteAdapter(ABC):
             except Exception:
                 break
 
-    async def _extract_from_page(self, page: Page):
+    async def _extract_from_page(self, page: Page, silent: bool = False):
         """Get page HTML, parse it with BeautifulSoup, and extract leads."""
         content = await page.content()
         soup = BeautifulSoup(content, "html.parser")
         card_selector = self.selectors.get("card", "div")
         cards = soup.select(card_selector)
 
-        print(f"  🔍  Found {len(cards)} cards on current page state")
+        if not silent:
+            print(f"  🔍  Found {len(cards)} cards on current page state")
+
+        # Diagnostic: when 0 cards found on a non-silent pass, dump structure hints
+        if len(cards) == 0 and not silent:
+            print(f"  ⚠️  DIAGNOSTIC: selector '{card_selector}' matched nothing.")
+            # Try common fallbacks and report what exists
+            for fallback in ["table tr", "div[class]", "[data-testid]", "article", "li"]:
+                count = len(soup.select(fallback))
+                if count > 0:
+                    print(f"       → '{fallback}' matched {count} elements")
 
         new_leads = 0
         for card in cards:
@@ -213,7 +244,8 @@ class BaseSiteAdapter(ABC):
             except Exception as e:
                 continue
 
-        print(f"  ➕  {new_leads} new unique leads extracted")
+        if not silent:
+            print(f"  ➕  {new_leads} new unique leads extracted")
 
     @abstractmethod
     def parse_card(self, card) -> Optional[InvestorLead]:

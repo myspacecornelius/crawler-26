@@ -1,0 +1,51 @@
+name,website,sectors,check_size,stage,hq
+KKR,https://www.kkr.com,Technology|Healthcare|Financial Services,$100M-$10B,Buyout,New York
+Blackstone,https://www.blackstone.com,Real Estate|Technology|Healthcare,$500M-$20B,Buyout,New York
+Apollo Global Management,https://www.apollo.com,Financial Services|Technology|Media,$100M-$5B,Buyout,New York
+Carlyle Group,https://www.carlyle.com,Aerospace|Technology|Healthcare,$100M-$5B,Buyout,Washington DC
+TPG Capital,https://www.tpg.com,Technology|Healthcare|Consumer,$100M-$5B,Buyout,San Francisco
+Warburg Pincus,https://www.warburgpincus.com,Technology|Financial Services|Healthcare,$100M-$3B,Growth Equity,New York
+Advent International,https://www.adventinternational.com,Technology|Healthcare|Business Services,$100M-$3B,Buyout,Boston
+Bain Capital Private Equity,https://www.baincapitalprivateequity.com,Technology|Healthcare|Retail,$100M-$5B,Buyout,Boston
+Thoma Bravo,https://www.thomabravo.com,Software|Technology|Financial Services,$100M-$5B,Buyout,San Francisco
+Vista Equity Partners,https://www.vistaequitypartners.com,Software|Technology|Data,$100M-$5B,Buyout,Austin
+Silver Lake,https://www.silverlake.com,Technology|Software,$1B-$10B,Buyout,Menlo Park
+Hellman & Friedman,https://www.hfrp.com,Technology|Financial Services|Healthcare,$500M-$5B,Buyout,San Francisco
+Leonard Green & Partners,https://www.leonardgreen.com,Consumer|Healthcare|Business Services,$200M-$3B,Buyout,Los Angeles
+Providence Equity Partners,https://www.provequity.com,Media|Communications|Technology,$100M-$3B,Buyout,Providence
+Welsh Carson Anderson & Stowe,https://www.wcas.com,Healthcare|Technology,$200M-$2B,Buyout,New York
+Francisco Partners,https://www.franciscopartners.com,Technology|Software,$100M-$3B,Buyout,San Francisco
+Permira,https://www.permira.com,Technology|Consumer|Healthcare,$200M-$5B,Buyout,London
+EQT Partners,https://www.eqtgroup.com,Technology|Healthcare|Services,$100M-$5B,Buyout,Stockholm
+CVC Capital Partners,https://www.cvc.com,Technology|Healthcare|Financial Services,$200M-$5B,Buyout,London
+Apax Partners,https://www.apax.com,Technology|Healthcare|Services,$100M-$3B,Buyout,London
+Cinven,https://www.cinven.com,Technology|Healthcare|Financial Services,$200M-$3B,Buyout,London
+BC Partners,https://www.bcpartners.com,Technology|Healthcare|Consumer,$200M-$3B,Buyout,London
+Hg Capital,https://www.hgcapital.com,Software|Technology|Services,$100M-$2B,Buyout,London
+Insight Partners,https://www.insightpartners.com,Software|Technology,$50M-$1B,Growth Equity,New York
+General Atlantic,https://www.generalatlantic.com,Technology|Financial Services|Healthcare,$50M-$2B,Growth Equity,New York
+TA Associates,https://www.ta.com,Technology|Healthcare|Financial Services,$50M-$500M,Growth Equity,Boston
+Summit Partners,https://www.summitpartners.com,Technology|Healthcare|Growth,$25M-$500M,Growth Equity,Boston
+GTCR,https://www.gtcr.com,Technology|Healthcare|Financial Services,$100M-$2B,Buyout,Chicago
+Madison Dearborn Partners,https://www.mdcp.com,Technology|Healthcare|Financial Services,$100M-$2B,Buyout,Chicago
+Clearlake Capital,https://www.clearlake.com,Technology|Industrials|Consumer,$100M-$2B,Buyout,Santa Monica
+Platinum Equity,https://www.platinumequity.com,Technology|Industrials|Manufacturing,$100M-$5B,Buyout,Beverly Hills
+Audax Private Equity,https://www.audaxprivateequity.com,Business Services|Healthcare|Technology,$25M-$300M,Mid-Market Buyout,Boston
+American Securities,https://www.americansecurities.com,Consumer|Industrial|Healthcare,$100M-$1B,Buyout,New York
+Genstar Capital,https://www.genstarcapital.com,Financial Services|Healthcare|Software,$100M-$1B,Mid-Market Buyout,San Francisco
+Veritas Capital,https://www.veritascapital.com,Technology|Government|Healthcare,$200M-$2B,Buyout,New York
+Riverside Company,https://www.riversidecompany.com,Business Services|Healthcare|Technology,$10M-$400M,Mid-Market,Cleveland
+Kelso & Company,https://www.kelso.com,Financial Services|Healthcare|Industrial,$100M-$1B,Buyout,New York
+Roark Capital,https://www.roarkcapital.com,Consumer|Restaurant|Franchise,$100M-$3B,Buyout,Atlanta
+Centerbridge Partners,https://www.centerbridge.com,Financial Services|Real Estate|Technology,$100M-$2B,Buyout,New York
+Cerberus Capital,https://www.cerberuscapital.com,Financial Services|Real Estate|Industrial,$100M-$5B,Buyout,New York
+New Mountain Capital,https://www.newmountaincapital.com,Healthcare|Technology|Business Services,$100M-$1B,Buyout,New York
+Searchlight Capital,https://www.searchlightcap.com,Technology|Business Services|Financial Services,$50M-$500M,Mid-Market,New York
+PAI Partners,https://www.paipartners.com,Food|Healthcare|Business Services,$200M-$3B,Buyout,Paris
+Bridgepoint,https://www.bridgepoint.eu,Technology|Healthcare|Services,$100M-$1B,Buyout,London
+Montagu Private Equity,https://www.montagu.com,Business Services|Healthcare|Technology,$100M-$1B,Buyout,London
+Nordic Capital,https://www.nordiccapital.com,Healthcare|Technology|Financial Services,$100M-$2B,Buyout,Stockholm
+Triton Partners,https://www.triton-partners.com,Industrial|Technology|Services,$100M-$2B,Buyout,Jersey
+Investindustrial,https://www.investindustrial.com,Consumer|Industrial|Healthcare,$100M-$1B,Buyout,London
+Charterhouse Capital,https://www.charterhouse.co.uk,Business Services|Healthcare|Industrial,$100M-$1B,Buyout,London
+IK Partners,https://www.ikpartners.com,Healthcare|Technology|Business Services,$100M-$1B,Buyout,London

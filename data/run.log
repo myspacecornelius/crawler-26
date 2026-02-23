@@ -1,0 +1,462 @@
+2026-02-21 15:49:31,339 - 🔍 Starting discovery engine for 1500 target domains
+2026-02-21 15:49:33,083 - 🔎 Querying DDG: "pre-seed venture capital" "team" "portfolio" -crunchbase -angellist
+2026-02-21 15:49:38,711 - ➕ Found 1 valid VC domains. (Total: 1/1500)
+2026-02-21 15:49:47,257 - 🔎 Querying DDG: "seed fund" "general partner" "thesis" site:.com
+2026-02-21 15:49:52,641 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:49:59,191 - 🔎 Querying DDG: "early stage VC" "check size" "team" -directory -linkedin
+2026-02-21 15:50:02,477 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:50:11,751 - 🔎 Querying DDG: "micro vc" "portfolio" "people" -crunchbase
+2026-02-21 15:50:15,737 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:50:25,656 - 🔎 Querying DDG: "pre-seed fund" "founders" "contact" "invest"
+2026-02-21 15:50:29,418 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:50:37,647 - 🔎 Querying DDG: "seed stage" "venture fund" "team" "focus areas"
+2026-02-21 15:50:42,339 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:50:51,448 - 🔎 Querying DDG: "angel fund" "managing partner" "portfolio" "contact"
+2026-02-21 15:50:55,791 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:51:03,268 - 🔎 Querying DDG: "rolling fund" "venture capital" "team" "thesis"
+2026-02-21 15:51:08,610 - ➕ Found 0 valid VC domains. (Total: 1/1500)
+2026-02-21 15:51:14,958 - 🔎 Querying DDG: "series A" "venture capital firm" "team" "portfolio" -pitchbook
+2026-02-21 15:51:18,993 - ➕ Found 1 valid VC domains. (Total: 2/1500)
+2026-02-21 15:51:26,750 - 🔎 Querying DDG: "series B" "growth equity" "investment team" "contact"
+2026-02-21 15:51:31,786 - ➕ Found 0 valid VC domains. (Total: 2/1500)
+2026-02-21 15:51:39,854 - 🔎 Querying DDG: "early growth" "venture fund" "partners" "thesis"
+2026-02-21 15:51:43,859 - ➕ Found 0 valid VC domains. (Total: 2/1500)
+2026-02-21 15:51:53,788 - 🔎 Querying DDG: "growth stage" "vc fund" "team" "focus"
+2026-02-21 15:51:58,689 - ➕ Found 0 valid VC domains. (Total: 2/1500)
+2026-02-21 15:52:07,359 - 🔎 Querying DDG: "b2b saas" "venture fund" "people" "team"
+2026-02-21 15:52:11,635 - ➕ Found 0 valid VC domains. (Total: 2/1500)
+2026-02-21 15:52:17,873 - 🔎 Querying DDG: "developer tools" "venture capital" "team" "portfolio"
+2026-02-21 15:52:23,389 - ➕ Found 1 valid VC domains. (Total: 3/1500)
+2026-02-21 15:52:31,263 - 🔎 Querying DDG: "enterprise software" "vc fund" "partners" "contact"
+2026-02-21 15:52:35,091 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:52:42,598 - 🔎 Querying DDG: "infrastructure" "venture capital" "team" "thesis" -linkedin
+2026-02-21 15:52:46,339 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:52:56,167 - 🔎 Querying DDG: "api-first" OR "devtools" "venture fund" "team"
+2026-02-21 15:53:00,060 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:53:08,310 - 🔎 Querying DDG: "open source" "venture capital" "team" "portfolio"
+2026-02-21 15:53:11,698 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:53:20,600 - 🔎 Querying DDG: "artificial intelligence" "venture fund" "team" "portfolio" -crunchbase
+2026-02-21 15:53:24,711 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:53:34,352 - 🔎 Querying DDG: "machine learning" "vc fund" "general partner" "contact"
+2026-02-21 15:53:39,159 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:53:47,265 - 🔎 Querying DDG: "AI-focused" "venture capital" "team" "thesis"
+2026-02-21 15:53:51,283 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:53:59,430 - 🔎 Querying DDG: "deep tech" "venture fund" "partners" "portfolio"
+2026-02-21 15:54:03,279 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:54:11,532 - 🔎 Querying DDG: "foundation models" OR "generative AI" "venture capital" "team"
+2026-02-21 15:54:16,296 - ➕ Found 0 valid VC domains. (Total: 3/1500)
+2026-02-21 15:54:21,853 - 🔎 Querying DDG: "climate tech" "venture capital" "team" "portfolio"
+2026-02-21 15:54:26,973 - ➕ Found 1 valid VC domains. (Total: 4/1500)
+2026-02-21 15:54:32,870 - 🔎 Querying DDG: "cleantech" "vc fund" "partners" "contact"
+2026-02-21 15:54:36,257 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:54:43,367 - 🔎 Querying DDG: "sustainability" "venture fund" "team" "thesis"
+2026-02-21 15:54:48,760 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:54:56,154 - 🔎 Querying DDG: "energy transition" "venture capital" "team" "invest"
+2026-02-21 15:55:01,130 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:55:07,451 - 🔎 Querying DDG: "climate fund" "general partner" "portfolio" "contact"
+2026-02-21 15:55:12,858 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:55:21,578 - 🔎 Querying DDG: "healthtech" "vc fund" "team" "focus"
+2026-02-21 15:55:26,787 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:55:34,849 - 🔎 Querying DDG: "digital health" "venture capital" "team" "portfolio"
+2026-02-21 15:55:39,245 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:55:47,000 - 🔎 Querying DDG: "biotech" "venture fund" "partners" "contact" -crunchbase
+2026-02-21 15:55:50,354 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:55:58,769 - 🔎 Querying DDG: "life sciences" "vc fund" "team" "thesis"
+2026-02-21 15:56:03,635 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:56:13,243 - 🔎 Querying DDG: "medtech" "venture capital" "general partner" "portfolio"
+2026-02-21 15:56:16,904 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:56:25,602 - 🔎 Querying DDG: "mental health" "venture fund" "team" "invest"
+2026-02-21 15:56:29,742 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:56:37,022 - 🔎 Querying DDG: "fintech" "early stage fund" "contact" "team"
+2026-02-21 15:56:42,495 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:56:50,285 - 🔎 Querying DDG: "financial technology" "venture capital" "team" "portfolio"
+2026-02-21 15:56:55,530 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:57:03,499 - 🔎 Querying DDG: "insurtech" "venture fund" "partners" "thesis"
+2026-02-21 15:57:08,476 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:57:16,754 - 🔎 Querying DDG: "crypto" "venture capital" "team" "portfolio" -directory
+2026-02-21 15:57:20,330 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:57:25,905 - 🔎 Querying DDG: "web3" "venture fund" "team" "contact" -linkedin
+2026-02-21 15:57:30,486 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:57:37,465 - 🔎 Querying DDG: "defi" "venture capital" "general partner" "portfolio"
+2026-02-21 15:57:42,233 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:57:49,329 - 🔎 Querying DDG: "consumer tech" "venture fund" "team" "portfolio"
+2026-02-21 15:57:52,735 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:58:00,400 - 🔎 Querying DDG: "marketplace" "venture capital" "team" "thesis"
+2026-02-21 15:58:04,574 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:58:13,215 - 🔎 Querying DDG: "future of work" "vc fund" "partners" "contact"
+2026-02-21 15:58:18,359 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:58:26,969 - 🔎 Querying DDG: "edtech" "venture capital" "team" "portfolio"
+2026-02-21 15:58:32,231 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:58:37,599 - 🔎 Querying DDG: "proptech" "venture fund" "team" "contact"
+2026-02-21 15:58:42,722 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:58:52,048 - 🔎 Querying DDG: "foodtech" OR "agtech" "venture capital" "team"
+2026-02-21 15:58:56,274 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:59:05,930 - 🔎 Querying DDG: "defense tech" "venture capital" "team" "portfolio"
+2026-02-21 15:59:10,953 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:59:18,516 - 🔎 Querying DDG: "national security" "venture fund" "partners" "contact"
+2026-02-21 15:59:22,110 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:59:30,516 - 🔎 Querying DDG: "dual-use" "venture capital" "team" "thesis"
+2026-02-21 15:59:35,573 - ➕ Found 0 valid VC domains. (Total: 4/1500)
+2026-02-21 15:59:42,129 - 🔎 Querying DDG: intitle:"team" "venture capital" "san francisco" "portfolio"
+2026-02-21 15:59:45,867 - ➕ Found 1 valid VC domains. (Total: 5/1500)
+2026-02-21 15:59:52,528 - 🔎 Querying DDG: intitle:"team" "venture capital" "new york" "portfolio"
+2026-02-21 15:59:56,048 - ➕ Found 1 valid VC domains. (Total: 6/1500)
+2026-02-21 16:00:04,709 - 🔎 Querying DDG: intitle:"team" "venture capital" "boston" "portfolio"
+2026-02-21 16:00:09,782 - ➕ Found 1 valid VC domains. (Total: 7/1500)
+2026-02-21 16:00:15,537 - 🔎 Querying DDG: intitle:"team" "venture capital" "austin" "portfolio"
+2026-02-21 16:00:19,690 - ➕ Found 1 valid VC domains. (Total: 8/1500)
+2026-02-21 16:00:29,152 - 🔎 Querying DDG: intitle:"team" "venture capital" "los angeles" "portfolio"
+2026-02-21 16:00:33,357 - ➕ Found 5 valid VC domains. (Total: 13/1500)
+2026-02-21 16:00:42,052 - 🔎 Querying DDG: intitle:"team" "venture capital" "chicago" "portfolio"
+2026-02-21 16:00:46,743 - ➕ Found 1 valid VC domains. (Total: 14/1500)
+2026-02-21 16:00:52,482 - 🔎 Querying DDG: intitle:"team" "venture capital" "seattle" "portfolio"
+2026-02-21 16:00:56,917 - ➕ Found 0 valid VC domains. (Total: 14/1500)
+2026-02-21 16:01:03,026 - 🔎 Querying DDG: intitle:"team" "venture capital" "miami" "portfolio"
+2026-02-21 16:01:06,498 - ➕ Found 0 valid VC domains. (Total: 14/1500)
+2026-02-21 16:01:15,754 - 🔎 Querying DDG: "venture capital" "team" "london" "portfolio" "contact"
+2026-02-21 16:01:20,830 - ➕ Found 0 valid VC domains. (Total: 14/1500)
+2026-02-21 16:01:29,712 - 🔎 Querying DDG: "venture capital" "team" "berlin" "portfolio" "contact"
+2026-02-21 16:01:33,747 - ➕ Found 0 valid VC domains. (Total: 14/1500)
+2026-02-21 16:01:43,622 - 🔎 Querying DDG: "venture capital" "team" "tel aviv" "portfolio" "contact"
+2026-02-21 16:01:48,577 - ➕ Found 0 valid VC domains. (Total: 14/1500)
+2026-02-21 16:01:55,069 - 🔎 Querying DDG: "venture capital" "team" "toronto" "portfolio" "contact"
+2026-02-21 16:01:58,724 - ➕ Found 1 valid VC domains. (Total: 15/1500)
+2026-02-21 16:02:04,169 - 🔎 Querying DDG: "venture capital" "team" "singapore" "portfolio" "contact"
+2026-02-21 16:02:09,483 - ➕ Found 0 valid VC domains. (Total: 15/1500)
+2026-02-21 16:02:17,962 - 🔎 Querying DDG: "venture capital" "team" "paris" "portfolio" "contact"
+2026-02-21 16:02:22,983 - ➕ Found 1 valid VC domains. (Total: 16/1500)
+2026-02-21 16:02:29,436 - 🔎 Querying DDG: "family office" "venture investments" "team" "contact"
+2026-02-21 16:02:33,822 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:02:41,404 - 🔎 Querying DDG: "corporate venture" "team" "portfolio" "contact"
+2026-02-21 16:02:44,993 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:02:51,340 - 🔎 Querying DDG: "university fund" OR "endowment fund" "venture" "team"
+2026-02-21 16:02:55,134 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:03:02,918 - 🔎 Querying DDG: "operator fund" "venture capital" "team" "thesis"
+2026-02-21 16:03:06,684 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:03:16,655 - 🔎 Querying DDG: "solo gp" "venture fund" "portfolio" "contact"
+2026-02-21 16:03:20,486 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:03:27,919 - 🔎 Querying DDG: "emerging manager" "venture fund" "team" "thesis"
+2026-02-21 16:03:31,816 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:03:39,340 - 🔎 Querying DDG: "fund of funds" "venture capital" "team" "contact"
+2026-02-21 16:03:43,540 - ➕ Found 0 valid VC domains. (Total: 16/1500)
+2026-02-21 16:19:05,592 -   ✉️  Email guesser: 31 leads without email (of 31 total)
+2026-02-21 16:19:05,593 -   ✉️  Email guesser complete: 0/31 emails found
+
+  ╔══════════════════════════════════════════╗
+  ║   🕷️  CRAWL ENGINE v2                    ║
+  ║   Investor Lead Machine                  ║
+  ╚══════════════════════════════════════════╝
+
+  ⏰  2026-02-21 15:49:31
+  🎯  Sites: ALL
+  👻  Stealth: ON
+  🔒  Proxy: OFF
+  🖥️  Headless: YES
+
+
+  🔍  DISCOVERY MODE — finding VC domains via search...
+  ✅  Discovery complete: 16 domains → data/target_funds.txt
+
+  🌐  Initializing browser for openvc...
+
+============================================================
+  🕷️  CRAWLING: OPENVC
+  📍  https://www.openvc.app/
+============================================================
+
+  📜  Scrolling... (1/100)
+  📜  Scrolling... (2/100)
+  📜  Scrolling... (3/100)
+  📜  Scrolling... (4/100)
+  📜  Scrolling... (5/100)
+  📜  Scrolling... (6/100)
+  📜  Scrolling... (7/100)
+  📜  Scrolling... (8/100)
+  📜  Scrolling... (9/100)
+  📜  Scrolling... (10/100)
+  📜  Scrolling... (11/100)
+  📜  Scrolling... (12/100)
+  📜  Scrolling... (13/100)
+  📜  Scrolling... (14/100)
+  📜  Scrolling... (15/100)
+  📜  Scrolling... (16/100)
+  📜  Scrolling... (17/100)
+  📜  Scrolling... (18/100)
+  📜  Scrolling... (19/100)
+  📜  Scrolling... (20/100)
+  📜  Scrolling... (21/100)
+  📜  Scrolling... (22/100)
+  📜  Scrolling... (23/100)
+  📜  Scrolling... (24/100)
+  📜  Scrolling... (25/100)
+  📜  Scrolling... (26/100)
+  📜  Scrolling... (27/100)
+  📜  Scrolling... (28/100)
+  📜  Scrolling... (29/100)
+  📜  Scrolling... (30/100)
+  📜  Scrolling... (31/100)
+  📜  Scrolling... (32/100)
+  📜  Scrolling... (33/100)
+  📜  Scrolling... (34/100)
+  📜  Scrolling... (35/100)
+  📜  Scrolling... (36/100)
+  📜  Scrolling... (37/100)
+  📜  Scrolling... (38/100)
+  📜  Scrolling... (39/100)
+  📜  Scrolling... (40/100)
+  📜  Scrolling... (41/100)
+  📜  Scrolling... (42/100)
+  📜  Scrolling... (43/100)
+  📜  Scrolling... (44/100)
+  📜  Scrolling... (45/100)
+  📜  Scrolling... (46/100)
+  📜  Scrolling... (47/100)
+  📜  Scrolling... (48/100)
+  📜  Scrolling... (49/100)
+  📜  Scrolling... (50/100)
+  📜  Scrolling... (51/100)
+  📜  Scrolling... (52/100)
+  📜  Scrolling... (53/100)
+  📜  Scrolling... (54/100)
+  📜  Scrolling... (55/100)
+  📜  Scrolling... (56/100)
+  📜  Scrolling... (57/100)
+  📜  Scrolling... (58/100)
+  📜  Scrolling... (59/100)
+  📜  Scrolling... (60/100)
+  📜  Scrolling... (61/100)
+  📜  Scrolling... (62/100)
+  📜  Scrolling... (63/100)
+  📜  Scrolling... (64/100)
+  📜  Scrolling... (65/100)
+  📜  Scrolling... (66/100)
+  📜  Scrolling... (67/100)
+  📜  Scrolling... (68/100)
+  📜  Scrolling... (69/100)
+  📜  Scrolling... (70/100)
+  📜  Scrolling... (71/100)
+  📜  Scrolling... (72/100)
+  📜  Scrolling... (73/100)
+  📜  Scrolling... (74/100)
+  📜  Scrolling... (75/100)
+  📜  Scrolling... (76/100)
+  📜  Scrolling... (77/100)
+  📜  Scrolling... (78/100)
+  📜  Scrolling... (79/100)
+  📜  Scrolling... (80/100)
+  📜  Scrolling... (81/100)
+  📜  Scrolling... (82/100)
+  📜  Scrolling... (83/100)
+  📜  Scrolling... (84/100)
+  📜  Scrolling... (85/100)
+  📜  Scrolling... (86/100)
+  📜  Scrolling... (87/100)
+  📜  Scrolling... (88/100)
+  📜  Scrolling... (89/100)
+  📜  Scrolling... (90/100)
+  📜  Scrolling... (91/100)
+  📜  Scrolling... (92/100)
+  📜  Scrolling... (93/100)
+  📜  Scrolling... (94/100)
+  📜  Scrolling... (95/100)
+  📜  Scrolling... (96/100)
+  📜  Scrolling... (97/100)
+  📜  Scrolling... (98/100)
+  📜  Scrolling... (99/100)
+  📜  Scrolling... (100/100)
+  🔍  Found 6 cards on current page state
+  ➕  6 new unique leads extracted
+
+  ✅  openvc: Extracted 6 leads
+
+  📸  Screenshot saved
+
+  🌐  Initializing browser for angelmatch...
+
+============================================================
+  🕷️  CRAWLING: ANGELMATCH
+  📍  https://angelmatch.io/investors
+============================================================
+
+  🏁  No more 'Load More' button found after 0 clicks
+  🔍  Found 25 cards on current page state
+  ➕  25 new unique leads extracted
+
+  ✅  angelmatch: Extracted 25 leads
+
+  📸  Screenshot saved
+
+  🌐  Initializing browser for visible_vc...
+
+============================================================
+  🕷️  CRAWLING: VISIBLE_VC
+  📍  https://visible.vc/investors
+============================================================
+
+  🏁  No more 'Load More' button found after 0 clicks
+  🔍  Found 0 cards on current page state
+  ➕  0 new unique leads extracted
+
+  ✅  visible_vc: Extracted 0 leads
+
+  📸  Screenshot saved
+
+  🌐  Initializing browser for landscape_vc...
+
+============================================================
+  🕷️  CRAWLING: LANDSCAPE_VC
+  📍  https://landscape.vc/investors
+============================================================
+
+  📄  Page 1/50
+  🔍  Found 0 cards on current page state
+  ➕  0 new unique leads extracted
+  🏁  No more pages after page 1
+
+  ✅  landscape_vc: Extracted 0 leads
+
+  📸  Screenshot saved
+
+  🌐  Initializing browser for wellfound...
+
+============================================================
+  🕷️  CRAWLING: WELLFOUND
+  📍  https://wellfound.com/investors
+============================================================
+
+  📜  Scrolling... (1/80)
+  📜  Scrolling... (2/80)
+  📜  Scrolling... (3/80)
+  📜  Scrolling... (4/80)
+  📜  Scrolling... (5/80)
+  📜  Scrolling... (6/80)
+  📜  Scrolling... (7/80)
+  📜  Scrolling... (8/80)
+  📜  Scrolling... (9/80)
+  📜  Scrolling... (10/80)
+  📜  Scrolling... (11/80)
+  📜  Scrolling... (12/80)
+  📜  Scrolling... (13/80)
+  📜  Scrolling... (14/80)
+  📜  Scrolling... (15/80)
+  📜  Scrolling... (16/80)
+  📜  Scrolling... (17/80)
+  📜  Scrolling... (18/80)
+  📜  Scrolling... (19/80)
+  📜  Scrolling... (20/80)
+  📜  Scrolling... (21/80)
+  📜  Scrolling... (22/80)
+  📜  Scrolling... (23/80)
+  📜  Scrolling... (24/80)
+  📜  Scrolling... (25/80)
+  📜  Scrolling... (26/80)
+  📜  Scrolling... (27/80)
+  📜  Scrolling... (28/80)
+  📜  Scrolling... (29/80)
+  📜  Scrolling... (30/80)
+  📜  Scrolling... (31/80)
+  📜  Scrolling... (32/80)
+  📜  Scrolling... (33/80)
+  📜  Scrolling... (34/80)
+  📜  Scrolling... (35/80)
+  📜  Scrolling... (36/80)
+  📜  Scrolling... (37/80)
+  📜  Scrolling... (38/80)
+  📜  Scrolling... (39/80)
+  📜  Scrolling... (40/80)
+  📜  Scrolling... (41/80)
+  📜  Scrolling... (42/80)
+  📜  Scrolling... (43/80)
+  📜  Scrolling... (44/80)
+  📜  Scrolling... (45/80)
+  📜  Scrolling... (46/80)
+  📜  Scrolling... (47/80)
+  📜  Scrolling... (48/80)
+  📜  Scrolling... (49/80)
+  📜  Scrolling... (50/80)
+  📜  Scrolling... (51/80)
+  📜  Scrolling... (52/80)
+  📜  Scrolling... (53/80)
+  📜  Scrolling... (54/80)
+  📜  Scrolling... (55/80)
+  📜  Scrolling... (56/80)
+  📜  Scrolling... (57/80)
+  📜  Scrolling... (58/80)
+  📜  Scrolling... (59/80)
+  📜  Scrolling... (60/80)
+  📜  Scrolling... (61/80)
+  📜  Scrolling... (62/80)
+  📜  Scrolling... (63/80)
+  📜  Scrolling... (64/80)
+  📜  Scrolling... (65/80)
+  📜  Scrolling... (66/80)
+  📜  Scrolling... (67/80)
+  📜  Scrolling... (68/80)
+  📜  Scrolling... (69/80)
+  📜  Scrolling... (70/80)
+  📜  Scrolling... (71/80)
+  📜  Scrolling... (72/80)
+  📜  Scrolling... (73/80)
+  📜  Scrolling... (74/80)
+  📜  Scrolling... (75/80)
+  📜  Scrolling... (76/80)
+  📜  Scrolling... (77/80)
+  📜  Scrolling... (78/80)
+  📜  Scrolling... (79/80)
+  📜  Scrolling... (80/80)
+  🔍  Found 0 cards on current page state
+  ➕  0 new unique leads extracted
+
+  ✅  wellfound: Extracted 0 leads
+
+  📸  Screenshot saved
+
+  ⏭️  Skipping signal_nfx (disabled)
+
+============================================================
+  🧠  ENRICHMENT PIPELINE
+============================================================
+
+  📧  Validating 31 emails (+ MX check)...
+  ✉️  Guessing emails for contacts without one...
+  ✉️  Guesser: 0 found / 0 attempted
+  📊  Scoring leads...
+  🆕  4 new leads detected (delta from master)
+
+  💾  Writing output...
+  💾  Saved 31 leads → data/enriched/investor_leads_master.csv
+  💾  Saved 31 leads → data/enriched/leads_20260221_161905.csv
+
+============================================================
+  📊  CRAWL SUMMARY
+============================================================
+  ⏱️  Duration: 1774.3s
+  📝  Total leads: 31
+  📈  Avg score: 21.4
+  🔴  HOT leads: 0
+  🟡  WARM leads: 0
+  🎭  Fingerprints used: 5
+  🔒  Proxy requests: 0
+
+  🏆  TOP 5 LEADS:
+  ──────────────────────────────────────────────────
+  ⚪ COLD  G+D Ventures (G+D VenturesVC firm)
+       📧 N/A (invalid) | 🎯 N/A
+       💰 $300k to $2M | Score: 34
+
+  ⚪ COLD  Inflection Point ventu... (Inflection Point ventu...VC firm)
+       📧 N/A (invalid) | 🎯 N/A
+       💰 $200k to $2M | Score: 34
+
+  ⚪ COLD  Brandon Zeuner (N/A)
+       📧 N/A (invalid) | 🎯 Remote Work Tech,iPad,Email
+       💰 N/A | Score: 34
+
+  ⚪ COLD  Brian Dixon (N/A)
+       📧 N/A (invalid) | 🎯 Health Care,Training,Databases
+       💰 N/A | Score: 34
+
+  ⚪ COLD  Steve Anderson (N/A)
+       📧 N/A (invalid) | 🎯 Advertising,Enterprise,Email
+       💰 N/A | Score: 34
+

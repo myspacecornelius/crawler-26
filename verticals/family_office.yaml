@@ -1,0 +1,63 @@
+name: "Family Offices"
+slug: family_office
+description: "Single and multi-family offices — ultra-high-net-worth investment vehicles"
+
+seed_sources:
+  - type: csv
+    path: data/seed/family_offices.csv
+
+search_queries:
+  - "family office direct investment {sector}"
+  - "single family office portfolio {sector}"
+  - "multi family office investment manager {sector}"
+  - "family office CIO chief investment officer"
+  - "family office venture co-investment {sector}"
+
+team_page_keywords:
+  - team
+  - about
+  - leadership
+  - people
+  - principals
+  - advisors
+  - our-team
+
+role_keywords:
+  - chief investment officer
+  - cio
+  - principal
+  - managing director
+  - director
+  - portfolio manager
+  - investment manager
+  - family office head
+  - founder
+  - president
+  - partner
+
+adapters: []
+
+scoring:
+  has_email: 25
+  has_linkedin: 15
+  role_match_bonus: 20
+  priority_roles:
+    - chief investment officer
+    - cio
+    - principal
+    - managing director
+    - founder
+    - president
+    - partner
+  depriority_roles:
+    - assistant
+    - coordinator
+    - receptionist
+
+default_sectors:
+  - Real Estate
+  - Technology
+  - Healthcare
+  - Private Equity
+  - Venture Capital
+  - Direct Investments

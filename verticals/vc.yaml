@@ -1,0 +1,76 @@
+name: "Venture Capital"
+slug: vc
+description: "Venture capital firms — seed through growth stage investors"
+
+seed_sources:
+  - type: csv
+    path: data/seed/vc_firms.csv
+  - type: github
+    urls:
+      - "https://raw.githubusercontent.com/trebeljahr/awesome-vc/main/README.md"
+      - "https://raw.githubusercontent.com/lnishan/awesome-vc/main/README.md"
+
+search_queries:
+  - "venture capital firm {sector} investments"
+  - "VC fund partner portfolio {sector}"
+  - "seed stage venture investor {sector}"
+  - "series A venture capital {sector}"
+  - "growth stage VC fund {sector}"
+
+team_page_keywords:
+  - team
+  - people
+  - about
+  - leadership
+  - partners
+  - professionals
+  - who-we-are
+  - our-team
+  - investors
+
+role_keywords:
+  - partner
+  - general partner
+  - managing partner
+  - managing director
+  - principal
+  - associate
+  - analyst
+  - venture partner
+  - operating partner
+  - founder
+  - ceo
+  - investor
+  - investment director
+  - head of
+  - vice president
+  - vp
+
+adapters:
+  - openvc
+  - angelmatch
+
+scoring:
+  has_email: 20
+  has_linkedin: 10
+  role_match_bonus: 15
+  priority_roles:
+    - general partner
+    - managing partner
+    - managing director
+    - partner
+    - principal
+    - founder
+  depriority_roles:
+    - analyst
+    - intern
+    - assistant
+    - coordinator
+
+default_sectors:
+  - Enterprise
+  - Consumer
+  - AI
+  - Fintech
+  - Healthcare
+  - SaaS

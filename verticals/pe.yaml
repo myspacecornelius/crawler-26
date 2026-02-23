@@ -1,0 +1,61 @@
+name: "Private Equity"
+slug: pe
+description: "Private equity firms — buyout, growth equity, and special situations"
+
+seed_sources:
+  - type: csv
+    path: data/seed/pe_firms.csv
+
+search_queries:
+  - "private equity firm {sector} portfolio"
+  - "PE fund managing director {sector}"
+  - "growth equity investor {sector}"
+  - "buyout fund partner {sector}"
+  - "middle market private equity {sector}"
+
+team_page_keywords:
+  - team
+  - professionals
+  - leadership
+  - about
+  - people
+  - investment-team
+  - our-professionals
+
+role_keywords:
+  - managing director
+  - partner
+  - principal
+  - vice president
+  - associate
+  - director
+  - operating partner
+  - senior advisor
+  - chairman
+  - head of
+
+adapters: []
+
+scoring:
+  has_email: 20
+  has_linkedin: 10
+  role_match_bonus: 15
+  priority_roles:
+    - managing director
+    - partner
+    - managing partner
+    - senior partner
+    - principal
+    - operating partner
+  depriority_roles:
+    - analyst
+    - intern
+    - administrative
+
+default_sectors:
+  - Technology
+  - Healthcare
+  - Financial Services
+  - Industrials
+  - Consumer
+  - Business Services

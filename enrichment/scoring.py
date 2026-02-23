@@ -4,8 +4,8 @@ Scores investor leads based on fit with your startup profile.
 """
 
 import yaml
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 
 class LeadScorer:
@@ -72,14 +72,27 @@ class LeadScorer:
         # Check size fit
         total += self._score_check_size(lead.check_size)
 
+        # Portfolio relevance (based on focus_areas overlap as a proxy)
+        total += self._score_portfolio_relevance(lead.focus_areas)
+
+        # Recency (based on scraped_at timestamp presence and lead data freshness)
+        total += self._score_recency(lead.scraped_at)
+
         # Contact quality modifiers
-        if lead.email and lead.email != "N/A":
+        if lead.email and lead.email not in ("N/A", "N/A (invalid)"):
             total += self.modifiers.get("has_email", 10)
         else:
             total += self.modifiers.get("no_email", -15)
 
         if lead.linkedin and lead.linkedin != "N/A":
             total += self.modifiers.get("has_linkedin", 5)
+
+        # Role-based modifier
+        total += self._score_role(lead.role)
+
+        # Stale fund modifier (applied when scraped_at is old or missing)
+        if self._is_stale(lead.scraped_at):
+            total += self.modifiers.get("stale_fund", -10)
 
         # Clamp to 0-100
         total = max(0, min(100, total))
@@ -172,6 +185,104 @@ class LeadScorer:
         except (ValueError, TypeError):
             return weight // 3
 
+    def _score_portfolio_relevance(self, investor_sectors: list) -> int:
+        """
+        Score portfolio relevance as a proxy for how likely this investor has
+        backed companies similar to ours. Uses sector overlap depth as signal.
+        Full weight when 2+ sectors overlap; partial for 1; minimal for unknown.
+        """
+        weight = self.weights.get("portfolio_relevance", 15)
+        my_sectors = {s.lower() for s in self.profile.get("sectors", [])}
+
+        if not investor_sectors or not my_sectors:
+            return weight // 4
+
+        their_sectors = {s.lower() for s in investor_sectors}
+
+        overlap = sum(
+            1 for ms in my_sectors
+            for ts in their_sectors
+            if ms in ts or ts in ms
+        )
+
+        if overlap >= 2:
+            return weight
+        elif overlap == 1:
+            return int(weight * 0.6)
+        return int(weight * 0.1)
+
+    def _score_recency(self, scraped_at: str) -> int:
+        """
+        Score recency based on whether the lead was freshly scraped.
+        Leads scraped within the current run always get full recency credit.
+        A missing/unparseable timestamp gets partial credit (not penalised).
+        """
+        weight = self.weights.get("recency", 10)
+        if not scraped_at:
+            return weight // 2
+
+        try:
+            scraped = datetime.fromisoformat(scraped_at)
+            now = datetime.now()
+            age_hours = (now - scraped).total_seconds() / 3600
+            if age_hours < 24:
+                return weight          # Fresh from this run
+            elif age_hours < 24 * 7:
+                return int(weight * 0.7)   # Within a week
+            elif age_hours < 24 * 30:
+                return int(weight * 0.4)   # Within a month
+            else:
+                return int(weight * 0.1)   # Stale
+        except (ValueError, TypeError):
+            return weight // 2
+
+    def _score_role(self, role: str) -> int:
+        """Score based on investor role/seniority."""
+        role_weights = self.modifiers.get("role_weights", {})
+        if not role_weights:
+            return 0  # Feature disabled when not configured
+
+        if not role or role in ("N/A", ""):
+            return role_weights.get("unknown", 0)
+
+        role_lower = role.lower()
+
+        # Partner/GP/Managing Director tier
+        partner_keywords = ["partner", "gp", "managing director", "general partner",
+                            "founding partner", "venture partner"]
+        if any(kw in role_lower for kw in partner_keywords):
+            return role_weights.get("partner", 15)
+
+        # Principal/VP/Director tier
+        principal_keywords = ["principal", "vice president", "vp", "director"]
+        if any(kw in role_lower for kw in principal_keywords):
+            return role_weights.get("principal", 10)
+
+        # Associate/Analyst tier
+        associate_keywords = ["associate", "analyst"]
+        if any(kw in role_lower for kw in associate_keywords):
+            return role_weights.get("associate", 5)
+
+        # Coordinator/Admin/Assistant/Intern tier
+        coordinator_keywords = ["coordinator", "admin", "assistant", "intern",
+                                "receptionist", "office manager"]
+        if any(kw in role_lower for kw in coordinator_keywords):
+            return role_weights.get("coordinator", -5)
+
+        # Unrecognized role — no modifier
+        return role_weights.get("unknown", 0)
+
+    def _is_stale(self, scraped_at: str) -> bool:
+        """Return True if the lead's scraped_at timestamp is older than 60 days."""
+        if not scraped_at:
+            return False
+        try:
+            scraped = datetime.fromisoformat(scraped_at)
+            age_days = (datetime.now() - scraped).days
+            return age_days > 60
+        except (ValueError, TypeError):
+            return False
+
     def _get_tier(self, score: int) -> str:
         """Map a score to a tier label."""
         if score >= self.tiers.get("hot", {}).get("min_score", 80):
@@ -189,7 +300,7 @@ class LeadScorer:
             score, tier = self.score(lead)
             lead.lead_score = score
             lead.tier = tier
-        return sorted(leads, key=lambda l: l.lead_score, reverse=True)
+        return sorted(leads, key=lambda lead: lead.lead_score, reverse=True)
 
     @property
     def stats(self) -> dict:

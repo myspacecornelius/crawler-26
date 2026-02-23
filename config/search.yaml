@@ -5,19 +5,103 @@
 # ──────────────────────────────────────────────────
 
 discovery:
-  target_domains_count: 500
-  search_engine: "google" # "google" or "bing"
+  target_domains_count: 1500
+  search_engine: "duckduckgo"
 
   queries:
-    - '"early stage VC fund" OR "pre-seed venture capital" "team" -"crunchbase" -"angelist"'
-    - '"venture capital firm" "portfolio" "contact us" "check size"'
-    - '"seed fund" "founders" "thesis" "team"'
-    - 'intitle:"team" "venture capital" OR "vc fund" "san francisco" OR "new york"'
-    - '"micro vc" OR "boutique venture capital" "team" -directory'
+    # ── Seed / Pre-seed ──────────────────────────────────────
+    - '"pre-seed venture capital" "team" "portfolio" -crunchbase -angellist'
+    - '"seed fund" "general partner" "thesis" site:.com'
+    - '"early stage VC" "check size" "team" -directory -linkedin'
+    - '"micro vc" "portfolio" "people" -crunchbase'
+    - '"pre-seed fund" "founders" "contact" "invest"'
+    - '"seed stage" "venture fund" "team" "focus areas"'
+    - '"angel fund" "managing partner" "portfolio" "contact"'
+    - '"rolling fund" "venture capital" "team" "thesis"'
+
+    # ── Series A / B ─────────────────────────────────────────
+    - '"series A" "venture capital firm" "team" "portfolio" -pitchbook'
+    - '"series B" "growth equity" "investment team" "contact"'
+    - '"early growth" "venture fund" "partners" "thesis"'
+    - '"growth stage" "vc fund" "team" "focus"'
+
+    # ── Sector: B2B SaaS / Dev Tools ─────────────────────────
     - '"b2b saas" "venture fund" "people" "team"'
-    - '"climate tech" "venture capital" "team"'
+    - '"developer tools" "venture capital" "team" "portfolio"'
+    - '"enterprise software" "vc fund" "partners" "contact"'
+    - '"infrastructure" "venture capital" "team" "thesis" -linkedin'
+    - '"api-first" OR "devtools" "venture fund" "team"'
+    - '"open source" "venture capital" "team" "portfolio"'
+
+    # ── Sector: AI / ML ──────────────────────────────────────
+    - '"artificial intelligence" "venture fund" "team" "portfolio" -crunchbase'
+    - '"machine learning" "vc fund" "general partner" "contact"'
+    - '"AI-focused" "venture capital" "team" "thesis"'
+    - '"deep tech" "venture fund" "partners" "portfolio"'
+    - '"foundation models" OR "generative AI" "venture capital" "team"'
+
+    # ── Sector: Climate / Sustainability ─────────────────────
+    - '"climate tech" "venture capital" "team" "portfolio"'
+    - '"cleantech" "vc fund" "partners" "contact"'
+    - '"sustainability" "venture fund" "team" "thesis"'
+    - '"energy transition" "venture capital" "team" "invest"'
+    - '"climate fund" "general partner" "portfolio" "contact"'
+
+    # ── Sector: Health / Bio ─────────────────────────────────
     - '"healthtech" "vc fund" "team" "focus"'
-    - '"fintech" "early stage fund" "contact"'
+    - '"digital health" "venture capital" "team" "portfolio"'
+    - '"biotech" "venture fund" "partners" "contact" -crunchbase'
+    - '"life sciences" "vc fund" "team" "thesis"'
+    - '"medtech" "venture capital" "general partner" "portfolio"'
+    - '"mental health" "venture fund" "team" "invest"'
+
+    # ── Sector: Fintech ──────────────────────────────────────
+    - '"fintech" "early stage fund" "contact" "team"'
+    - '"financial technology" "venture capital" "team" "portfolio"'
+    - '"insurtech" "venture fund" "partners" "thesis"'
+    - '"crypto" "venture capital" "team" "portfolio" -directory'
+    - '"web3" "venture fund" "team" "contact" -linkedin'
+    - '"defi" "venture capital" "general partner" "portfolio"'
+
+    # ── Sector: Consumer / Marketplace ───────────────────────
+    - '"consumer tech" "venture fund" "team" "portfolio"'
+    - '"marketplace" "venture capital" "team" "thesis"'
+    - '"future of work" "vc fund" "partners" "contact"'
+    - '"edtech" "venture capital" "team" "portfolio"'
+    - '"proptech" "venture fund" "team" "contact"'
+    - '"foodtech" OR "agtech" "venture capital" "team"'
+
+    # ── Sector: Defense / Dual-Use ───────────────────────────
+    - '"defense tech" "venture capital" "team" "portfolio"'
+    - '"national security" "venture fund" "partners" "contact"'
+    - '"dual-use" "venture capital" "team" "thesis"'
+
+    # ── Geography: US Cities ─────────────────────────────────
+    - 'intitle:"team" "venture capital" "san francisco" "portfolio"'
+    - 'intitle:"team" "venture capital" "new york" "portfolio"'
+    - 'intitle:"team" "venture capital" "boston" "portfolio"'
+    - 'intitle:"team" "venture capital" "austin" "portfolio"'
+    - 'intitle:"team" "venture capital" "los angeles" "portfolio"'
+    - 'intitle:"team" "venture capital" "chicago" "portfolio"'
+    - 'intitle:"team" "venture capital" "seattle" "portfolio"'
+    - 'intitle:"team" "venture capital" "miami" "portfolio"'
+
+    # ── Geography: International ──────────────────────────────
+    - '"venture capital" "team" "london" "portfolio" "contact"'
+    - '"venture capital" "team" "berlin" "portfolio" "contact"'
+    - '"venture capital" "team" "tel aviv" "portfolio" "contact"'
+    - '"venture capital" "team" "toronto" "portfolio" "contact"'
+    - '"venture capital" "team" "singapore" "portfolio" "contact"'
+    - '"venture capital" "team" "paris" "portfolio" "contact"'
+
+    # ── Fund Type ────────────────────────────────────────────
+    - '"family office" "venture investments" "team" "contact"'
+    - '"corporate venture" "team" "portfolio" "contact"'
+    - '"university fund" OR "endowment fund" "venture" "team"'
+    - '"operator fund" "venture capital" "team" "thesis"'
+    - '"solo gp" "venture fund" "portfolio" "contact"'
+    - '"emerging manager" "venture fund" "team" "thesis"'
+    - '"fund of funds" "venture capital" "team" "contact"'
 
   # Domains to explicitly discard (aggregators, directories, social networks)
   ignore_domains:

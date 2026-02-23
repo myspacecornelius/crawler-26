@@ -94,10 +94,7 @@ class Searcher:
             browser = await p.chromium.launch(headless=False)
             fp = self.fingerprints.generate()
             ctx = await browser.new_context(
-                user_agent=fp["user_agent"],
-                viewport=fp["viewport"],
-                timezone_id=fp["timezone_id"],
-                locale="en-US"
+                **self.fingerprints.get_context_kwargs(fp)
             )
             page = await ctx.new_page()
             await self.fingerprints.apply_js_overrides(page)

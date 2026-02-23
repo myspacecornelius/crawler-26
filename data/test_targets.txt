@@ -1,0 +1,6 @@
+# Test targets for deep crawl coverage validation
+https://a16z.com
+https://www.sequoiacap.com
+https://greylock.com
+https://benchmark.com
+https://www.accel.com
