@@ -96,7 +96,9 @@ class GoogleDorker:
                     if resp.status == 429:
                         self._stats["rate_limited"] += 1
                         logger.warning("  ⚠️  Google rate-limited, backing off...")
-                        await asyncio.sleep(random.uniform(30, 60))
+                        # If we have a serp api key, we just fall through and let SERPAPI handle it
+                        if not self._serpapi_key:
+                            await asyncio.sleep(random.uniform(10, 20))
                         return ""
                     if resp.status != 200:
                         return ""
@@ -150,12 +152,14 @@ class GoogleDorker:
         for query in queries:
             self._stats["queries_made"] += 1
 
-            # Try direct Google first
-            html = await self._google_search(query, session)
-
-            if not html and self._serpapi_key:
-                # Fallback to SerpAPI
+            html = ""
+            # Prefer SERPAPI when key is available (avoids Google rate-limits entirely)
+            if self._serpapi_key:
                 html = await self._serpapi_search(query, session)
+
+            # Fall back to direct Google scrape only if no SERPAPI key or it returned nothing
+            if not html:
+                html = await self._google_search(query, session)
 
             if html:
                 found = _extract_emails_from_text(html, domain)

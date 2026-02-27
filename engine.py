@@ -45,6 +45,17 @@ from sources.http_discovery import http_discover
 from deep_crawl import DeepCrawler
 from enrichment.portfolio_scraper import PortfolioScraper
 from enrichment.incremental import CrawlStateManager, update_lead_freshness_in_db
+from dotenv import load_dotenv
+load_dotenv()  # .env → os.environ (SERPAPI_KEY, GITHUB_TOKEN, etc.)
+
+from enrichment.google_dorker import GoogleDorker
+from enrichment.github_miner import GitHubMiner
+from enrichment.sec_edgar import SECEdgarScraper
+from enrichment.wayback_enricher import WaybackEnricher
+from enrichment.dns_harvester import DNSHarvester
+from enrichment.catchall_detector import CatchAllDetector
+from enrichment.gravatar_oracle import GravatarOracle
+from enrichment.pgp_keyserver import PGPKeyserverScraper
 
 
 # ──────────────────────────────────────────────────
@@ -480,12 +491,19 @@ class CrawlEngine:
             if lead.email_status == "unknown" and lead.email and lead.email != "N/A" and "@" in lead.email:
                 lead.email_status = "guessed"
 
-        # Total email summary
+        # Total email summary (post-guesser)
         total_emails = sum(
             1 for lead in self.all_leads
             if lead.email and lead.email != "N/A" and "@" in lead.email
         )
         print(f"  📧  TOTAL emails: {total_emails}/{len(self.all_leads)} ({100*total_emails//len(self.all_leads) if self.all_leads else 0}%)")
+
+        # ── Greyhat enrichment (Google Dorking, GitHub, SEC EDGAR, Wayback) ──
+        if not getattr(self.args, 'skip_greyhat', False):
+            await self._run_greyhat_enrichment()
+        else:
+            print("  ⏭️  Greyhat enrichment skipped (--skip-greyhat)")
+
 
         # ── SMTP batch verification (on by default, skip with --skip-smtp) ──
         if not getattr(self.args, 'skip_smtp', False):
@@ -528,6 +546,7 @@ class CrawlEngine:
         print("  📊  Scoring leads...")
         self.all_leads = self.scorer.score_batch(self.all_leads)
 
+
         # ── Delta detection ──
         deltas = self.csv_writer.detect_deltas(self.all_leads)
 
@@ -546,6 +565,130 @@ class CrawlEngine:
             )
         else:
             print("\n  🧪  DRY RUN — no files written")
+
+    async def _run_greyhat_enrichment(self):
+        """
+        Run all greyhat email enrichment modules in sequence:
+          1. Google Dorking  — leaked emails on third-party pages
+          2. GitHub Miner    — commit author emails
+          3. SEC EDGAR       — regulatory filing emails
+          4. Wayback Machine — archived fund team pages
+        Each module only touches leads that still have no email.
+        """
+        print(f"\n{'='*60}")
+        print("  🕵️  GREYHAT ENRICHMENT")
+        print(f"{'='*60}\n")
+
+        missing_before = sum(
+            1 for lead in self.all_leads
+            if not lead.email or lead.email in ("N/A", "N/A (invalid)")
+        )
+        print(f"  ℹ️  {missing_before} leads still need emails — running greyhat modules...")
+
+        # ── 0. DNS Harvester ───────────────────────────────────────────────
+        print("  🗄️  Phase 0: DNS Record Harvesting...")
+        dns_harvester = DNSHarvester()
+        self.all_leads = await dns_harvester.enrich_batch(self.all_leads)
+        dns_stats = dns_harvester.stats
+        print(
+            f"  🗄️  DNS: {dns_stats['leads_enriched']} enriched, "
+            f"{dns_stats['emails_found']} emails found, "
+            f"{dns_stats['domains_queried']} domains queried"
+        )
+        
+        # ── 1. Google Dorking ──────────────────────────────────────────────
+        print("  🔍  Phase 1: Google Dorking...")
+        dorker = GoogleDorker(concurrency=3)
+        self.all_leads = await dorker.enrich_batch(self.all_leads)
+        gs = dorker.stats
+        print(
+            f"  🔍  Dorker: {gs['leads_enriched']} enriched, "
+            f"{gs['emails_found']} emails, "
+            f"{gs['queries_made']} queries"
+        )
+
+        # ── 2. Gravatar Oracle ──────────────────────────────────────────────
+        print("  👻  Phase 2: Gravatar Email Confirmation...")
+        gravatar = GravatarOracle(concurrency=50)
+        self.all_leads = await gravatar.enrich_batch(self.all_leads)
+        grav_s = gravatar.stats
+        print(
+            f"  👻  Gravatar: {grav_s['emails_confirmed']} confirmed "
+            f"out of {grav_s['candidates_probed']} probes"
+        )
+
+        # ── 3. PGP Keyserver Scraping ──────────────────────────────────────
+        print("  🔑  Phase 3: PGP Keyserver Search...")
+        pgp = PGPKeyserverScraper(concurrency=10)
+        self.all_leads = await pgp.enrich_batch(self.all_leads)
+        pgp_s = pgp.stats
+        print(
+            f"  🔑  PGP: {pgp_s['leads_enriched']} enriched, "
+            f"{pgp_s['emails_extracted']} emails extracted "
+            f"({pgp_s['keyservers_queried']} queries)"
+        )
+
+        # ── 4. GitHub Commit Mining ────────────────────────────────────────
+        print("  🐙  Phase 4: GitHub Commit Mining...")
+        miner = GitHubMiner(concurrency=10)
+        self.all_leads = await miner.enrich_batch(self.all_leads)
+        ghs = miner.stats
+        print(
+            f"  🐙  GitHub: {ghs['leads_enriched']} enriched, "
+            f"{ghs['emails_found']} emails, "
+            f"{ghs['commits_inspected']} commits scanned"
+        )
+
+        # ── 5. SEC EDGAR ───────────────────────────────────────────────────
+        print("  📋  Phase 5: SEC EDGAR Filings...")
+        edgar = SECEdgarScraper()
+        self.all_leads = await edgar.enrich_batch(self.all_leads)
+        es = edgar.stats
+        print(
+            f"  📋  EDGAR: {es['leads_enriched']} enriched, "
+            f"{es['emails_found']} emails, "
+            f"{es['domains_searched']} domains searched"
+        )
+
+        # ── 6. Wayback Machine ─────────────────────────────────────────────
+        print("  🕰️  Phase 6: Wayback Machine Snapshots...")
+        wayback = WaybackEnricher()
+        self.all_leads = await wayback.enrich_batch(self.all_leads)
+        ws = wayback.stats
+        print(
+            f"  🕰️  Wayback: {ws['leads_enriched']} enriched, "
+            f"{ws['emails_found']} emails, "
+            f"{ws['snapshots_fetched']} snapshots fetched"
+        )
+
+        # ── 7. Catch-All & JS Scraper ──────────────────────────────────────
+        print("  🛑  Phase 7: Catch-All Detection & JS Scraping...")
+        # Note: Set browser timeout lower than default for engine speed
+        catchall = CatchAllDetector(browser_timeout=15000)
+        self.all_leads = await catchall.enrich_batch(self.all_leads)
+        cs = catchall.stats
+        print(
+            f"  🛑  Catch-All/JS: {cs['leads_enriched_catchall']} catch-all enriched, "
+            f"{cs['leads_enriched_js']} JS-scraped "
+            f"({cs['catchall_domains']} catch-all domains detected)"
+        )
+
+        # ── Summary ────────────────────────────────────────────────────────
+        missing_after = sum(
+            1 for lead in self.all_leads
+            if not lead.email or lead.email in ("N/A", "N/A (invalid)")
+        )
+        recovered = missing_before - missing_after
+        print(
+            f"\n  ✅  Greyhat enrichment complete: "
+            f"{recovered} emails recovered "
+            f"({missing_before} → {missing_after} missing)"
+        )
+        # Mark any newly-found emails not yet tagged
+        for lead in self.all_leads:
+            if lead.email_status == "unknown" and lead.email and lead.email not in ("N/A", "N/A (invalid)") and "@" in lead.email:
+                lead.email_status = "greyhat"
+
 
     def _print_banner(self):
         print()
@@ -641,6 +784,11 @@ def parse_args():
         "--skip-smtp", action="store_true",
         help="Skip SMTP deliverability checks on emails (faster but less accurate)",
     )
+    parser.add_argument(
+        "--skip-greyhat", action="store_true",
+        help="Skip greyhat enrichment (Google Dorking, GitHub, SEC EDGAR, Wayback Machine)",
+    )
+
     parser.add_argument(
         "--portfolio", action="store_true",
         help="Scrape portfolio pages from fund websites to extract portfolio companies",
