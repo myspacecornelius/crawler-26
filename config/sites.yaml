@@ -53,7 +53,7 @@ sites:
       click_delay_ms: 1500
 
   visible_vc:
-    enabled: false  # DISABLED: selectors not verified against live HTML
+    enabled: false # DISABLED: selectors not verified against live HTML
     url: "https://visible.vc/investors"
     adapter: "visible_vc"
     description: "Visible.vc — public investor directory, no login required"
@@ -76,7 +76,7 @@ sites:
       click_delay_ms: 2000
 
   landscape_vc:
-    enabled: false  # DISABLED: selectors not verified against live HTML
+    enabled: false # DISABLED: selectors not verified against live HTML
     url: "https://landscape.vc/investors"
     adapter: "landscape_vc"
     description: "Landscape.vc — filterable VC directory"
@@ -98,7 +98,7 @@ sites:
       max_pages: 50
 
   wellfound:
-    enabled: false  # DISABLED: requires login, 0 cards in test run
+    enabled: false # DISABLED: requires login, 0 cards in test run
     url: "https://wellfound.com/investors"
     adapter: "wellfound"
     description: "Wellfound (AngelList) — large angel/VC investor database"
@@ -121,32 +121,49 @@ sites:
       load_indicator: ".loading, [data-test='loading']"
 
   signal_nfx:
-    enabled: false
-    url: "https://signal.nfx.com/investors"
-    adapter: "signal"
-    description: "NFX Signal — requires login (disabled until auth flow built)"
+    enabled: false # Enable when ready to scrape
+    url: "https://signal.nfx.com/investor-lists"
+    adapter: "signal_nfx"
+    description: "NFX Signal — high-quality VC directory"
     selectors:
-      card: ".investor-row"
-      name: ".investor-name a"
+      card: ".investor-row, .investor-card, [class*='investor']"
+      name: "h3.investor-name, .name, h3"
       email: ""
-      role: ".investor-role"
-      fund: ".fund-name"
-      focus_areas: ".market-tags .tag"
-      stage: ".stage"
-      check_size: ".check-size"
-      location: ".location"
-      linkedin: "a[href*='linkedin.com']"
-      website: ""
+      role: ".title, .role, .position"
+      fund: ".org-name, .fund-name, .subtitle"
+      focus_areas: ".tag, .chip, .sector-tag"
+      stage: ".stage, .stage-tag"
+      check_size: ""
+      location: ".location, .city"
+      linkedin: "a[href*='linkedin.com/in']"
+      website: "a[href*='http']:not([href*='linkedin']):not([href*='signal.nfx'])"
+    pagination:
+      type: "load_more_button"
+      button_selector: "button.load-more, button:has-text('Load More'), a.next-page"
+      max_clicks: 50
+      click_delay_ms: 2000
+
+  crunchbase:
+    enabled: false # Enable when ready to scrape (free tier)
+    url: "https://www.crunchbase.com/discover/organization.investors"
+    adapter: "crunchbase"
+    description: "Crunchbase — free tier org/person pages for investor data"
+    selectors:
+      card: ".component--grid-row, [class*='GridRow'], tr[data-entity]"
+      name: ".person-name, .identifier-label, h3"
+      email: ""
+      role: ".person-title, .role, .title"
+      fund: ".organization-name, .org-link, .company"
+      focus_areas: ".category-tag, .industry-tag"
+      stage: ""
+      check_size: ""
+      location: ".location, .headquarters"
+      linkedin: "a[href*='linkedin.com/in']"
+      website: "a[class*='homepage'], a[href*='http']:not([href*='crunchbase']):not([href*='linkedin'])"
     pagination:
       type: "numbered_pages"
-      next_button: "a.next-page"
-      max_pages: 50
-    auth:
-      required: true
-      login_url: "https://signal.nfx.com/login"
-      email_field: "input[name='email']"
-      password_field: "input[name='password']"
-      submit_button: "button[type='submit']"
+      next_button: "a[rel='next'], button.next-page, [class*='pagination'] a:last-child"
+      max_pages: 30
 
 # ──────────────────────────────────────────────────
 #  Global Defaults

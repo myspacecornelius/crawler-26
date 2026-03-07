@@ -5,7 +5,7 @@ Pydantic schemas for API request/response validation.
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from uuid import UUID
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 # ── Auth ─────────────────────────────────────────
@@ -33,8 +33,7 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TokenResponse(BaseModel):
@@ -66,8 +65,7 @@ class CampaignResponse(BaseModel):
     completed_at: Optional[datetime]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CampaignList(BaseModel):
@@ -99,8 +97,7 @@ class LeadResponse(BaseModel):
     opted_out: bool = False
     scraped_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     @classmethod
     def model_validate(cls, obj, **kwargs):
@@ -158,8 +155,7 @@ class CreditTransaction(BaseModel):
     balance_after: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ── API Keys ────────────────────────────────────
@@ -182,8 +178,7 @@ class ApiKeyListItem(BaseModel):
     created_at: datetime
     last_used: Optional[datetime]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ── Verticals ───────────────────────────────────
@@ -216,8 +211,7 @@ class BillingHistoryItem(BaseModel):
     balance_after: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BillingHistory(BaseModel):
@@ -249,8 +243,7 @@ class PortfolioCompanyResponse(BaseModel):
     year: Optional[int]
     scraped_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PortfolioCompanyList(BaseModel):

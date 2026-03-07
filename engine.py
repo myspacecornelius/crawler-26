@@ -31,6 +31,8 @@ from adapters.angelmatch import AngelMatchAdapter
 from adapters.visible_vc import VisibleVCAdapter
 from adapters.landscape_vc import LandscapeVCAdapter
 from adapters.wellfound import WellfoundAdapter
+from adapters.signal_nfx import SignalNFXAdapter
+from adapters.crunchbase import CrunchbaseAdapter
 from stealth.fingerprint import FingerprintManager
 from stealth.behavior import HumanBehavior
 from stealth.proxy import ProxyManager
@@ -42,9 +44,12 @@ from output.webhook import WebhookNotifier
 from discovery.searcher import Searcher
 from sources.aggregator import SourceAggregator, generate_target_funds
 from sources.http_discovery import http_discover
+from discovery.multi_searcher import multi_discover
 from deep_crawl import DeepCrawler
 from enrichment.portfolio_scraper import PortfolioScraper
 from enrichment.incremental import CrawlStateManager, update_lead_freshness_in_db
+from enrichment.dedup import LeadDeduplicator
+from enrichment.email_waterfall import EmailWaterfall
 
 
 # ──────────────────────────────────────────────────
@@ -57,9 +62,8 @@ ADAPTER_MAP = {
     "visible_vc": VisibleVCAdapter,
     "landscape_vc": LandscapeVCAdapter,
     "wellfound": WellfoundAdapter,
-    # Add new adapters here as you build them:
-    # "signal": SignalAdapter,
-    # "crunchbase": CrunchbaseAdapter,
+    "signal_nfx": SignalNFXAdapter,
+    "crunchbase": CrunchbaseAdapter,
 }
 
 
@@ -100,17 +104,29 @@ class CrawlEngine:
             return yaml.safe_load(f)
 
     async def _run_discovery(self):
-        """Run HTTP-based discovery and save results to data/target_funds.txt."""
-        print("\n  🔍  DISCOVERY MODE — finding VC domains via HTTP search...")
+        """Run multi-engine discovery and save results to data/target_funds.txt."""
+        print("\n  🔍  DISCOVERY MODE — finding VC domains via multi-engine search...")
         import yaml
         with open("config/search.yaml") as f:
             search_config = yaml.safe_load(f).get("discovery", {})
 
         queries = search_config.get("queries", [])
-        target_count = search_config.get("target_domains_count", 500)
+        target_count = search_config.get("target_domains_count", 2000)
         ignore = set(search_config.get("ignore_domains", []))
+        engine_config = search_config.get("engines", {})
 
-        domains = await http_discover(queries, target_count=target_count, ignore_domains=ignore)
+        # Use multi-engine discovery if engines are configured, otherwise fallback
+        if engine_config:
+            domains = await multi_discover(
+                queries,
+                target_count=target_count,
+                ignore_domains=ignore,
+                engine_config=engine_config,
+            )
+        else:
+            domains = await http_discover(
+                queries, target_count=target_count, ignore_domains=ignore,
+            )
 
         target_file = Path("data/target_funds.txt")
         target_file.parent.mkdir(parents=True, exist_ok=True)
@@ -441,6 +457,10 @@ class CrawlEngine:
             print(f"  🚫  Filtered {filtered_out} fund-level rows (name == fund name)")
         print(f"  👤  {len(self.all_leads)} person-level leads remaining")
 
+        # ── Cross-run deduplication ──
+        dedup = LeadDeduplicator()
+        self.all_leads = dedup.deduplicate(self.all_leads)
+
         # ── Email validation (with MX verification) ──
         print(f"  📧  Validating {len(self.all_leads)} emails (+ MX check)...")
         emails = [lead.email for lead in self.all_leads]
@@ -523,6 +543,13 @@ class CrawlEngine:
                       f"{catch_all} catch-all, {unknown} unknown")
         else:
             print("  ⏭️  SMTP verification skipped (--skip-smtp)")
+
+        # ── Email waterfall verification (for inconclusive emails) ──
+        waterfall = EmailWaterfall()
+        if waterfall.providers:
+            self.all_leads = await waterfall.verify_batch(self.all_leads)
+        else:
+            print("  ⏭️  Email waterfall skipped (no API keys configured)")
 
         # ── Lead scoring ──
         print("  📊  Scoring leads...")

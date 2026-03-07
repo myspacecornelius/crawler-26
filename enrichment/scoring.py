@@ -90,6 +90,9 @@ class LeadScorer:
         # Role-based modifier
         total += self._score_role(lead.role)
 
+        # Engagement signals (dedup frequency, verified status, multi-channel)
+        total += self._score_engagement(lead)
+
         # Stale fund modifier (applied when scraped_at is old or missing)
         if self._is_stale(lead.scraped_at):
             total += self.modifiers.get("stale_fund", -10)
@@ -271,6 +274,37 @@ class LeadScorer:
 
         # Unrecognized role — no modifier
         return role_weights.get("unknown", 0)
+
+    def _score_engagement(self, lead) -> int:
+        """
+        Score engagement signals that indicate a more actionable lead.
+        Higher engagement = more likely to get a response.
+        """
+        score = 0
+
+        # Verified email is a strong signal
+        email_status = getattr(lead, 'email_status', 'unknown')
+        if email_status == 'verified':
+            score += 5
+        elif email_status == 'catch_all':
+            score += 2
+
+        # Seen across multiple crawl runs = persistent, reliable data
+        times_seen = getattr(lead, 'times_seen', 1)
+        if times_seen >= 3:
+            score += 3
+        elif times_seen >= 2:
+            score += 1
+
+        # Has both email AND LinkedIn = full contact profile
+        has_email = (getattr(lead, 'email', 'N/A') not in ('N/A', '', None)
+                     and '@' in getattr(lead, 'email', ''))
+        has_linkedin = (getattr(lead, 'linkedin', 'N/A') not in ('N/A', '', None)
+                        and 'linkedin' in getattr(lead, 'linkedin', ''))
+        if has_email and has_linkedin:
+            score += 2
+
+        return score
 
     def _is_stale(self, scraped_at: str) -> bool:
         """Return True if the lead's scraped_at timestamp is older than 60 days."""

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Known GitHub raw URLs containing curated VC lists
 GITHUB_SOURCES = [
+    # ── Original sources ──
     {
         "name": "awesome-vc (mckaywrigley)",
         "url": "https://raw.githubusercontent.com/mckaywrigley/awesome-vc/main/README.md",
@@ -28,6 +29,43 @@ GITHUB_SOURCES = [
     {
         "name": "vc-firms (jbkunst)",
         "url": "https://raw.githubusercontent.com/jbkunst/vc-firms/main/README.md",
+    },
+    # ── Expanded sources ──
+    {
+        "name": "awesome-vc-list (govc)",
+        "url": "https://raw.githubusercontent.com/govc/awesome-vc/main/README.md",
+    },
+    {
+        "name": "startup-investors (codingforentrepreneurs)",
+        "url": "https://raw.githubusercontent.com/codingforentrepreneurs/startup-investors/main/README.md",
+    },
+    {
+        "name": "global-vc-list (dbreunig)",
+        "url": "https://raw.githubusercontent.com/dbreunig/venture-capital/master/README.md",
+    },
+    {
+        "name": "european-vc-list",
+        "url": "https://raw.githubusercontent.com/nicbou/european-vc/main/README.md",
+    },
+    {
+        "name": "awesome-crypto-vc",
+        "url": "https://raw.githubusercontent.com/nicklockwood/awesome-crypto-vc/main/README.md",
+    },
+    {
+        "name": "awesome-climate-vc",
+        "url": "https://raw.githubusercontent.com/elainesfolder/awesome-climate-vc/main/README.md",
+    },
+    {
+        "name": "vc-list-usa (founder-resources)",
+        "url": "https://raw.githubusercontent.com/founder-resources/vc-database/main/README.md",
+    },
+    {
+        "name": "seed-vc-list",
+        "url": "https://raw.githubusercontent.com/seed-vc/awesome-seed-vc/main/README.md",
+    },
+    {
+        "name": "women-led-vc",
+        "url": "https://raw.githubusercontent.com/gogirl-vc/women-led-vc/main/README.md",
     },
 ]
 

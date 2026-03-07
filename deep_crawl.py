@@ -11,7 +11,7 @@ import random
 import re
 import logging
 from urllib.parse import urlparse, urljoin
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 
 from playwright.async_api import async_playwright, Page, Browser
@@ -36,7 +36,11 @@ logger = logging.getLogger(__name__)
 TEAM_PAGE_KEYWORDS = [
     "team", "people", "about", "who-we-are", "our-team",
     "partners", "leadership", "staff", "investors", "bios",
-    "professionals", "portfolio-team", "our-people", "meet-the-team"
+    "professionals", "portfolio-team", "our-people", "meet-the-team",
+    # Contact pages — often have general emails and sometimes team contacts
+    "contact", "connect", "reach-out", "get-in-touch",
+    # Management/exec pages
+    "management", "executives", "board-of-directors", "advisory-board",
 ]
 
 # Words that indicate a person's role
@@ -205,6 +209,91 @@ def _match_email_to_name(email: str, name: str) -> float:
     if last in local:
         return 0.5
     return 0.0
+
+
+def extract_structured_data(soup: BeautifulSoup) -> List[Dict[str, str]]:
+    """
+    Extract contact data from JSON-LD / Schema.org Person markup.
+    Returns a list of dicts with keys: name, role, email, linkedin.
+    This provides high-confidence structured data when available.
+    """
+    import json as _json
+    contacts = []
+
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            raw = script.string or ""
+            if not raw.strip():
+                continue
+            data = _json.loads(raw)
+            items = data if isinstance(data, list) else [data]
+
+            for item in items:
+                _type = item.get("@type", "")
+
+                # Direct Person objects
+                if _type == "Person":
+                    person = _extract_person_from_ld(item)
+                    if person:
+                        contacts.append(person)
+
+                # Organization with members/employees
+                elif _type in ("Organization", "Corporation", "LocalBusiness"):
+                    for member in item.get("member", []) + item.get("employee", []):
+                        if isinstance(member, dict) and member.get("@type") == "Person":
+                            person = _extract_person_from_ld(member)
+                            if person:
+                                contacts.append(person)
+
+                # @graph arrays
+                if "@graph" in item:
+                    for node in item["@graph"]:
+                        if isinstance(node, dict) and node.get("@type") == "Person":
+                            person = _extract_person_from_ld(node)
+                            if person:
+                                contacts.append(person)
+
+        except (_json.JSONDecodeError, TypeError, KeyError):
+            continue
+
+    return contacts
+
+
+def _extract_person_from_ld(item: dict) -> Optional[Dict[str, str]]:
+    """Extract a person dict from a JSON-LD Person object."""
+    name = item.get("name", "").strip()
+    if not name or len(name) < 3:
+        return None
+
+    email = item.get("email", "N/A")
+    if email and email != "N/A":
+        # Clean up mailto: prefix
+        email = email.replace("mailto:", "").strip()
+
+    role = item.get("jobTitle", "") or item.get("title", "") or ""
+
+    # LinkedIn from sameAs
+    linkedin = "N/A"
+    same_as = item.get("sameAs", [])
+    if isinstance(same_as, str):
+        same_as = [same_as]
+    for url in same_as:
+        if isinstance(url, str) and "linkedin.com/in/" in url:
+            linkedin = url
+            break
+
+    # Also check url field
+    if linkedin == "N/A":
+        person_url = item.get("url", "")
+        if isinstance(person_url, str) and "linkedin.com/in/" in person_url:
+            linkedin = person_url
+
+    return {
+        "name": name,
+        "role": role,
+        "email": email,
+        "linkedin": linkedin,
+    }
 
 
 def extract_linkedin_urls(soup: BeautifulSoup) -> List[str]:
@@ -607,6 +696,67 @@ class DeepCrawler:
 
         return targets
 
+    async def _check_sitemap(self, base_url: str) -> List[str]:
+        """
+        Check /sitemap.xml and /robots.txt for team/about page URLs.
+        Much faster than crawling the homepage and scanning links.
+        Uses aiohttp (no browser needed).
+        """
+        import xml.etree.ElementTree as ET
+        import aiohttp
+
+        team_urls = set()
+        sitemap_urls = [urljoin(base_url, "/sitemap.xml")]
+
+        # Check robots.txt for sitemap locations
+        try:
+            async with aiohttp.ClientSession() as session:
+                robots_url = urljoin(base_url, "/robots.txt")
+                async with session.get(
+                    robots_url,
+                    timeout=aiohttp.ClientTimeout(total=5),
+                    headers={"User-Agent": "Mozilla/5.0"},
+                ) as resp:
+                    if resp.status == 200:
+                        text = await resp.text()
+                        for line in text.splitlines():
+                            if line.lower().startswith("sitemap:"):
+                                sm_url = line.split(":", 1)[1].strip()
+                                if sm_url.startswith("http"):
+                                    sitemap_urls.append(sm_url)
+        except Exception:
+            pass
+
+        # Parse sitemaps
+        try:
+            async with aiohttp.ClientSession() as session:
+                for sm_url in sitemap_urls[:3]:  # Cap at 3 sitemaps
+                    try:
+                        async with session.get(
+                            sm_url,
+                            timeout=aiohttp.ClientTimeout(total=8),
+                            headers={"User-Agent": "Mozilla/5.0"},
+                        ) as resp:
+                            if resp.status != 200:
+                                continue
+                            xml_text = await resp.text()
+                            root = ET.fromstring(xml_text)
+                            # Handle both sitemap index and urlset
+                            ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+                            for loc in root.findall('.//sm:loc', ns) + root.findall('.//loc'):
+                                url = (loc.text or "").strip()
+                                if url and is_team_page_url(url):
+                                    team_urls.add(url)
+                    except Exception:
+                        continue
+        except Exception:
+            pass
+
+        if team_urls:
+            logger.info(f"  🗺️ Sitemap: found {len(team_urls)} team pages")
+
+        return list(team_urls)
+
     async def _find_team_pages(self, page: Page, base_url: str) -> List[str]:
         """Scan homepage for links to team/about pages."""
         team_urls = set()
@@ -651,6 +801,25 @@ class DeepCrawler:
             emails = extract_emails_from_html(soup, page_text)
             linkedin_urls = extract_linkedin_urls(soup)
             name_roles = extract_name_role_pairs(soup)
+
+            # ── JSON-LD structured data (highest confidence) ──
+            structured = extract_structured_data(soup)
+            structured_names = set()
+            for sd in structured:
+                structured_names.add(sd["name"].lower().strip())
+                # Check if this person is already in name_roles
+                already_found = any(
+                    p["name"].lower().strip() == sd["name"].lower().strip()
+                    for p in name_roles
+                )
+                if not already_found:
+                    name_roles.append({"name": sd["name"], "role": sd["role"]})
+                if sd.get("email") and sd["email"] != "N/A":
+                    emails.append(sd["email"])
+                if sd.get("linkedin") and sd["linkedin"] != "N/A":
+                    linkedin_urls.append(sd["linkedin"])
+            if structured:
+                logger.info(f"  📋 JSON-LD: found {len(structured)} Person objects on {url}")
 
             # Build contact objects
             for pair in name_roles:
@@ -758,12 +927,197 @@ class DeepCrawler:
 
         return contacts
 
+    async def _find_bio_links(self, page: Page, base_url: str, contacts: List[InvestorLead]) -> List[dict]:
+        """
+        Detect individual bio/profile page links from a team page.
+        Returns a list of {"url": str, "name": str} for each bio link found.
+        """
+        bio_links = []
+        try:
+            html = await page.content()
+            soup = BeautifulSoup(html, "html.parser")
+            base_netloc = urlparse(base_url).netloc
+
+            # Build a name lookup for matching
+            contact_names = {c.name.lower().strip() for c in contacts if c.name != "Unknown"}
+
+            # Strategy 1: Links whose text or nearby text matches a known contact name
+            for a in soup.find_all("a", href=True):
+                href = a["href"]
+                full_url = urljoin(base_url, href)
+
+                # Skip external links
+                if urlparse(full_url).netloc != base_netloc:
+                    continue
+                # Skip team page links (we already crawled those)
+                if is_team_page_url(full_url):
+                    continue
+                # Skip anchors, javascript, and obvious non-bio paths
+                if href.startswith("#") or href.startswith("javascript:"):
+                    continue
+                if any(skip in href.lower() for skip in [
+                    "/career", "/jobs", "/portfolio", "/contact", "/blog",
+                    "/news", "/press", "/privacy", "/terms", "/login",
+                    "/sign", "/apply", ".pdf", ".jpg", ".png",
+                ]):
+                    continue
+
+                # Check if link text matches a contact name
+                link_text = a.get_text(strip=True).lower()
+                matched_name = None
+                for name in contact_names:
+                    if name in link_text or link_text in name:
+                        matched_name = name
+                        break
+
+                # Also check if the URL path contains a name-like slug
+                if not matched_name:
+                    path_lower = urlparse(full_url).path.lower()
+                    for name in contact_names:
+                        # Convert "John Smith" to "john-smith" or "johnsmith"
+                        slug_dash = name.replace(" ", "-")
+                        slug_none = name.replace(" ", "")
+                        if slug_dash in path_lower or slug_none in path_lower:
+                            matched_name = name
+                            break
+
+                if matched_name and full_url not in {b["url"] for b in bio_links}:
+                    bio_links.append({"url": full_url, "name": matched_name})
+
+            # Strategy 2: Look for common bio page URL patterns
+            BIO_PATH_KEYWORDS = ["/bio/", "/profile/", "/member/", "/person/",
+                                  "/staff/", "/our-team/", "/people/"]
+            for a in soup.find_all("a", href=True):
+                href = a["href"]
+                full_url = urljoin(base_url, href)
+                if urlparse(full_url).netloc != base_netloc:
+                    continue
+                path = urlparse(full_url).path.lower()
+                if any(kw in path for kw in BIO_PATH_KEYWORDS):
+                    # Must have additional path segments (not just /people/ itself)
+                    segments = [s for s in path.split("/") if s]
+                    if len(segments) >= 2 and full_url not in {b["url"] for b in bio_links}:
+                        bio_links.append({"url": full_url, "name": a.get_text(strip=True).lower()})
+
+        except Exception as e:
+            logger.debug(f"  Bio link detection error: {e}")
+
+        return bio_links
+
+    async def _enrich_from_bio_pages(
+        self, page: Page, bio_links: List[dict],
+        contacts: List[InvestorLead], fund_name: str, fund_url: str,
+    ) -> List[InvestorLead]:
+        """
+        Follow individual bio page links to enrich existing contacts with
+        richer data: direct email, LinkedIn, full bio text.
+        Also discovers new contacts not found on the team listing page.
+        """
+        visited = 0
+        enriched = 0
+        new_contacts = []
+        MAX_BIO_PAGES = 15  # Cap to avoid spending too long on one fund
+
+        for bio in bio_links[:MAX_BIO_PAGES]:
+            try:
+                await page.goto(bio["url"], wait_until="networkidle", timeout=12000)
+                await asyncio.sleep(0.8)
+
+                title = await page.title()
+                if "404" in title.lower() or "not found" in title.lower():
+                    continue
+
+                visited += 1
+                html = await page.content()
+                soup = BeautifulSoup(html, "html.parser")
+                page_text = soup.get_text(separator=" ")
+
+                # Extract data from bio page
+                emails = extract_emails_from_html(soup, page_text)
+                linkedin_urls = extract_linkedin_urls(soup)
+
+                # Try JSON-LD structured data on bio pages
+                structured_email = None
+                structured_role = None
+                for script in soup.find_all("script", type="application/ld+json"):
+                    try:
+                        import json
+                        ld = json.loads(script.string or "")
+                        items = ld if isinstance(ld, list) else [ld]
+                        for item in items:
+                            if item.get("@type") == "Person":
+                                structured_email = item.get("email")
+                                structured_role = item.get("jobTitle")
+                    except Exception:
+                        pass
+
+                # Match to existing contact
+                matched = None
+                bio_name = bio["name"]
+                for c in contacts:
+                    if c.name.lower().strip() == bio_name:
+                        matched = c
+                        break
+
+                if matched:
+                    # Enrich email
+                    if matched.email in ("N/A", "", None):
+                        if structured_email:
+                            matched.email = structured_email
+                            matched.email_status = "scraped"
+                            enriched += 1
+                        elif emails:
+                            best_email = None
+                            best_score = 0.0
+                            for email in emails:
+                                score = _match_email_to_name(email, matched.name)
+                                if score > best_score:
+                                    best_score = score
+                                    best_email = email
+                            if best_email and best_score >= 0.3:
+                                matched.email = best_email
+                                matched.email_status = "scraped"
+                                enriched += 1
+
+                    # Enrich LinkedIn
+                    if matched.linkedin in ("N/A", "", None) and linkedin_urls:
+                        name_lower = matched.name.lower().replace(" ", "")
+                        for li_url in linkedin_urls:
+                            if name_lower[:6] in li_url.lower().replace("-", ""):
+                                matched.linkedin = li_url
+                                break
+                        if matched.linkedin in ("N/A", "", None):
+                            matched.linkedin = linkedin_urls[0]  # Best guess
+
+                    # Enrich role from structured data
+                    if structured_role and matched.role in ("N/A", "", None):
+                        matched.role = structured_role
+                else:
+                    # Bio page for someone not on the team listing — new contact
+                    bio_contacts = await self._extract_from_page(
+                        page, bio["url"], fund_name, fund_url
+                    )
+                    new_contacts.extend(bio_contacts)
+
+            except Exception as e:
+                logger.debug(f"  Bio page error ({bio['url']}): {e}")
+                continue
+
+        if visited:
+            logger.info(
+                f"  🔍 Bio deep dive: visited {visited} pages, "
+                f"enriched {enriched} contacts, found {len(new_contacts)} new"
+            )
+
+        return new_contacts
+
     async def _crawl_fund(self, browser: Browser, fund_url: str) -> List[InvestorLead]:
-        """Crawl a single VC fund website with a 30s hard timeout."""
+        """Crawl a single VC fund website with a hard timeout."""
         fund_name = urlparse(fund_url).netloc.replace("www.", "").split(".")[0].title()
-        contacts = []
+        contacts = []  # ← shared with _do_crawl so partial results survive timeout
 
         async def _do_crawl():
+            nonlocal contacts
             ctx = await browser.new_context(
                 user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                            "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -781,18 +1135,31 @@ class DeepCrawler:
 
             await asyncio.sleep(random.uniform(1.0, 2.5))
 
+            # ── Sitemap-first discovery (fast, no browser) ──
+            sitemap_team_urls = await self._check_sitemap(fund_url)
+
             team_urls = await self._find_team_pages(page, fund_url)
+
+            # Merge sitemap results (deduplicated)
+            existing = set(team_urls)
+            for su in sitemap_team_urls:
+                if su not in existing:
+                    team_urls.append(su)
+                    existing.add(su)
 
             if not team_urls:
                 for path in ["/team", "/about", "/people", "/about-us", "/our-team",
                              "/leadership", "/who-we-are", "/about/team",
-                             "/partners", "/our-people"]:
+                             "/partners", "/our-people",
+                             # Contact pages
+                             "/contact", "/connect", "/get-in-touch",
+                             # Management pages
+                             "/management", "/executives"]:
                     team_urls.append(urljoin(fund_url, path))
 
             logger.info(f"  📄 Found {len(team_urls)} potential team pages")
 
-            found = []
-            for team_url in team_urls[:8]:  # Try up to 8 pages
+            for team_url in team_urls[:5]:  # Cap at 5 pages to stay within timeout
                 try:
                     await page.goto(team_url, wait_until="networkidle", timeout=15000)
                     await asyncio.sleep(1.0)  # Post-load delay for JS rendering
@@ -862,10 +1229,20 @@ class DeepCrawler:
                     except Exception:
                         pass
 
-                    found.extend(page_contacts)
+                    contacts.extend(page_contacts)
 
                     if page_contacts:
                         logger.info(f"  ✅ Extracted {len(page_contacts)} contacts from {team_url}")
+
+                    # ── Sub-page deep dive: follow individual bio links ──
+                    if page_contacts:
+                        bio_links = await self._find_bio_links(page, team_url, page_contacts)
+                        if bio_links:
+                            logger.info(f"  🔗 Found {len(bio_links)} bio page links, diving in...")
+                            new_from_bios = await self._enrich_from_bio_pages(
+                                page, bio_links, page_contacts, fund_name, fund_url
+                            )
+                            contacts.extend(new_from_bios)
 
                 except Exception as e:
                     logger.warning(f"  ⚠️ Failed to extract from {team_url}: {e}")
@@ -878,22 +1255,25 @@ class DeepCrawler:
             # Dedup contacts by name (case-insensitive) before returning
             seen_names = set()
             deduped = []
-            for c in found:
+            for c in contacts:
                 key = c.name.lower().strip()
                 if key not in seen_names:
                     seen_names.add(key)
                     deduped.append(c)
-            if len(found) != len(deduped):
-                logger.info(f"  🔄 Deduped {len(found)} → {len(deduped)} contacts for {fund_name}")
-            found = deduped
+            if len(contacts) != len(deduped):
+                logger.info(f"  🔄 Deduped {len(contacts)} → {len(deduped)} contacts for {fund_name}")
+            contacts = deduped
 
             await ctx.close()
-            return found
+            return
 
         try:
-            contacts = await asyncio.wait_for(_do_crawl(), timeout=45.0)
+            await asyncio.wait_for(_do_crawl(), timeout=120.0)
         except asyncio.TimeoutError:
-            logger.warning(f"  ⏱️ Hard timeout (45s) reached for {fund_url}, skipping")
+            logger.warning(
+                f"  ⏱️ Hard timeout (120s) reached for {fund_url}, "
+                f"keeping {len(contacts)} partial contacts"
+            )
         except Exception as e:
             logger.error(f"  ❌ Failed to crawl {fund_url}: {e}")
 
@@ -939,31 +1319,70 @@ class DeepCrawler:
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=self.headless)
 
-            # Process funds in batches to avoid overwhelming browser
+            # Process funds in adaptive batches with success-rate throttling
             batch_size = self.max_concurrent
+            min_batch = max(2, self.max_concurrent // 3)
+            max_batch = self.max_concurrent * 3
             total = len(targets)
-            for batch_start in range(0, total, batch_size):
+            batch_start = 0
+            batch_num = 0
+            total_succeeded = 0
+            total_failed = 0
+
+            while batch_start < total:
                 batch = targets[batch_start:batch_start + batch_size]
                 batch_end = min(batch_start + batch_size, total)
-                logger.info(f"  📦 Batch {batch_start // batch_size + 1}: funds {batch_start + 1}-{batch_end}/{total}")
+                batch_num += 1
+                logger.info(
+                    f"  📦 Batch {batch_num}: funds {batch_start + 1}-{batch_end}/{total} "
+                    f"(concurrency: {batch_size})"
+                )
 
                 tasks = [self._crawl_fund(browser, url) for url in batch]
                 try:
                     results = await asyncio.wait_for(
                         asyncio.gather(*tasks, return_exceptions=True),
-                        timeout=batch_size * 50.0,  # ~50s per fund in batch
+                        timeout=batch_size * 50.0,
                     )
+                    succeeded = 0
+                    failed = 0
                     for result in results:
                         if isinstance(result, list):
                             self.all_contacts.extend(result)
-                except asyncio.TimeoutError:
-                    logger.warning(f"  ⏱️ Batch timeout — moving to next batch")
+                            if result:  # Non-empty = success
+                                succeeded += 1
+                            else:
+                                failed += 1
+                        else:
+                            failed += 1  # Exception
+                    total_succeeded += succeeded
+                    total_failed += failed
 
+                    # Adaptive throttling based on success rate
+                    success_rate = succeeded / max(len(batch), 1)
+                    if success_rate >= 0.75 and batch_size < max_batch:
+                        batch_size = min(batch_size + 2, max_batch)
+                        logger.info(f"  📈 Success rate {success_rate:.0%} — increasing batch to {batch_size}")
+                    elif success_rate < 0.5 and batch_size > min_batch:
+                        batch_size = max(batch_size - 2, min_batch)
+                        logger.info(f"  📉 Success rate {success_rate:.0%} — reducing batch to {batch_size}")
+
+                except asyncio.TimeoutError:
+                    logger.warning(f"  ⏱️ Batch timeout — reducing batch size")
+                    total_failed += len(batch)
+                    batch_size = max(batch_size - 2, min_batch)
+
+                batch_start = batch_end
                 contacts_so_far = len(self.all_contacts)
                 logger.info(f"  📊 Running total: {contacts_so_far} contacts")
 
                 # Incremental checkpoint — save raw contacts after each batch
                 self._save_checkpoint()
+
+            logger.info(
+                f"  🏁 Crawl complete: {total_succeeded} succeeded, {total_failed} failed "
+                f"out of {total} total"
+            )
 
             await browser.close()
 

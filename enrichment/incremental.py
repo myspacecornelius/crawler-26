@@ -155,6 +155,86 @@ class CrawlStateManager:
             "stale_threshold_days": self.stale_days,
         }
 
+    async def prioritize_recrawl(self, urls: List[str]) -> List[str]:
+        """
+        Smart re-crawl prioritization. Returns URLs sorted by priority:
+        1. Domains that errored last time (most likely to succeed on retry)
+        2. Domains never crawled before (new discoveries)
+        3. Domains with highest previous lead yield (most valuable)
+        4. Oldest domains (most stale)
+        """
+        domain_meta: Dict[str, dict] = {}
+
+        # Load extended metadata from DB if available
+        if self._db_available:
+            try:
+                from api.database import async_session
+                from api.models import CrawlState
+                from sqlalchemy import select
+
+                async with async_session() as session:
+                    result = await session.execute(select(CrawlState))
+                    for row in result.scalars().all():
+                        domain_meta[row.domain] = {
+                            "last_crawled": row.last_crawled_at,
+                            "leads_found": getattr(row, 'leads_found', 0) or 0,
+                            "status": getattr(row, 'status', 'completed'),
+                            "duration": getattr(row, 'crawl_duration_s', 0) or 0,
+                        }
+            except Exception:
+                pass
+
+        def _priority_score(url: str) -> Tuple[int, int, float]:
+            """
+            Returns (tier, -leads_found, staleness_seconds) for sorting.
+            Lower tier = higher priority. Within same tier, sort by leads desc then staleness.
+            """
+            domain = self._normalize_domain(url)
+            meta = domain_meta.get(domain)
+
+            if meta is None:
+                # Never crawled — high priority
+                return (1, 0, 0)
+
+            status = meta.get("status", "completed")
+            leads = meta.get("leads_found", 0)
+            last_crawled = meta.get("last_crawled")
+
+            # Calculate staleness
+            now = datetime.now(timezone.utc)
+            if last_crawled:
+                if last_crawled.tzinfo is None:
+                    last_crawled = last_crawled.replace(tzinfo=timezone.utc)
+                staleness = (now - last_crawled).total_seconds()
+            else:
+                staleness = float('inf')
+
+            # Errored last time — retry first
+            if status in ("error", "timeout", "failed"):
+                return (0, -leads, staleness)
+
+            # High-yield domains — prioritize valuable sources
+            if leads >= 5:
+                return (2, -leads, staleness)
+
+            # Normal domains — sort by staleness
+            return (3, -leads, staleness)
+
+        # Filter to stale-only, then sort by priority
+        stale_urls = [url for url in urls if self.is_stale(url)]
+        stale_urls.sort(key=_priority_score)
+
+        if stale_urls:
+            errored = sum(1 for u in stale_urls if _priority_score(u)[0] == 0)
+            new = sum(1 for u in stale_urls if _priority_score(u)[0] == 1)
+            high_yield = sum(1 for u in stale_urls if _priority_score(u)[0] == 2)
+            logger.info(
+                f"  🎯 Re-crawl priority: {errored} errored, {new} new, "
+                f"{high_yield} high-yield, {len(stale_urls) - errored - new - high_yield} normal"
+            )
+
+        return stale_urls
+
 
 async def update_lead_freshness_in_db(
     campaign_id: str,

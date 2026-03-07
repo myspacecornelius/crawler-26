@@ -5,8 +5,25 @@
 # ──────────────────────────────────────────────────
 
 discovery:
-  target_domains_count: 1500
-  search_engine: "duckduckgo"
+  target_domains_count: 2000
+  search_engine: "duckduckgo"   # legacy field, kept for compatibility
+
+  # ── Multi-engine config ──────────────────────────────
+  # Each engine can be toggled independently.
+  # API keys can be set here OR via environment variables:
+  #   GOOGLE_API_KEY, BING_API_KEY, BRAVE_API_KEY
+  engines:
+    duckduckgo:
+      enabled: true                         # No API key needed
+    google:
+      enabled: false                        # SerpAPI: 100 free searches/month
+      # api_key: "YOUR_SERPAPI_KEY"          # or set GOOGLE_API_KEY env var
+    bing:
+      enabled: false                        # Bing Web Search: 1,000 free/month
+      # api_key: "YOUR_BING_KEY"            # or set BING_API_KEY env var
+    brave:
+      enabled: false                        # Brave Search: 2,000 free/month
+      # api_key: "YOUR_BRAVE_KEY"           # or set BRAVE_API_KEY env var
 
   queries:
     # ── Seed / Pre-seed ──────────────────────────────────────
