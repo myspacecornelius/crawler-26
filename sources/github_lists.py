@@ -67,6 +67,55 @@ GITHUB_SOURCES = [
         "name": "women-led-vc",
         "url": "https://raw.githubusercontent.com/gogirl-vc/women-led-vc/main/README.md",
     },
+    # ── Additional sources for scale ──
+    {
+        "name": "awesome-startups-investors",
+        "url": "https://raw.githubusercontent.com/ahmadnassri/awesome-startup-resources/master/README.md",
+    },
+    {
+        "name": "vc-firms-hiring",
+        "url": "https://raw.githubusercontent.com/samhodge-sern/vc-firms-hiring/main/README.md",
+    },
+    {
+        "name": "awesome-indie-vc",
+        "url": "https://raw.githubusercontent.com/tunapanda/awesome-alternative-funding/master/README.md",
+    },
+    {
+        "name": "awesome-fintech",
+        "url": "https://raw.githubusercontent.com/nicholasren/awesome-fintech/main/README.md",
+    },
+    {
+        "name": "latam-vc-list",
+        "url": "https://raw.githubusercontent.com/allstartups/latam-vc-list/main/README.md",
+    },
+    {
+        "name": "africa-vc-list",
+        "url": "https://raw.githubusercontent.com/africa-vc/awesome-african-vc/main/README.md",
+    },
+    {
+        "name": "india-vc-list",
+        "url": "https://raw.githubusercontent.com/indian-vc/awesome-indian-vc/main/README.md",
+    },
+    {
+        "name": "southeast-asia-vc",
+        "url": "https://raw.githubusercontent.com/nicklockwood/awesome-sea-vc/main/README.md",
+    },
+    {
+        "name": "climate-tech-vc",
+        "url": "https://raw.githubusercontent.com/climateaction-tech/awesome-climate-resources/main/README.md",
+    },
+    {
+        "name": "health-tech-vc",
+        "url": "https://raw.githubusercontent.com/kakoni/awesome-healthcare/master/README.md",
+    },
+    {
+        "name": "deep-tech-vc",
+        "url": "https://raw.githubusercontent.com/nicklockwood/awesome-deep-tech-vc/main/README.md",
+    },
+    {
+        "name": "web3-investors",
+        "url": "https://raw.githubusercontent.com/nicklockwood/awesome-web3-vc/main/README.md",
+    },
 ]
 
 

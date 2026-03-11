@@ -5,7 +5,7 @@
 # ──────────────────────────────────────────────────
 
 discovery:
-  target_domains_count: 2000
+  target_domains_count: 5000
   search_engine: "duckduckgo"   # legacy field, kept for compatibility
 
   # ── Multi-engine config ──────────────────────────────
@@ -93,6 +93,127 @@ discovery:
     - '"national security" "venture fund" "partners" "contact"'
     - '"dual-use" "venture capital" "team" "thesis"'
 
+    # ── Sector: Robotics / Hardware ─────────────────────────
+    - '"robotics" "venture capital" "team" "portfolio"'
+    - '"robotics fund" "general partner" "thesis" "contact"'
+    - '"hardware" "venture fund" "team" "portfolio" -crunchbase'
+    - '"industrial automation" "vc fund" "partners" "contact"'
+
+    # ── Sector: Space Tech ──────────────────────────────────
+    - '"space tech" "venture capital" "team" "portfolio"'
+    - '"aerospace" "venture fund" "partners" "thesis"'
+    - '"space venture" "fund" "team" "contact" "invest"'
+    - '"newspace" "vc fund" "general partner" "portfolio"'
+
+    # ── Sector: Quantum Computing ───────────────────────────
+    - '"quantum computing" "venture capital" "team" "portfolio"'
+    - '"quantum" "venture fund" "partners" "thesis" "contact"'
+
+    # ── Sector: Cybersecurity ───────────────────────────────
+    - '"cybersecurity" "venture capital" "team" "portfolio"'
+    - '"cyber" "vc fund" "partners" "thesis" "contact"'
+    - '"security" "venture fund" "team" "portfolio" -home -adt'
+    - '"infosec" "venture capital" "general partner" "invest"'
+
+    # ── Sector: Supply Chain / Logistics ────────────────────
+    - '"supply chain" "venture capital" "team" "portfolio"'
+    - '"logistics" "venture fund" "partners" "thesis"'
+    - '"freight tech" "vc fund" "team" "contact"'
+    - '"warehousing" OR "last mile" "venture capital" "team"'
+
+    # ── Sector: HR Tech / Future of Work ────────────────────
+    - '"hr tech" "venture capital" "team" "portfolio"'
+    - '"people tech" "venture fund" "partners" "contact"'
+    - '"workforce" "vc fund" "team" "thesis" "invest"'
+    - '"talent" "venture capital" "team" "portfolio" -recruiting'
+
+    # ── Sector: Legal Tech ──────────────────────────────────
+    - '"legal tech" "venture capital" "team" "portfolio"'
+    - '"legaltech" "venture fund" "partners" "thesis"'
+
+    # ── Sector: Gaming / Entertainment ──────────────────────
+    - '"gaming" "venture capital" "team" "portfolio"'
+    - '"esports" "venture fund" "partners" "contact"'
+    - '"game studio" "venture capital" "team" "invest"'
+    - '"interactive entertainment" "vc fund" "team" "portfolio"'
+
+    # ── Sector: Sports Tech / Music Tech ────────────────────
+    - '"sports tech" "venture capital" "team" "portfolio"'
+    - '"music tech" "venture fund" "partners" "thesis"'
+    - '"media tech" "vc fund" "team" "contact"'
+
+    # ── Sector: Fashion Tech / Retail Tech ──────────────────
+    - '"fashion tech" "venture capital" "team" "portfolio"'
+    - '"retail tech" "venture fund" "partners" "thesis"'
+    - '"commerce" "vc fund" "team" "contact" "invest"'
+    - '"dtc" OR "direct to consumer" "venture fund" "team"'
+
+    # ── Sector: Real Estate Tech / Construction Tech ────────
+    - '"real estate technology" "venture capital" "team" "portfolio"'
+    - '"proptech" "venture fund" "partners" "thesis" "contact"'
+    - '"construction tech" "venture capital" "team" "portfolio"'
+    - '"contech" "vc fund" "partners" "invest"'
+    - '"built environment" "venture fund" "team" "thesis"'
+
+    # ── Sector: Travel Tech / Mobility ──────────────────────
+    - '"travel tech" "venture capital" "team" "portfolio"'
+    - '"mobility" "venture fund" "partners" "thesis"'
+    - '"autonomous vehicles" "vc fund" "team" "contact"'
+    - '"self-driving" "venture capital" "team" "portfolio"'
+    - '"ev" OR "electric vehicle" "venture fund" "team" "invest"'
+    - '"micromobility" "venture capital" "team" "portfolio"'
+
+    # ── Sector: AR/VR / Spatial Computing ───────────────────
+    - '"augmented reality" OR "virtual reality" "venture capital" "team"'
+    - '"spatial computing" "venture fund" "team" "portfolio"'
+    - '"metaverse" "vc fund" "partners" "thesis" "contact"'
+    - '"XR" "venture capital" "team" "portfolio" "invest"'
+
+    # ── Sector: IoT / Edge Computing ────────────────────────
+    - '"internet of things" "venture capital" "team" "portfolio"'
+    - '"IoT" "venture fund" "partners" "thesis" "contact"'
+    - '"edge computing" "vc fund" "team" "portfolio"'
+    - '"connected devices" "venture capital" "team" "invest"'
+
+    # ── Sector: Semiconductors / Materials ──────────────────
+    - '"semiconductor" "venture capital" "team" "portfolio"'
+    - '"chips" "venture fund" "partners" "thesis" "invest"'
+    - '"materials science" "vc fund" "team" "contact"'
+    - '"advanced materials" "venture capital" "team" "portfolio"'
+
+    # ── Sector: Synthetic Biology / Bioengineering ──────────
+    - '"synthetic biology" "venture capital" "team" "portfolio"'
+    - '"synbio" "venture fund" "partners" "thesis"'
+    - '"bioengineering" "vc fund" "team" "contact"'
+
+    # ── Sector: Neuroscience / Mental Health ────────────────
+    - '"neuroscience" "venture capital" "team" "portfolio"'
+    - '"neurotech" "venture fund" "partners" "thesis"'
+    - '"mental health" "vc fund" "team" "contact" "invest"'
+    - '"behavioral health" "venture capital" "team" "portfolio"'
+
+    # ── Sector: Fertility / Longevity ───────────────────────
+    - '"femtech" OR "fertility" "venture capital" "team" "portfolio"'
+    - '"longevity" "venture fund" "partners" "thesis"'
+    - '"anti-aging" OR "healthspan" "vc fund" "team" "contact"'
+    - '"women health" "venture capital" "team" "invest"'
+
+    # ── Sector: Agriculture / Water ─────────────────────────
+    - '"agriculture" "venture capital" "team" "portfolio"'
+    - '"agtech" "venture fund" "partners" "thesis" "contact"'
+    - '"precision agriculture" "vc fund" "team" "invest"'
+    - '"water tech" "venture capital" "team" "portfolio"'
+    - '"water" "venture fund" "general partner" "thesis"'
+
+    # ── Sector: Carbon Capture / Nuclear / Hydrogen ─────────
+    - '"carbon capture" "venture capital" "team" "portfolio"'
+    - '"carbon removal" "venture fund" "partners" "thesis"'
+    - '"nuclear" "venture capital" "team" "invest" "portfolio"'
+    - '"fusion" "venture fund" "partners" "contact"'
+    - '"hydrogen" "venture capital" "team" "portfolio"'
+    - '"green hydrogen" "vc fund" "partners" "thesis"'
+    - '"energy storage" "venture fund" "team" "contact"'
+
     # ── Geography: US Cities ─────────────────────────────────
     - 'intitle:"team" "venture capital" "san francisco" "portfolio"'
     - 'intitle:"team" "venture capital" "new york" "portfolio"'
@@ -102,14 +223,99 @@ discovery:
     - 'intitle:"team" "venture capital" "chicago" "portfolio"'
     - 'intitle:"team" "venture capital" "seattle" "portfolio"'
     - 'intitle:"team" "venture capital" "miami" "portfolio"'
+    - 'intitle:"team" "venture capital" "denver" "portfolio"'
+    - 'intitle:"team" "venture capital" "nashville" "portfolio"'
+    - 'intitle:"team" "venture capital" "portland" "portfolio"'
+    - 'intitle:"team" "venture capital" "minneapolis" "portfolio"'
+    - 'intitle:"team" "venture capital" "pittsburgh" "portfolio"'
+    - 'intitle:"team" "venture capital" "detroit" "portfolio"'
+    - '"venture capital" "raleigh" OR "durham" "team" "portfolio"'
+    - 'intitle:"team" "venture capital" "salt lake city" "portfolio"'
+    - 'intitle:"team" "venture capital" "dallas" "portfolio"'
+    - 'intitle:"team" "venture capital" "houston" "portfolio"'
+    - 'intitle:"team" "venture capital" "phoenix" "portfolio"'
+    - 'intitle:"team" "venture capital" "san diego" "portfolio"'
+    - 'intitle:"team" "venture capital" "atlanta" "portfolio"'
+    - 'intitle:"team" "venture capital" "washington dc" "portfolio"'
+    - 'intitle:"team" "venture capital" "philadelphia" "portfolio"'
+    - 'intitle:"team" "venture capital" "charlotte" "portfolio"'
+    - 'intitle:"team" "venture capital" "indianapolis" "portfolio"'
+    - 'intitle:"team" "venture capital" "columbus" "portfolio"'
+    - 'intitle:"team" "venture capital" "kansas city" "portfolio"'
+    - 'intitle:"team" "venture capital" "st louis" "portfolio"'
+    - 'intitle:"team" "venture capital" "tampa" "portfolio"'
+    - 'intitle:"team" "venture capital" "orlando" "portfolio"'
+    - '"venture capital" "silicon valley" "team" "portfolio" "contact"'
+    - '"venture capital" "boulder" "team" "portfolio" "contact"'
+    - '"venture capital" "madison" "team" "portfolio" "contact"'
+    - '"venture capital" "ann arbor" "team" "portfolio" "contact"'
+    - '"venture capital" "richmond" "team" "portfolio" "contact"'
+    - '"venture capital" "san antonio" "team" "portfolio" "contact"'
 
-    # ── Geography: International ──────────────────────────────
+    # ── Geography: International - Europe ────────────────────
     - '"venture capital" "team" "london" "portfolio" "contact"'
     - '"venture capital" "team" "berlin" "portfolio" "contact"'
     - '"venture capital" "team" "tel aviv" "portfolio" "contact"'
-    - '"venture capital" "team" "toronto" "portfolio" "contact"'
-    - '"venture capital" "team" "singapore" "portfolio" "contact"'
     - '"venture capital" "team" "paris" "portfolio" "contact"'
+    - '"venture capital" "team" "amsterdam" "portfolio" "contact"'
+    - '"venture capital" "team" "stockholm" "portfolio" "contact"'
+    - '"venture capital" "team" "zurich" "portfolio" "contact"'
+    - '"venture capital" "team" "munich" "portfolio" "contact"'
+    - '"venture capital" "team" "madrid" "portfolio" "contact"'
+    - '"venture capital" "team" "barcelona" "portfolio" "contact"'
+    - '"venture capital" "team" "dublin" "portfolio" "contact"'
+    - '"venture capital" "team" "copenhagen" "portfolio" "contact"'
+    - '"venture capital" "team" "helsinki" "portfolio" "contact"'
+    - '"venture capital" "team" "warsaw" "portfolio" "contact"'
+    - '"venture capital" "team" "prague" "portfolio" "contact"'
+    - '"venture capital" "team" "vienna" "portfolio" "contact"'
+    - '"venture capital" "team" "lisbon" "portfolio" "contact"'
+    - '"venture capital" "team" "milan" "portfolio" "contact"'
+    - '"venture capital" "team" "oslo" "portfolio" "contact"'
+    - '"venture capital" "team" "brussels" "portfolio" "contact"'
+    - '"venture capital" "team" "bucharest" "portfolio" "contact"'
+    - '"venture capital" "team" "kiev" OR "kyiv" "portfolio"'
+    - '"venture capital" "team" "tallinn" OR "estonia" "portfolio"'
+
+    # ── Geography: International - Asia Pacific ──────────────
+    - '"venture capital" "team" "singapore" "portfolio" "contact"'
+    - '"venture capital" "team" "tokyo" "portfolio" "contact"'
+    - '"venture capital" "team" "beijing" "portfolio" "contact"'
+    - '"venture capital" "team" "shanghai" "portfolio" "contact"'
+    - '"venture capital" "team" "hong kong" "portfolio" "contact"'
+    - '"venture capital" "team" "mumbai" "portfolio" "contact"'
+    - '"venture capital" "team" "bangalore" "portfolio" "contact"'
+    - '"venture capital" "team" "jakarta" "portfolio" "contact"'
+    - '"venture capital" "team" "seoul" "portfolio" "contact"'
+    - '"venture capital" "team" "taipei" "portfolio" "contact"'
+    - '"venture capital" "team" "sydney" "portfolio" "contact"'
+    - '"venture capital" "team" "melbourne" "portfolio" "contact"'
+    - '"venture capital" "team" "kuala lumpur" "portfolio" "contact"'
+    - '"venture capital" "team" "bangkok" "portfolio" "contact"'
+    - '"venture capital" "team" "ho chi minh" OR "vietnam" "portfolio"'
+    - '"venture capital" "team" "new delhi" "portfolio" "contact"'
+
+    # ── Geography: International - Americas ──────────────────
+    - '"venture capital" "team" "toronto" "portfolio" "contact"'
+    - '"venture capital" "team" "vancouver" "portfolio" "contact"'
+    - '"venture capital" "team" "montreal" "portfolio" "contact"'
+    - '"venture capital" "team" "sao paulo" "portfolio" "contact"'
+    - '"venture capital" "team" "mexico city" "portfolio" "contact"'
+    - '"venture capital" "team" "bogota" "portfolio" "contact"'
+    - '"venture capital" "team" "buenos aires" "portfolio" "contact"'
+    - '"venture capital" "team" "santiago" "portfolio" "contact"'
+    - '"venture capital" "team" "lima" "portfolio" "contact"'
+    - '"venture capital" "team" "medellin" "portfolio" "contact"'
+
+    # ── Geography: International - Middle East / Africa ──────
+    - '"venture capital" "team" "dubai" "portfolio" "contact"'
+    - '"venture capital" "team" "abu dhabi" "portfolio" "contact"'
+    - '"venture capital" "team" "riyadh" "portfolio" "contact"'
+    - '"venture capital" "team" "lagos" "portfolio" "contact"'
+    - '"venture capital" "team" "nairobi" "portfolio" "contact"'
+    - '"venture capital" "team" "cape town" "portfolio" "contact"'
+    - '"venture capital" "team" "cairo" "portfolio" "contact"'
+    - '"venture capital" "team" "accra" "portfolio" "contact"'
 
     # ── Fund Type ────────────────────────────────────────────
     - '"family office" "venture investments" "team" "contact"'
@@ -119,6 +325,140 @@ discovery:
     - '"solo gp" "venture fund" "portfolio" "contact"'
     - '"emerging manager" "venture fund" "team" "thesis"'
     - '"fund of funds" "venture capital" "team" "contact"'
+
+    # ── Fund Type: SPVs / Syndicates / DAOs ──────────────────
+    - '"spv" "special purpose vehicle" "venture" "team" "invest"'
+    - '"syndicate" "venture capital" "team" "portfolio"'
+    - '"investment syndicate" "angel" "team" "contact"'
+    - '"dao" "venture" "investment" "team" "portfolio" -tutorial'
+    - '"investment dao" "team" "portfolio" "contact"'
+    - '"venture syndicate" "general partner" "thesis" "contact"'
+
+    # ── Fund Type: Institutional VC Arms ─────────────────────
+    - '"sovereign wealth fund" "venture" "startup" "team" "portfolio"'
+    - '"pension fund" "venture" "startup" "team" "invest"'
+    - '"insurance" "venture arm" "team" "portfolio" "startup"'
+    - '"bank venture" "team" "portfolio" "startup" "invest"'
+    - '"media company" "venture" "team" "portfolio" "startup"'
+    - '"corporate venture capital" "cvc" "team" "portfolio"'
+    - '"strategic investments" "venture" "team" "portfolio"'
+    - '"corporate ventures" "innovation" "team" "portfolio"'
+
+    # ── Stage: Pre-Seed / Bridge / Alternative ───────────────
+    - '"pre-seed only" "venture" "team" "portfolio" "contact"'
+    - '"pre-seed" "check size" "$" "team" "portfolio"'
+    - '"bridge round" "venture capital" "team" "invest"'
+    - '"revenue-based financing" "venture" "team" "portfolio"'
+    - '"venture debt" "team" "portfolio" "contact"'
+    - '"growth equity" "team" "portfolio" "contact" -linkedin'
+    - '"late stage" "venture capital" "team" "portfolio"'
+    - '"crossover fund" "venture" "team" "portfolio"'
+    - '"opportunity fund" "venture" "team" "portfolio"'
+    - '"continuation fund" "venture" "team" "portfolio"'
+
+    # ── Emerging Manager / First-Time Funds ──────────────────
+    - '"first-time fund" "venture" "team" "thesis" "portfolio"'
+    - '"emerging manager" "vc" "team" "thesis" "invest"'
+    - '"debut fund" "venture capital" "team" "portfolio"'
+    - '"fund I" "venture capital" "team" "portfolio" "thesis"'
+    - '"new fund" "venture capital" "team" "general partner"'
+    - '"newly launched" "venture fund" "team" "portfolio"'
+    - '"first fund" "venture" "general partner" "thesis"'
+    - '"emerging vc" "fund" "team" "portfolio" "contact"'
+
+    # ── Diversity-Focused Funds ──────────────────────────────
+    - '"Black-led" "venture capital" "team" "portfolio"'
+    - '"Black founders" "venture fund" "team" "invest"'
+    - '"Latinx" "venture capital" "team" "portfolio"'
+    - '"Latino" OR "Latina" "venture fund" "team" "portfolio"'
+    - '"women-led" "venture capital" "team" "portfolio"'
+    - '"female founders" "venture fund" "team" "invest"'
+    - '"female general partner" "venture" "portfolio" "contact"'
+    - '"LGBTQ" "venture capital" "team" "portfolio"'
+    - '"queer" "venture fund" "team" "invest" "portfolio"'
+    - '"indigenous" "venture capital" "team" "portfolio"'
+    - '"diverse founders" "venture fund" "team" "invest"'
+    - '"underrepresented" "venture capital" "team" "portfolio"'
+    - '"minority-led" "venture fund" "team" "portfolio"'
+    - '"diversity" "venture capital" "team" "portfolio" "thesis"'
+
+    # ── Industry Verticals - Alt Phrasing ────────────────────
+    - '"we invest in" "portfolio companies" "our team" site:.com'
+    - '"investment focus" "portfolio" "managing director" site:.com'
+    - '"our portfolio" "our team" "investment thesis" -crunchbase -linkedin'
+    - '"what we look for" "team" "portfolio" "venture" site:.com'
+    - '"areas of focus" "venture" "team" "portfolio" site:.com'
+    - '"investment strategy" "venture" "team" "portfolio" "contact"'
+    - '"our investments" "our team" "general partner" site:.com'
+    - '"backed by" "our team" "venture" "thesis" "portfolio"'
+    - '"venture studio" "team" "portfolio" "contact"'
+    - '"startup studio" "venture" "team" "portfolio" "invest"'
+    - '"incubator" "venture fund" "team" "portfolio" "invest"'
+    - '"accelerator" "venture fund" "team" "portfolio" "thesis"'
+
+    # ── About Us / Our Team Pages ────────────────────────────
+    - 'inurl:"about" "venture capital" "portfolio" "team"'
+    - 'inurl:"team" "venture capital" "portfolio" "thesis"'
+    - 'inurl:"people" "venture capital" "portfolio" "invest"'
+    - 'inurl:"portfolio" "venture capital" "team" "thesis"'
+    - '"our team" "venture capital" "investment focus" "portfolio"'
+    - '"about us" "venture capital" "team" "portfolio" "contact"'
+    - '"meet the team" "venture capital" "portfolio" "thesis"'
+    - '"partners" "venture capital" "portfolio" "thesis" "contact"'
+    - 'intitle:"about" "venture capital firm" "portfolio" "team"'
+    - 'intitle:"portfolio" "venture capital" "team" "thesis"'
+    - 'intitle:"people" "venture capital" "portfolio" "contact"'
+    - 'intitle:"investments" "venture capital" "team" "portfolio"'
+
+    # ── inurl / intitle Operator Queries ─────────────────────
+    - 'inurl:"ventures" intitle:"team" "portfolio" "thesis"'
+    - 'inurl:"capital" intitle:"team" "portfolio" "venture"'
+    - 'inurl:"partners" "venture capital" "portfolio" "invest"'
+    - 'inurl:"invest" "venture fund" "team" "portfolio"'
+    - 'intitle:"venture capital" "early stage" "team" "portfolio"'
+    - 'intitle:"venture fund" "general partner" "portfolio"'
+    - 'intitle:"seed fund" "team" "portfolio" "thesis"'
+    - 'intitle:"our portfolio" "venture" "team" "contact"'
+    - 'inurl:"fund" "venture capital" "team" "portfolio" -mutual -hedge -etf'
+    - 'inurl:"vc" "general partner" "portfolio" "thesis"'
+
+    # ── Impact / ESG Funds ───────────────────────────────────
+    - '"impact investing" "venture capital" "team" "portfolio"'
+    - '"social impact" "venture fund" "team" "thesis"'
+    - '"ESG" "venture capital" "team" "portfolio"'
+    - '"double bottom line" "venture fund" "team" "contact"'
+    - '"impact fund" "general partner" "portfolio" "thesis"'
+    - '"mission-driven" "venture capital" "team" "portfolio"'
+
+    # ── Regional / Ecosystem Terms ───────────────────────────
+    - '"midwest venture" "fund" "team" "portfolio" "contact"'
+    - '"southeast" "venture capital" "team" "portfolio"'
+    - '"pacific northwest" "venture fund" "team" "portfolio"'
+    - '"northeast" "venture capital" "team" "portfolio"'
+    - '"southwest" "venture fund" "team" "portfolio"'
+    - '"flyover" OR "heartland" "venture" "team" "portfolio"'
+    - '"tier 2 city" "venture capital" "team" "portfolio"'
+    - '"european" "venture capital" "team" "portfolio" "contact"'
+    - '"african" "venture capital" "team" "portfolio" "contact"'
+    - '"southeast asian" "venture capital" "team" "portfolio"'
+    - '"latin american" "venture capital" "team" "portfolio"'
+    - '"MENA" "venture capital" "team" "portfolio" "contact"'
+    - '"nordic" "venture capital" "team" "portfolio" "contact"'
+    - '"DACH" "venture capital" "team" "portfolio" "contact"'
+
+    # ── Additional Catch-All Discovery ───────────────────────
+    - '"venture capital firm" "contact us" "our portfolio" "team"'
+    - '"vc firm" "portfolio" "team" "partners" -crunchbase -pitchbook'
+    - '"venture partners" "portfolio" "team" "thesis" site:.com'
+    - '"investment firm" "early stage" "team" "portfolio" "venture"'
+    - '"technology investors" "team" "portfolio" "thesis" site:.com'
+    - '"startup investors" "team" "portfolio" "contact" site:.com'
+    - '"we back founders" "team" "portfolio" site:.com'
+    - '"backed founders" "venture" "team" "portfolio" site:.com'
+    - '"fund size" "venture capital" "team" "portfolio"'
+    - '"assets under management" "venture" "team" "portfolio"'
+    - '"venture firm" "managing partner" "portfolio" "contact"'
+    - '"venture firm" "investment team" "portfolio" "thesis"'
 
   # Domains to explicitly discard (aggregators, directories, social networks)
   ignore_domains:
