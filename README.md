@@ -1,201 +1,403 @@
-# LeadFactory — Multi-Vertical Lead Generation Platform
+# LeadFactory — VC Lead Generation & Outreach Platform
 
-A full-stack lead generation platform that crawls VC/PE fund websites, extracts investment team members, enriches contacts with email discovery & SMTP verification, scores leads, and delivers them through a modern dashboard with outreach and CRM integrations.
+A full-stack system that discovers investor contacts across VC/PE fund websites, enriches them through a multi-layer email discovery pipeline, scores and deduplicates leads, and delivers them through a Next.js dashboard with campaign management, outreach integrations, and CRM push. Includes a public-facing marketing site ("Honeypot") for founder acquisition.
+
+---
+
+## Project Tree
+
+```
+crawl/
+├── engine.py                          # Main pipeline orchestrator
+├── deep_crawl.py                      # Playwright-based fund website crawler
+├── enrich_checkpoint.py               # Checkpoint-based enrichment runner
+├── requirements.txt                   # Python dependencies
+├── gameplan.md                        # Strategic planning notes
+│
+├── adapters/                          # VC directory adapters
+│   ├── base.py                        #   InvestorLead data model
+│   ├── angelmatch.py                  #   AngelMatch scraper
+│   ├── crunchbase.py                  #   Crunchbase adapter
+│   ├── landscape_vc.py                #   Landscape VC adapter
+│   ├── openvc.py                      #   OpenVC API adapter
+│   ├── signal_nfx.py                  #   Signal NFX adapter
+│   ├── visible_vc.py                  #   Visible VC adapter
+│   └── wellfound.py                   #   Wellfound (AngelList) adapter
+│
+├── api/                               # FastAPI backend
+│   ├── main.py                        #   App entry point + middleware
+│   ├── auth.py                        #   JWT authentication
+│   ├── billing.py                     #   Stripe billing logic
+│   ├── database.py                    #   SQLAlchemy async engine
+│   ├── models.py                      #   ORM models
+│   ├── schemas.py                     #   Pydantic request/response schemas
+│   ├── tasks.py                       #   Background task runner
+│   ├── import_leads.py                #   CSV-to-database importer
+│   └── routers/
+│       ├── billing.py                 #   Checkout, portal, plans
+│       ├── campaigns.py               #   Campaign CRUD + execution
+│       ├── crm.py                     #   HubSpot/Salesforce push
+│       ├── leads.py                   #   Lead list, filter, export
+│       ├── outreach.py                #   Instantly/SmartLead launch
+│       ├── portfolio.py               #   Portfolio company explorer
+│       ├── users.py                   #   Register, login, profile
+│       └── verticals.py              #   Vertical definitions
+│
+├── config/                            # YAML configuration
+│   ├── proxies.yaml                   #   Proxy rotation pool
+│   ├── scoring.yaml                   #   Lead scoring weights
+│   ├── search.yaml                    #   Discovery search queries
+│   └── sites.yaml                     #   Per-site crawl rules
+│
+├── dashboard/                         # Next.js 14 analytics dashboard
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   ├── app/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx                   #   Landing/login redirect
+│   │   ├── login/
+│   │   ├── privacy/
+│   │   ├── terms/
+│   │   └── dashboard/
+│   │       ├── layout.tsx             #   Sidebar + breadcrumb shell
+│   │       ├── page.tsx               #   Overview stats + charts
+│   │       ├── campaigns/
+│   │       │   ├── page.tsx           #   Campaign list
+│   │       │   ├── new/page.tsx       #   3-step creation wizard
+│   │       │   └── [id]/page.tsx      #   Campaign detail + leads
+│   │       ├── crm/page.tsx           #   CRM integration page
+│   │       ├── outreach/
+│   │       │   ├── page.tsx           #   Outreach hub
+│   │       │   └── [id]/page.tsx      #   Outreach campaign detail
+│   │       ├── portfolio/page.tsx     #   Portfolio intelligence
+│   │       ├── settings/page.tsx      #   Account + billing
+│   │       └── verticals/page.tsx     #   Vertical browser
+│   ├── components/
+│   │   ├── ActivityFeed.tsx
+│   │   ├── CampaignWizard.tsx
+│   │   ├── EmptyState.tsx
+│   │   ├── LeadTable.tsx
+│   │   ├── QuickActions.tsx
+│   │   ├── Sidebar.tsx
+│   │   ├── StatsCard.tsx
+│   │   ├── DataTable/               #   Generic data table system
+│   │   │   ├── DataTable.tsx
+│   │   │   ├── FilterBar.tsx
+│   │   │   ├── BulkActions.tsx
+│   │   │   ├── ColumnToggle.tsx
+│   │   │   ├── ExportButton.tsx
+│   │   │   └── TableSkeleton.tsx
+│   │   ├── campaign/
+│   │   │   ├── CampaignStatsPanel.tsx
+│   │   │   └── LeadScoreDistribution.tsx
+│   │   ├── charts/
+│   │   │   ├── EmailStatusDonut.tsx
+│   │   │   ├── FundCoverageBar.tsx
+│   │   │   ├── LeadsOverTimeChart.tsx
+│   │   │   └── MiniSparkline.tsx
+│   │   ├── crm/
+│   │   │   ├── CRMProviderSetup.tsx
+│   │   │   ├── CRMPushForm.tsx
+│   │   │   └── CRMPushHistory.tsx
+│   │   ├── layout/
+│   │   │   ├── AppSidebar.tsx
+│   │   │   ├── Breadcrumbs.tsx
+│   │   │   ├── CommandPalette.tsx
+│   │   │   ├── MobileNav.tsx
+│   │   │   ├── NotificationBell.tsx
+│   │   │   └── UserMenu.tsx
+│   │   ├── outreach/
+│   │   │   ├── OutreachStatsChart.tsx
+│   │   │   └── ProviderCard.tsx
+│   │   └── ui/                       #   Shared primitives
+│   │       ├── Badge.tsx
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       ├── Dialog.tsx
+│   │       ├── Input.tsx
+│   │       ├── Select.tsx
+│   │       ├── Skeleton.tsx
+│   │       ├── Toast.tsx
+│   │       └── Tooltip.tsx
+│   ├── contexts/
+│   │   └── SidebarContext.tsx
+│   └── lib/
+│       ├── api.ts                     #   Typed API client
+│       └── cn.ts                      #   clsx + tailwind-merge util
+│
+├── data/
+│   ├── target_funds.txt               #   Fund URLs for deep crawl
+│   ├── seen_domains.txt               #   Domain dedup tracking
+│   ├── dedup_index.json               #   Cross-run dedup state
+│   ├── leadfactory.db                 #   SQLite fallback DB
+│   ├── vc_contacts.csv                #   Raw extraction output
+│   ├── vc_contacts_checkpoint.csv     #   Mid-pipeline checkpoint
+│   ├── seed/
+│   │   ├── vc_firms.csv               #   Core VC seed list
+│   │   ├── vc_firms_expanded.csv      #   Extended VC list
+│   │   ├── vc_firms_supplemental.csv  #   Supplemental entries
+│   │   ├── pe_firms.csv               #   Private equity firms
+│   │   ├── family_offices.csv         #   Family office contacts
+│   │   └── corp_dev.csv               #   Corporate dev teams
+│   ├── enriched/
+│   │   ├── investor_leads_master.csv  #   Merged master (~12,500 leads)
+│   │   ├── leads_YYYYMMDD_*.csv       #   Per-run timestamped exports
+│   │   ├── checkpoint_dedup.csv       #   Post-dedup snapshot
+│   │   ├── checkpoint_guesser.csv     #   Post-guesser snapshot
+│   │   └── checkpoint_validation.csv  #   Post-validation snapshot
+│   ├── raw/                           #   Unprocessed scrape data
+│   └── screenshots/                   #   Debug screenshots (67 files)
+│
+├── discovery/                         # Search-engine lead discovery
+│   ├── multi_searcher.py              #   Multi-engine search (Google, Bing, DuckDuckGo)
+│   ├── searcher.py                    #   Single-engine search wrapper
+│   └── aggregator.py                  #   Discovery result aggregation
+│
+├── enrichment/                        # Email discovery & validation
+│   ├── email_guesser.py               #   Pattern-based email generation (8 patterns)
+│   ├── email_validator.py             #   Format + MX + SMTP verification
+│   ├── email_waterfall.py             #   Multi-provider fallback (Hunter/ZeroBounce/MV)
+│   ├── scoring.py                     #   Weighted lead scoring + tier assignment
+│   ├── dedup.py                       #   Cross-run deduplication engine
+│   ├── incremental.py                 #   Crawl freshness + state tracking
+│   ├── dns_harvester.py               #   DMARC/SOA/TXT email extraction
+│   ├── google_dorker.py               #   Google dorking for leaked emails
+│   ├── github_miner.py                #   Git commit author email discovery
+│   ├── gravatar_oracle.py             #   Avatar-based email confirmation
+│   ├── pgp_keyserver.py               #   PGP public key email lookup
+│   ├── sec_edgar.py                   #   SEC filing email extraction
+│   ├── wayback_enricher.py            #   Internet Archive email recovery
+│   ├── catchall_detector.py           #   Catch-all detection + JS DOM scraping
+│   ├── portfolio_scraper.py           #   Fund portfolio company extraction
+│   ├── linkedin_enricher.py           #   LinkedIn profile enrichment
+│   ├── fund_intelligence.py           #   Fund metadata extraction
+│   └── pdf_parser.py                  #   PDF document email extraction
+│
+├── integrations/                      # CRM connectors
+│   ├── crm_base.py                    #   Abstract CRM interface
+│   ├── hubspot.py                     #   HubSpot push
+│   ├── salesforce.py                  #   Salesforce push
+│   └── manager.py                     #   CRM provider manager
+│
+├── landing/                           # Honeypot marketing site
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   ├── app/
+│   │   ├── globals.css                #   Theme + print styles
+│   │   ├── layout.tsx
+│   │   └── page.tsx                   #   Full landing page (~900 lines)
+│   └── scripts/
+│       └── export-pdf.ts              #   Playwright PDF export
+│
+├── outreach/                          # Email campaign integrations
+│   ├── base.py                        #   Abstract outreach interface
+│   ├── instantly.py                   #   Instantly.ai integration
+│   ├── smartlead.py                   #   SmartLead integration
+│   ├── manager.py                     #   Provider manager
+│   └── templates.py                   #   Email template engine
+│
+├── output/                            # Data export
+│   ├── csv_writer.py                  #   Master CSV writer + checkpoints
+│   └── webhook.py                     #   Discord/Slack notifications
+│
+├── scripts/
+│   └── expand_seed.py                 #   Seed database expansion utility
+│
+├── sources/                           # Deterministic lead sources
+│   ├── aggregator.py                  #   Combines seed + GitHub + directories
+│   ├── directory_fetchers.py          #   HTTP-based VC directory scrapers
+│   ├── github_lists.py                #   GitHub public VC list fetcher
+│   ├── http_discovery.py              #   HTTP-based domain discovery
+│   └── seed_db.py                     #   Curated seed database loader
+│
+├── stealth/                           # Anti-detection layer
+│   ├── behavior.py                    #   Human-like browsing patterns
+│   ├── fingerprint.py                 #   Browser fingerprint rotation
+│   └── proxy.py                       #   Proxy pool management
+│
+├── tests/                             # Test suite
+│   ├── test_crm.py
+│   ├── test_dedup.py
+│   ├── test_email_discovery.py
+│   ├── test_email_waterfall.py
+│   ├── test_engine_integration.py
+│   ├── test_extraction_coverage.py
+│   ├── test_fixes.py
+│   ├── test_incremental.py
+│   ├── test_multi_searcher.py
+│   ├── test_portfolio.py
+│   ├── test_scale.py
+│   ├── test_smtp_fix.py
+│   ├── test_v2.py
+│   └── test_v3.py
+│
+├── verticals/                         # Investor vertical definitions
+│   ├── loader.py                      #   YAML vertical loader
+│   ├── vc.yaml                        #   VC firm targeting rules
+│   ├── pe.yaml                        #   PE firm targeting rules
+│   ├── family_office.yaml             #   Family office rules
+│   └── corp_dev.yaml                  #   Corp dev rules
+│
+├── .github/workflows/
+│   └── pylint.yml                     # CI linting
+└── .vscode/
+    ├── extensions.json
+    └── settings.json
+```
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Dashboard (Next.js 14)                                     │
-│  /dashboard  /campaigns  /outreach  /verticals  /settings   │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ REST API
-┌──────────────────────────▼──────────────────────────────────┐
-│  API Server (FastAPI)                                        │
-│  /campaigns  /leads  /outreach  /crm  /portfolio  /billing   │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ PostgreSQL
-┌──────────────────────────▼──────────────────────────────────┐
-│  Crawl & Enrichment Pipeline                                 │
-│  engine.py → deep_crawl.py → email_guesser → email_validator │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  LEAD DISCOVERY                                                   │
+│  sources/aggregator.py  →  seed DB + GitHub lists + directories  │
+│  discovery/multi_searcher.py  →  Google, Bing, DuckDuckGo        │
+│  deep_crawl.py  →  Playwright team page extraction               │
+└───────────────────────────┬──────────────────────────────────────┘
+                            ↓
+┌──────────────────────────────────────────────────────────────────┐
+│  EMAIL ENRICHMENT  (enrichment/)                                  │
+│  dns_harvester → google_dorker → gravatar_oracle → pgp_keyserver │
+│  → github_miner → sec_edgar → wayback_enricher → catchall       │
+│  → email_guesser (8 patterns) → email_validator (SMTP)           │
+│  → email_waterfall (Hunter / ZeroBounce / MillionVerifier)       │
+└───────────────────────────┬──────────────────────────────────────┘
+                            ↓
+┌──────────────────────────────────────────────────────────────────┐
+│  SCORING & OUTPUT                                                 │
+│  scoring.py  →  weighted rank (stage, sector, check size)        │
+│  dedup.py    →  cross-run merge with email quality hierarchy     │
+│  csv_writer  →  master CSV + timestamped exports + checkpoints   │
+└───────────────────────────┬──────────────────────────────────────┘
+                            ↓
+┌──────────────────────────────────────────────────────────────────┐
+│  PLATFORM                                                         │
+│  API (FastAPI)  →  campaigns, leads, outreach, CRM, billing     │
+│  Dashboard (Next.js 14)  →  stats, charts, tables, wizards      │
+│  Outreach  →  Instantly.ai / SmartLead email campaigns           │
+│  CRM  →  HubSpot / Salesforce contact push                      │
+│  Landing  →  Honeypot marketing site (Next.js)                   │
+└──────────────────────────────────────────────────────────────────┘
 ```
-
-### Key directories
-
-| Directory | Purpose |
-|-----------|---------|
-| `api/` | FastAPI backend — routers, models, schemas, auth, billing |
-| `dashboard/` | Next.js 14 frontend — pages, components, API client |
-| `enrichment/` | Email guesser, SMTP validator, scoring |
-| `adapters/` | Data model (`InvestorLead`) and fund adapters |
-| `output/` | CSV writer |
-| `config/` | Scoring weights, vertical configs |
-| `integrations/` | CRM push (HubSpot, Salesforce) |
-| `outreach/` | Email outreach (Instantly, SmartLead) |
-| `data/` | Seed databases, target lists, crawl output |
-| `tests/` | Pytest suite (321 tests) |
-| `.windsurf/tasks/` | Sub-agent task briefs (see below) |
 
 ---
 
 ## Quick Start
 
 ```bash
-# Backend
-venv/bin/python -m pytest tests/ -x -q          # Run tests (321 passing)
-LEADFACTORY_SECRET_KEY=dev-secret uvicorn api.main:app --reload  # Start API
+# Python setup
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium
 
-# Frontend
-cd dashboard && npm install && npm run dev       # Start dashboard at localhost:3000
-cd dashboard && npm run build                    # Verify production build
+# Run the crawl pipeline
+python engine.py --deep --headless --force-recrawl
 
-# Crawl pipeline
-venv/bin/python engine.py --deep --headless --force-recrawl     # Full crawl
-venv/bin/python deep_crawl.py --targets data/test_targets.txt --limit 5 --headless  # Test crawl
+# Run tests
+python -m pytest tests/ -x -q
 
-# Data quality check
-wc -l data/enriched/investor_leads_master.csv
-awk -F',' 'NR>1 && $1==$4' data/enriched/investor_leads_master.csv | wc -l  # fund-level rows
+# Start API server
+LEADFACTORY_SECRET_KEY=dev-secret uvicorn api.main:app --reload
+
+# Dashboard
+cd dashboard && npm install && npm run dev    # localhost:3000
+
+# Landing page
+cd landing && npm install && npm run dev      # localhost:3001
+
+# Export landing page as PDF
+cd landing && npx tsx scripts/export-pdf.ts
 ```
-
----
-
-## Task Orchestration Guide
-
-Each `.md` file in `.windsurf/tasks/` is a **self-contained brief** for a sub-agent (a fresh Cascade conversation).
-
-### Task Index
-
-| # | File | Description | Status |
-|---|------|-------------|--------|
-| 01 | `01-scoring-csv-fix.md` | Fix CSV column alignment, add role-weighted scoring | ✅ Done |
-| 02 | `02-data-cleaning.md` | Filter fund-level rows, fix garbled roles | ✅ Done |
-| 03 | `03-email-verification.md` | Wire SMTP RCPT TO into pipeline, add Email Status column | ✅ Done |
-| 04 | `04-deep-crawl-coverage.md` | Improve per-fund extraction (pagination, JS rendering) | ✅ Done |
-| 05 | `05-postgres-api-dashboard.md` | PostgreSQL DB, wire API to real data, connect dashboard | ✅ Done |
-| 06 | `06-stripe-billing-compliance.md` | Stripe billing, legal compliance, opt-out | ✅ Done |
-| 07 | `07-extraction-coverage.md` | Expand team member extraction heuristics in `deep_crawl.py` | ✅ Done |
-| 08 | `08-email-guess-verify.md` | SMTP pattern discovery, concurrency, email guesser improvements | ✅ Done |
-| 09 | `09-smtp-verification-fix.md` | SMTP self-test, port fallback, HELO config, graceful degradation | ✅ Done |
-| 10 | `10-email-status-freshness.md` | Email status badges + freshness panel in LeadTable | ✅ Done |
-| 11 | `11-campaign-wizard-enhance.md` | Multi-step campaign creation wizard with targeting | ✅ Done |
-| 12 | `12-outreach-integration-page.md` | Outreach page (Instantly / SmartLead) | ✅ Done |
-| 13 | `13-crm-integration-page.md` | CRM integration page (HubSpot / Salesforce) | ⏳ Pending |
-| 14 | `14-portfolio-intelligence-page.md` | Portfolio intelligence explorer | ⏳ Pending |
-
-### Dependency Graph
-
-```
-Track A — Data Pipeline (completed)
-  Task 01 (Scoring/CSV) ─┐
-                          ├→ Task 03 (Email Verify) → Task 04 (Deep Crawl)
-  Task 02 (Cleaning) ────┘
-                          ↓
-  Task 07 (Extraction) → Task 08 (Email Guesser) → Task 09 (SMTP Fix)
-
-Track B — Platform (completed through Task 12)
-  Task 05 (Postgres/API) → Task 06 (Stripe/Compliance)
-                          ↓
-  Task 10 (Email Status UI) ─┐
-  Task 11 (Campaign Wizard) ─┤─→ all independent, no file conflicts
-  Task 12 (Outreach Page) ───┘
-                          ↓
-  Task 13 (CRM Page) ────────→ touches Sidebar.tsx, api.ts (sequential)
-  Task 14 (Portfolio Page) ──→ touches Sidebar.tsx, api.ts (sequential)
-```
-
-### Launching a Sub-Agent
-
-1. **Open a new Cascade conversation** (fresh context)
-2. **Paste this template:**
-   ```
-   I'm working on a lead generation platform. I need you to complete a specific task.
-   Here is the task brief:
-
-   [PASTE THE FULL CONTENTS OF THE TASK .md FILE HERE]
-
-   Before making any changes, read all the files listed in the brief.
-   Then propose your approach and wait for my approval before editing.
-   ```
-3. **Use `@` mentions** for file references (relative to workspace root):
-   - `@deep_crawl.py` → `/Users/davidnichols/Desktop/crawl/deep_crawl.py`
-   - `@api/models.py` → `/Users/davidnichols/Desktop/crawl/api/models.py`
-   - `@dashboard/components/LeadTable.tsx` → etc.
-4. **Verify acceptance criteria** after completion (listed in each brief)
-
-### After Each Task: Integration Check
-
-```bash
-# Backend tests
-venv/bin/python -m pytest tests/ -x -q
-
-# Frontend build
-cd dashboard && npm run build
-
-# Quick data quality check (pipeline tasks)
-venv/bin/python engine.py --deep --headless --force-recrawl 2>&1 | tail -30
-```
-
----
-
-## File Ownership Map
-
-| File | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 |
-|------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
-| `enrichment/scoring.py` | ✏️ | | | | | | | | | | | | | |
-| `output/csv_writer.py` | ✏️ | | ✏️ | | | | | | | | | | | |
-| `config/scoring.yaml` | ✏️ | | | | | | | | | | | | | |
-| `adapters/base.py` | ✏️ | | ✏️ | | | | | | | | | | | |
-| `engine.py` | | ✏️ | ✏️ | | | | | | | | | | | |
-| `deep_crawl.py` | | ✏️ | | ✏️ | | | ✏️ | | | | | | | |
-| `enrichment/email_guesser.py` | | ✏️ | | | | | | ✏️ | | | | | | |
-| `enrichment/email_validator.py` | | | ✏️ | | | | | | ✏️ | | | | | |
-| `api/models.py` | | | | | ✏️ | ✏️ | | | | | | | | |
-| `api/schemas.py` | | | | | ✏️ | ✏️ | | | | ✏️ | | | | |
-| `api/routers/leads.py` | | | | | ✏️ | | | | | ✏️ | | | | |
-| `api/routers/crm.py` | | | | | ✏️ | | | | | | | | ✏️ | |
-| `api/routers/outreach.py` | | | | | ✏️ | | | | | | | ✏️ | | |
-| `api/routers/portfolio.py` | | | | | ✏️ | | | | | | | | | ✏️ |
-| `api/main.py` | | | | | ✏️ | ✏️ | | | | | | | | |
-| `dashboard/components/LeadTable.tsx` | | | | | ✏️ | | | | | ✏️ | | | | |
-| `dashboard/components/Sidebar.tsx` | | | | | ✏️ | | | | | | | ✏️ | ✏️ | ✏️ |
-| `dashboard/components/CampaignWizard.tsx` | | | | | | | | | | | ✏️ | | | |
-| `dashboard/lib/api.ts` | | | | | ✏️ | | | | | ✏️ | ✏️ | ✏️ | ✏️ | ✏️ |
-| `dashboard/app/dashboard/campaigns/new/` | | | | | ✏️ | | | | | | ✏️ | | | |
-| `dashboard/app/dashboard/campaigns/[id]/` | | | | | ✏️ | | | | | ✏️ | | | | |
-| `dashboard/app/dashboard/outreach/` | | | | | | | | | | | | ✏️ | | |
-| `dashboard/app/dashboard/crm/` | | | | | | | | | | | | | ✏️ | |
-| `dashboard/app/dashboard/portfolio/` | | | | | | | | | | | | | | ✏️ |
 
 ---
 
 ## Dashboard Pages
 
-| Route | Description | Status |
-|-------|-------------|--------|
-| `/dashboard` | Overview — campaigns, credits, stats | ✅ Live |
-| `/dashboard/campaigns` | Campaign list — run, delete, view | ✅ Live |
-| `/dashboard/campaigns/new` | 3-step campaign wizard with targeting | ✅ Live |
-| `/dashboard/campaigns/[id]` | Campaign detail — stats, freshness, leads table | ✅ Live |
-| `/dashboard/outreach` | Outreach hub — launch, monitor via Instantly/SmartLead | ✅ Live |
-| `/dashboard/outreach/[id]` | Outreach campaign stats detail | ✅ Live |
-| `/dashboard/verticals` | Vertical browser | ✅ Live |
-| `/dashboard/settings` | Account, credits, billing | ✅ Live |
-| `/dashboard/crm` | CRM push (HubSpot/Salesforce) | ⏳ Brief 13 |
-| `/dashboard/portfolio` | Portfolio intelligence explorer | ⏳ Brief 14 |
+| Route | Description |
+|-------|-------------|
+| `/dashboard` | Overview — lead volume, email quality charts, activity feed |
+| `/dashboard/campaigns` | Campaign list with status filters |
+| `/dashboard/campaigns/new` | 3-step creation wizard with targeting |
+| `/dashboard/campaigns/[id]` | Campaign detail — stats, score distribution, leads table |
+| `/dashboard/outreach` | Outreach hub — Instantly / SmartLead launch + monitoring |
+| `/dashboard/outreach/[id]` | Outreach campaign stats |
+| `/dashboard/crm` | CRM push (HubSpot / Salesforce) |
+| `/dashboard/portfolio` | Portfolio intelligence explorer |
+| `/dashboard/verticals` | Vertical browser |
+| `/dashboard/settings` | Account, credits, billing (Stripe) |
+
+---
 
 ## API Endpoints
 
-| Prefix | Router | Key endpoints |
-|--------|--------|---------------|
-| `/campaigns` | `campaigns.py` | CRUD, run campaign |
-| `/leads` | `leads.py` | List, filter, stats, freshness, export CSV |
-| `/outreach` | `outreach.py` | Launch, start, pause, stats, templates |
-| `/crm` | `crm.py` | Push, status, fields, field-mapping defaults |
-| `/funds/{fund}/portfolio` | `portfolio.py` | Portfolio companies with filters |
-| `/billing` | `billing.py` | Checkout, portal, history, plans |
-| `/users` | `users.py` | Register, login, profile, credits |
-| `/verticals` | `verticals.py` | List, detail |
+| Prefix | Key endpoints |
+|--------|---------------|
+| `/campaigns` | CRUD, run campaign, stats |
+| `/leads` | List, filter, export CSV, freshness |
+| `/outreach` | Launch, start, pause, templates |
+| `/crm` | Push contacts, field mapping |
+| `/funds/{fund}/portfolio` | Portfolio companies with filters |
+| `/billing` | Stripe checkout, portal, plans |
+| `/users` | Register, login, profile |
+| `/verticals` | List, detail |
+
+---
+
+## Key Files for AI Briefing
+
+If you need to give another AI the best possible understanding of this codebase from a limited set of files, provide the tree above plus these files in priority order:
+
+### Tier 1 — System Architecture (read these first)
+
+| File | Why |
+|------|-----|
+| `engine.py` | The brain. Orchestrates the entire pipeline — discovery, crawl, enrichment, scoring, output. Reading this reveals how every module connects. |
+| `adapters/base.py` | Defines `InvestorLead`, the core data model that flows through every stage of the pipeline. |
+| `api/main.py` | FastAPI app setup — shows all mounted routers, middleware, and how the API layer is structured. |
+| `api/models.py` | ORM models — the database schema that underpins campaigns, leads, users, and billing. |
+
+### Tier 2 — Pipeline Internals
+
+| File | Why |
+|------|-----|
+| `sources/aggregator.py` | How leads enter the system — seed DB + GitHub + directory fetchers, domain-level dedup. |
+| `deep_crawl.py` | Playwright-based fund website crawler — team page detection, JS rendering, contact extraction. |
+| `enrichment/email_guesser.py` | Pattern-based email generation — the 8 patterns, MX validation, learned pattern matching. |
+| `enrichment/email_validator.py` | Multi-layer email verification — format, MX, disposable, SMTP RCPT TO, catch-all detection. |
+| `enrichment/scoring.py` | Lead ranking — weighted scoring dimensions, tier assignment (HOT/WARM/COOL/COLD). |
+| `enrichment/dedup.py` | Cross-run deduplication — persistent index, email quality hierarchy, merge-not-replace logic. |
+| `config/scoring.yaml` | Scoring weight configuration — reveals what the system values in a lead. |
+| `config/sites.yaml` | Per-site crawl rules — selectors, pagination, rate limits for each fund directory. |
+
+### Tier 3 — Frontend & Integration
+
+| File | Why |
+|------|-----|
+| `dashboard/app/dashboard/page.tsx` | Main dashboard — shows what data the platform surfaces and how. |
+| `dashboard/lib/api.ts` | Typed API client — every endpoint the frontend calls, typed request/response. |
+| `dashboard/components/LeadTable.tsx` | Core data display — filtering, sorting, email status badges, export. |
+| `landing/app/page.tsx` | Marketing site — product positioning, feature list, pricing (useful for understanding the product). |
+| `outreach/manager.py` | Outreach provider abstraction — how campaigns get pushed to Instantly/SmartLead. |
+| `integrations/manager.py` | CRM provider abstraction — how leads get pushed to HubSpot/Salesforce. |
+
+### Tier 4 — Enrichment Modules (read if deep-diving email discovery)
+
+| File | Why |
+|------|-----|
+| `enrichment/dns_harvester.py` | Zero-cost DMARC/SOA email extraction |
+| `enrichment/google_dorker.py` | Google dorking for leaked emails on third-party sites |
+| `enrichment/github_miner.py` | Git commit author email discovery |
+| `enrichment/sec_edgar.py` | SEC filing email extraction |
+| `enrichment/email_waterfall.py` | Multi-provider verification fallback chain |
+| `enrichment/catchall_detector.py` | Catch-all detection + Playwright JS DOM scraping |
+
+### Minimum Viable Briefing
+
+For the fastest possible onboarding, provide just these 4 files plus the tree:
+1. **`engine.py`** — full pipeline flow
+2. **`adapters/base.py`** — data model
+3. **`api/main.py`** — API structure
+4. **`dashboard/app/dashboard/page.tsx`** — what the user sees

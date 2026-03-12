@@ -19,40 +19,41 @@ const config: Config = {
         ],
       },
       colors: {
-        background: "#F3EFE7",
+        background: "#F5F1EA",
         surface: {
           primary: "#FFFFFF",
-          muted: "#F8F6F2",
+          warm: "#FAF8F4",
         },
         text: {
-          primary: "#1A1F2B",
-          secondary: "#6A7180",
-          muted: "#9CA3AF",
-        },
-        nav: {
-          bg: "#1B2432",
-          text: "#E5E7EB",
-          border: "#2E3747",
-        },
-        accent: {
-          DEFAULT: "#2ED3B7",
-          hover: "#23BFA5",
+          primary: "#1A1A17",
+          secondary: "#65635C",
+          muted: "#9A978F",
         },
         honey: {
-          DEFAULT: "#E7B84B",
-          muted: "rgba(231,184,75,0.18)",
+          500: "#E5B94B",
+          400: "#F0CC6B",
+          glow: "rgba(229,185,75,0.22)",
+          tint: "rgba(229,185,75,0.12)",
         },
-        ink: {
-          900: "#0F1219",
-          800: "#161B26",
+        petrol: {
+          600: "#2F5E63",
+          700: "#23474B",
+          800: "#1A3538",
+          mist: "#DCE8E8",
+        },
+        charcoal: {
+          900: "#171512",
+          800: "#1E1B16",
+          700: "#2A2620",
+          text: "#E8E5DF",
+          border: "#2E2A24",
         },
         border: {
-          subtle: "#E5E7EB",
-          strong: "#CBD5E1",
+          subtle: "#E5E2DA",
+          strong: "#CCC9C0",
         },
-        success: "#16A34A",
-        warning: "#F59E0B",
-        danger: "#EF4444",
+        success: "#3A8A5C",
+        danger: "#C0392B",
       },
       borderRadius: {
         card: "16px",
@@ -62,11 +63,9 @@ const config: Config = {
       boxShadow: {
         card: "0 8px 30px rgba(0,0,0,0.06)",
         "card-hover": "0 12px 40px rgba(0,0,0,0.10)",
-        "accent-ring": "0 0 0 2px rgba(46,211,183,0.25)",
-      },
-      backgroundImage: {
-        "gradient-primary":
-          "linear-gradient(135deg, #2563EB 0%, #4F46E5 40%, #7C3AED 75%, #EC4899 100%)",
+        "honey-ring": "0 0 0 2px rgba(229,185,75,0.35)",
+        "honey-glow": "0 0 20px rgba(229,185,75,0.18)",
+        "petrol-glow": "0 0 24px rgba(47,94,99,0.15)",
       },
       maxWidth: {
         container: "1200px",
