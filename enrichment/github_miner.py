@@ -63,6 +63,9 @@ class GitHubMiner:
 
     async def _api_get(self, url: str, params: dict, session: aiohttp.ClientSession) -> Optional[dict]:
         """Make a rate-limited GitHub API request."""
+        # Bail early if rate-limited too many times without a token
+        if self._stats["rate_limited"] >= 2 and not self._token:
+            return None
         try:
             async with self._sem:
                 async with session.get(
@@ -72,9 +75,9 @@ class GitHubMiner:
                     if resp.status == 403:
                         # Rate limited
                         self._stats["rate_limited"] += 1
-                        retry_after = resp.headers.get("Retry-After", "60")
+                        retry_after = min(int(resp.headers.get("Retry-After", "60")), 15)
                         logger.warning(f"  ⚠️  GitHub rate-limited, waiting {retry_after}s...")
-                        await asyncio.sleep(int(retry_after))
+                        await asyncio.sleep(retry_after)
                         return None
                     if resp.status == 422:
                         # Validation error (query too broad, etc.)
@@ -225,44 +228,57 @@ class GitHubMiner:
         if not self._token:
             logger.warning("  ⚠️  No GITHUB_TOKEN set — limited to 60 req/hr (set env var for 5,000/hr)")
 
-        async with aiohttp.ClientSession() as session:
-            for domain, domain_group in domain_leads.items():
-                # Phase 1: Domain-wide commit search
-                domain_emails = await self.search_domain(domain, session)
+        phase_timeout = float(os.environ.get("GITHUB_MINER_PHASE_TIMEOUT", "120"))
 
-                # Match found emails to leads
-                if domain_emails:
-                    unmatched = list(domain_emails)
-                    for lead in domain_group:
-                        if lead.email and lead.email not in ("N/A", "N/A (invalid)"):
-                            continue
-                        best_email = None
-                        best_score = 0.0
-                        for email in unmatched:
-                            score = _match_email_to_name(email, lead.name)
-                            if score > best_score:
-                                best_score = score
-                                best_email = email
-                        if best_email and best_score >= 0.3:
-                            lead.email = best_email
+        async def _mining_loop():
+            async with aiohttp.ClientSession() as session:
+                for domain, domain_group in domain_leads.items():
+                    # Bail early if rate-limited without token
+                    if self._stats["rate_limited"] >= 2 and not self._token:
+                        logger.info("  🐙  GitHub miner: rate-limited without token, skipping remaining domains")
+                        break
+
+                    # Phase 1: Domain-wide commit search
+                    domain_emails = await self.search_domain(domain, session)
+
+                    # Match found emails to leads
+                    if domain_emails:
+                        unmatched = list(domain_emails)
+                        for lead in domain_group:
+                            if lead.email and lead.email not in ("N/A", "N/A (invalid)"):
+                                continue
+                            best_email = None
+                            best_score = 0.0
+                            for email in unmatched:
+                                score = _match_email_to_name(email, lead.name)
+                                if score > best_score:
+                                    best_score = score
+                                    best_email = email
+                            if best_email and best_score >= 0.3:
+                                lead.email = best_email
+                                lead.email_status = "github"
+                                unmatched.remove(best_email)
+                                self._stats["leads_enriched"] += 1
+                                logger.info(f"  🐙  GitHub email for {lead.name}: {best_email} (score={best_score:.2f})")
+
+                    # Phase 2: Per-person search for top 5 remaining
+                    still_missing = [
+                        l for l in domain_group
+                        if not l.email or l.email in ("N/A", "N/A (invalid)")
+                    ]
+                    for lead in still_missing[:5]:
+                        found = await self.search_by_name(lead.name, domain, session)
+                        if found:
+                            email = list(found)[0]
+                            lead.email = email
                             lead.email_status = "github"
-                            unmatched.remove(best_email)
                             self._stats["leads_enriched"] += 1
-                            logger.info(f"  🐙  GitHub email for {lead.name}: {best_email} (score={best_score:.2f})")
+                            logger.info(f"  🐙  GitHub email for {lead.name}: {email}")
 
-                # Phase 2: Per-person search for top 5 remaining
-                still_missing = [
-                    l for l in domain_group
-                    if not l.email or l.email in ("N/A", "N/A (invalid)")
-                ]
-                for lead in still_missing[:5]:
-                    found = await self.search_by_name(lead.name, domain, session)
-                    if found:
-                        email = list(found)[0]
-                        lead.email = email
-                        lead.email_status = "github"
-                        self._stats["leads_enriched"] += 1
-                        logger.info(f"  🐙  GitHub email for {lead.name}: {email}")
+        try:
+            await asyncio.wait_for(_mining_loop(), timeout=phase_timeout)
+        except asyncio.TimeoutError:
+            logger.warning(f"  ⚠️  GitHub miner phase hit timeout ({phase_timeout}s) — moving on")
 
         logger.info(
             f"  🐙  GitHub miner complete: {self._stats['leads_enriched']} leads enriched, "

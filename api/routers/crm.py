@@ -117,7 +117,10 @@ async def push_to_crm(
     from ..database import async_session
     from ..models import Campaign, Lead
     from sqlalchemy import select
-    from integrations.manager import CRMManager
+    try:
+        from integrations.manager import CRMManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="CRM integrations module not installed")
 
     if data.provider not in ("hubspot", "salesforce"):
         raise HTTPException(status_code=400, detail=f"Unsupported CRM provider: {data.provider}")
@@ -201,7 +204,10 @@ async def crm_sync_status(
     user_id: str = Depends(get_current_user_id),
 ):
     """Check the status of previously-pushed CRM records."""
-    from integrations.manager import CRMManager
+    try:
+        from integrations.manager import CRMManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="CRM integrations module not installed")
 
     try:
         kwargs = _provider_kwargs(data, data.provider)
@@ -230,7 +236,10 @@ async def get_crm_fields(
     Get available CRM fields for the given provider.
     Useful for building field-mapping UI.
     """
-    from integrations.manager import CRMManager
+    try:
+        from integrations.manager import CRMManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="CRM integrations module not installed")
 
     kwargs = {}
     if provider == "hubspot" and api_key:
@@ -265,7 +274,10 @@ async def get_default_field_mapping(
     user_id: str = Depends(get_current_user_id),
 ):
     """Return the default Lead → CRM field mapping."""
-    from integrations.crm_base import DEFAULT_FIELD_MAPPING
+    try:
+        from integrations.crm_base import DEFAULT_FIELD_MAPPING
+    except ImportError:
+        raise HTTPException(status_code=501, detail="CRM integrations module not installed")
     return {
         "mapping": [
             CRMFieldMappingItem(lead_field=k, crm_field=v)

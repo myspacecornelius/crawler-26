@@ -10,7 +10,7 @@ import logging
 import socket
 import subprocess
 import time
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,26 @@ ROLE_PREFIXES = {
 }
 
 
+class LRUDict(OrderedDict):
+    """OrderedDict with a maximum size — evicts least-recently-used entries."""
+
+    def __init__(self, maxsize: int = 10000):
+        super().__init__()
+        self.maxsize = maxsize
+
+    def __getitem__(self, key):
+        value = super().__getitem__(key)
+        self.move_to_end(key)
+        return value
+
+    def __setitem__(self, key, value):
+        if key in self:
+            self.move_to_end(key)
+        super().__setitem__(key, value)
+        if len(self) > self.maxsize:
+            self.popitem(last=False)
+
+
 class EmailValidator:
     """
     Multi-layer email validation:
@@ -40,15 +60,15 @@ class EmailValidator:
     """
 
     def __init__(self):
-        self._mx_cache: dict[str, bool] = {}  # domain → has_mx
-        self._mx_host_cache: dict[str, str] = {}  # domain → best MX host
-        self._smtp_cache: dict[str, dict] = {}  # email → smtp result
-        self._catch_all_cache: dict[str, bool] = {}  # domain → is_catch_all
+        self._mx_cache: LRUDict = LRUDict(maxsize=10000)       # domain → has_mx
+        self._mx_host_cache: LRUDict = LRUDict(maxsize=10000)  # domain → best MX host
+        self._smtp_cache: LRUDict = LRUDict(maxsize=50000)     # email → smtp result
+        self._catch_all_cache: LRUDict = LRUDict(maxsize=10000) # domain → is_catch_all
         self._pattern = re.compile(
             r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         )
         # ── SMTP configuration from environment ──
-        self._smtp_timeout = int(os.environ.get("SMTP_TIMEOUT", "10"))
+        self._smtp_timeout = int(os.environ.get("SMTP_TIMEOUT", "5"))
         self._smtp_helo_domain = os.environ.get(
             "SMTP_HELO_DOMAIN",
             socket.getfqdn() if socket.getfqdn() != "localhost" else "mail.leadfactory.io",
@@ -56,6 +76,8 @@ class EmailValidator:
         self._smtp_proxy_host = os.environ.get("SMTP_PROXY_HOST", "")
         self._smtp_proxy_port = int(os.environ.get("SMTP_PROXY_PORT", "25"))
         self._smtp_available: Optional[bool] = None  # None = not tested yet
+        self._smtp_last_tested: float = 0  # monotonic timestamp of last test
+        self._smtp_retry_ttl: float = 300  # retry negative results after 5 minutes
 
     def validate(self, email: str) -> dict:
         """
@@ -208,7 +230,14 @@ class EmailValidator:
         false positives from firewalls that accept TCP but drop SMTP.
         """
         if self._smtp_available is not None:
-            return self._smtp_available
+            if self._smtp_available:
+                return True  # positive results cached indefinitely
+            # Retry negative results after TTL expires
+            if time.monotonic() - self._smtp_last_tested < self._smtp_retry_ttl:
+                return self._smtp_available
+            # TTL expired — re-test
+            self._smtp_available = None
+            logger.info("SMTP self-test: retrying after TTL expiry")
 
         # If using a proxy, test the proxy host instead
         if self._smtp_proxy_host:
@@ -241,6 +270,7 @@ class EmailValidator:
             return False
 
         self._smtp_available = await loop.run_in_executor(None, _probe)
+        self._smtp_last_tested = time.monotonic()
 
         if not self._smtp_available:
             logger.warning(
@@ -251,22 +281,12 @@ class EmailValidator:
         return self._smtp_available
 
     def _smtp_connect(self, host: str, port: int):
-        """Create an SMTP connection, trying the given port first, then 587 fallback."""
+        """Create an SMTP connection on the specified port (no fallback to avoid doubling timeout)."""
         import smtplib
-        ports = [port]
-        if port == 25:
-            ports.append(587)
-        last_err = None
-        for p in ports:
-            try:
-                smtp = smtplib.SMTP(timeout=self._smtp_timeout)
-                smtp.connect(host, p)
-                logger.debug("SMTP connect %s:%d → OK", host, p)
-                return smtp
-            except Exception as e:
-                logger.debug("SMTP connect %s:%d → FAILED (%s)", host, p, e)
-                last_err = e
-        raise last_err  # type: ignore[misc]
+        smtp = smtplib.SMTP(timeout=self._smtp_timeout)
+        smtp.connect(host, port)
+        logger.debug("SMTP connect %s:%d → OK", host, port)
+        return smtp
 
     async def verify_smtp(self, email: str) -> dict:
         """

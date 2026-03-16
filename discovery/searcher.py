@@ -48,7 +48,7 @@ class Searcher:
             if "google" in domain or "bing" in domain: return False
             
             return True
-        except:
+        except (ValueError, AttributeError):
             return False
 
     def _get_base_url(self, url: str) -> str:
@@ -56,7 +56,7 @@ class Searcher:
         try:
             parsed = urlparse(url)
             return f"{parsed.scheme}://{parsed.netloc}"
-        except:
+        except (ValueError, AttributeError):
             return url
 
     async def _extract_ddg_results(self, page: Page) -> List[str]:
@@ -78,7 +78,8 @@ class Searcher:
                         real_url = urllib.parse.unquote(qs["uddg"][0])
                         if real_url.startswith("http"):
                             found_urls.append(real_url)
-                except: pass
+                except (KeyError, IndexError, ValueError):
+                    pass
             # If it's a direct link
             elif href.startswith("http") and "duckduckgo.com" not in href:
                 found_urls.append(href)

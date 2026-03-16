@@ -19,10 +19,12 @@ Usage:
 """
 
 import csv
+import fcntl
 import hashlib
 import json
 import logging
 import os
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
@@ -89,11 +91,15 @@ class LeadDeduplicator:
         self._load_index()
 
     def _load_index(self):
-        """Load the dedup index from disk."""
+        """Load the dedup index from disk with shared file lock."""
         if self.index_path.exists():
             try:
                 with open(self.index_path, "r", encoding="utf-8") as f:
-                    self.index = json.load(f)
+                    fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                    try:
+                        self.index = json.load(f)
+                    finally:
+                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
                 logger.info(f"  📋 Loaded dedup index: {len(self.index)} entries")
             except (json.JSONDecodeError, IOError) as e:
                 logger.warning(f"  ⚠️ Dedup index corrupted, starting fresh: {e}")
@@ -102,10 +108,27 @@ class LeadDeduplicator:
             self.index = {}
 
     def _save_index(self):
-        """Persist the dedup index to disk."""
+        """Persist the dedup index to disk atomically with exclusive lock."""
         self.index_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(self.index_path, "w", encoding="utf-8") as f:
-            json.dump(self.index, f, indent=2, default=str)
+        # Write to temp file first, then atomically replace
+        fd, tmp_path = tempfile.mkstemp(
+            dir=str(self.index_path.parent), suffix=".tmp"
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                try:
+                    json.dump(self.index, f, indent=2, default=str)
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+            os.replace(tmp_path, str(self.index_path))
+        except Exception:
+            # Clean up temp file on failure
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
         logger.info(f"  💾 Saved dedup index: {len(self.index)} entries")
 
     def _merge_lead(self, existing: dict, new_lead) -> dict:

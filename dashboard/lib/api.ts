@@ -92,9 +92,8 @@ export async function getFreshness(campaignId: string) {
   return fetchAPI(`/leads/campaign/${campaignId}/freshness`);
 }
 
-export function getExportUrl(campaignId: string, tier?: string) {
-  const params = new URLSearchParams();
-  if (tier) params.set('tier', tier);
+export function getExportUrl(campaignId: string, filters: Record<string, string> = {}) {
+  const params = new URLSearchParams(filters);
   return `${API_BASE}/leads/campaign/${campaignId}/export?${params}`;
 }
 

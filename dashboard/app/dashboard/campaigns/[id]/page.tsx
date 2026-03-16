@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronDown } from 'lucide-react';
@@ -23,6 +23,8 @@ interface Campaign {
   started_at: string | null;
   completed_at: string | null;
   created_at: string;
+  progress_stage?: string;
+  progress_pct?: number;
 }
 
 interface Stats {
@@ -61,7 +63,7 @@ export default function CampaignDetailPage() {
     } catch { /* ignore */ }
   }, [id]);
 
-  useEffect(() => {
+  const loadCampaignData = useCallback(() => {
     Promise.all([
       getCampaign(id),
       getLeadStats(id).catch(() => null),
@@ -72,9 +74,22 @@ export default function CampaignDetailPage() {
       setFreshness(f);
       setLoading(false);
     }).catch(() => router.push('/dashboard/campaigns'));
+  }, [id, router]);
 
+  useEffect(() => {
+    loadCampaignData();
     loadLeads(1);
-  }, [id, router, loadLeads]);
+  }, [id, loadCampaignData, loadLeads]);
+
+  // Poll every 5s while campaign is running
+  useEffect(() => {
+    if (campaign?.status !== 'running') return;
+    const interval = setInterval(() => {
+      loadCampaignData();
+      loadLeads(page, filters);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [campaign?.status, loadCampaignData, loadLeads, page, filters]);
 
   const handleRun = async () => {
     try {
@@ -118,6 +133,20 @@ export default function CampaignDetailPage() {
               {campaign.error_message}
             </div>
           )}
+          {campaign.status === 'running' && (
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <span className="capitalize">{campaign.progress_stage || 'Starting'}...</span>
+                <span>{campaign.progress_pct ?? 0}%</span>
+              </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                  style={{ width: `${campaign.progress_pct ?? 0}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {campaign.status === 'pending' && (
@@ -127,7 +156,7 @@ export default function CampaignDetailPage() {
           )}
           {campaign.status === 'completed' && campaign.total_leads > 0 && (
             <a
-              href={getExportUrl(id)}
+              href={getExportUrl(id, filters)}
               className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
             >
               Export CSV
@@ -177,7 +206,7 @@ export default function CampaignDetailPage() {
               {['HOT', 'WARM', 'COOL'].map((tier) => (
                 <a
                   key={tier}
-                  href={getExportUrl(id, tier)}
+                  href={getExportUrl(id, { ...filters, tier })}
                   className="text-xs px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 font-medium"
                 >
                   Export {tier}

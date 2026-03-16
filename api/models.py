@@ -95,6 +95,8 @@ class Campaign(Base):
     total_emails = Column(Integer, default=0)
     credits_used = Column(Integer, default=0)
     error_message = Column(Text, nullable=True)
+    progress_stage = Column(String(50), default="pending")  # pending, crawling, enriching, validating, scoring, storing
+    progress_pct = Column(Integer, default=0)
     started_at = Column(DateTime(timezone=True), nullable=True)
     completed_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

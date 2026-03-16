@@ -10,6 +10,7 @@ per domain, then apply the best pattern.
 
 import asyncio
 import logging
+import os
 import re
 import unicodedata
 from typing import List, Optional
@@ -250,7 +251,10 @@ class EmailGuesser:
         }
 
     async def _discover_domain_pattern(self, name: str, domain: str) -> Optional[str]:
-        """SMTP-verify top 3 candidates for one contact to discover domain's email pattern."""
+        """SMTP-verify top 3 candidates for one contact to discover domain's email pattern.
+
+        Has a per-domain timeout to avoid hanging on unresponsive SMTP servers.
+        """
         clean = _clean_person_name(name)
         candidates = generate_candidates(clean, domain)[:3]
         if not candidates:
@@ -260,19 +264,28 @@ class EmailGuesser:
         if not smtp_ok:
             return None
 
-        for candidate in candidates:
-            async with self._sem:
-                result = await self.validator.verify_smtp(candidate)
-            if result.get("deliverable") is True:
-                pattern = detect_pattern(candidate, clean)
-                if pattern:
-                    self._pattern_cache._patterns[domain] = pattern
-                    self._stats["patterns_discovered"] += 1
-                    logger.info(f"  \U0001f50d  Discovered pattern for {domain}: {pattern} (via {candidate})")
-                    return candidate
-            await asyncio.sleep(0.5)
+        # Per-domain timeout: skip domains whose SMTP servers are slow/unresponsive
+        per_domain_timeout = float(os.environ.get("SMTP_PROBE_DOMAIN_TIMEOUT", "15"))
 
-        return None
+        async def _probe():
+            for candidate in candidates:
+                async with self._sem:
+                    result = await self.validator.verify_smtp(candidate)
+                if result.get("deliverable") is True:
+                    pattern = detect_pattern(candidate, clean)
+                    if pattern:
+                        self._pattern_cache._patterns[domain] = pattern
+                        self._stats["patterns_discovered"] += 1
+                        logger.info(f"  \U0001f50d  Discovered pattern for {domain}: {pattern} (via {candidate})")
+                        return candidate
+                await asyncio.sleep(0.3)
+            return None
+
+        try:
+            return await asyncio.wait_for(_probe(), timeout=per_domain_timeout)
+        except asyncio.TimeoutError:
+            logger.debug(f"  SMTP probe timeout for {domain} (>{per_domain_timeout}s)")
+            return None
 
     async def _check_domain_mx(self, domain: str) -> bool:
         """Check MX once per domain (cached). Returns True if domain can receive email."""
@@ -378,8 +391,22 @@ class EmailGuesser:
 
         if domains_to_probe:
             logger.info(f"  \U0001f50d  Probing {len(domains_to_probe)} domains for email patterns via SMTP...")
-            for domain, lead in domains_to_probe.items():
-                await self._discover_domain_pattern(lead.name, domain)
+
+            # Run probes concurrently (capped by semaphore) with a global phase timeout
+            probe_concurrency = int(os.environ.get("SMTP_PROBE_CONCURRENCY", "5"))
+            phase_timeout = float(os.environ.get("SMTP_PROBE_PHASE_TIMEOUT", "120"))
+            probe_sem = asyncio.Semaphore(probe_concurrency)
+
+            async def _bounded_probe(domain, lead):
+                async with probe_sem:
+                    return await self._discover_domain_pattern(lead.name, domain)
+
+            tasks = [_bounded_probe(d, l) for d, l in domains_to_probe.items()]
+            try:
+                await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=phase_timeout)
+            except asyncio.TimeoutError:
+                logger.warning(f"  \u26a0\ufe0f  SMTP probe phase hit global timeout ({phase_timeout}s) — moving on")
+
             logger.info(f"  \U0001f50d  Pattern discovery complete: {self._stats['patterns_discovered']} patterns found")
 
         # Phase 2: Apply known patterns (fast, no MX needed — pattern was

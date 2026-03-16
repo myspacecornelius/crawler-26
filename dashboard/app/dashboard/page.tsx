@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Users, Mail, Rocket, CreditCard } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
@@ -9,6 +9,7 @@ import LeadsOverTimeChart from '@/components/charts/LeadsOverTimeChart';
 import EmailStatusDonut from '@/components/charts/EmailStatusDonut';
 import ActivityFeed from '@/components/ActivityFeed';
 import QuickActions from '@/components/QuickActions';
+import { useToast } from '@/components/ui/Toast';
 import { listCampaigns, getCredits } from '@/lib/api';
 
 const containerVariants: Variants = {
@@ -89,20 +90,41 @@ function randomSparkline(len = 14, base = 50, variance = 30): number[] {
 /* ── Main page ───────────────────────────────────────────── */
 
 export default function DashboardPage() {
+  const { toast } = useToast();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [credits, setCredits] = useState({ credits_remaining: 0, credits_monthly: 0, plan: 'starter' });
   const [loading, setLoading] = useState(true);
+  const hasShownError = useRef(false);
 
-  useEffect(() => {
+  const loadData = useCallback(() => {
     Promise.all([
-      listCampaigns(1).catch(() => ({ campaigns: [], total: 0 })),
-      getCredits().catch(() => ({ credits_remaining: 0, credits_monthly: 0, plan: 'starter' })),
+      listCampaigns(1).catch((err: Error) => {
+        if (!hasShownError.current) {
+          toast({ title: 'Failed to load campaigns', description: err.message, variant: 'error' });
+          hasShownError.current = true;
+        }
+        return { campaigns: [], total: 0 };
+      }),
+      getCredits().catch((err: Error) => {
+        if (!hasShownError.current) {
+          toast({ title: 'Failed to load credits', description: err.message, variant: 'error' });
+          hasShownError.current = true;
+        }
+        return { credits_remaining: 0, credits_monthly: 0, plan: 'starter' };
+      }),
     ]).then(([campData, credData]) => {
       setCampaigns(campData.campaigns || []);
       setCredits(credData);
       setLoading(false);
+      hasShownError.current = false;
     });
-  }, []);
+  }, [toast]);
+
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 15000);
+    return () => clearInterval(interval);
+  }, [loadData]);
 
   const totalLeads = campaigns.reduce((sum, c) => sum + c.total_leads, 0);
   const totalEmails = campaigns.reduce((sum, c) => sum + c.total_emails, 0);

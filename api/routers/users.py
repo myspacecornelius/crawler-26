@@ -2,12 +2,40 @@
 User registration, login, and profile management.
 """
 
+from collections import defaultdict
+from time import monotonic
 from uuid import UUID
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+
+# ── Simple in-memory rate limiter ────────────────
+class _RateLimiter:
+    def __init__(self, max_requests: int = 5, window_seconds: int = 60):
+        self.max_requests = max_requests
+        self.window = window_seconds
+        self._attempts: dict[str, list[float]] = defaultdict(list)
+
+    def check(self, key: str) -> bool:
+        now = monotonic()
+        self._attempts[key] = [t for t in self._attempts[key] if now - t < self.window]
+        if len(self._attempts[key]) >= self.max_requests:
+            return False
+        self._attempts[key].append(now)
+        return True
+
+
+_auth_limiter = _RateLimiter(max_requests=5, window_seconds=60)
+
+
+def _get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
 
 from ..database import get_db
 from ..models import User, ApiKey
@@ -24,8 +52,10 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("/register", response_model=TokenResponse, status_code=201)
-async def register(body: UserCreate, db: AsyncSession = Depends(get_db)):
+async def register(body: UserCreate, request: Request, db: AsyncSession = Depends(get_db)):
     """Register a new user account."""
+    if not _auth_limiter.check(_get_client_ip(request)):
+        raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
     existing = await db.execute(select(User).where(User.email == body.email))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="Email already registered")
@@ -48,8 +78,10 @@ async def register(body: UserCreate, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(body: UserLogin, db: AsyncSession = Depends(get_db)):
+async def login(body: UserLogin, request: Request, db: AsyncSession = Depends(get_db)):
     """Authenticate and receive a JWT token."""
+    if not _auth_limiter.check(_get_client_ip(request)):
+        raise HTTPException(status_code=429, detail="Too many requests. Try again later.")
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
 

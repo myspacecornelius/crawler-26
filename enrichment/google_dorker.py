@@ -82,6 +82,10 @@ class GoogleDorker:
 
     async def _google_search(self, query: str, session: aiohttp.ClientSession) -> str:
         """Execute a Google search and return the results page HTML."""
+        # If we've been rate-limited too many times and have no SerpAPI fallback, skip
+        if self._stats["rate_limited"] >= 3 and not self._serpapi_key:
+            return ""
+
         url = f"https://www.google.com/search?q={quote_plus(query)}&num={_MAX_RESULTS_PER_QUERY}"
         headers = {
             "User-Agent": random.choice(_USER_AGENTS),
@@ -96,9 +100,8 @@ class GoogleDorker:
                     if resp.status == 429:
                         self._stats["rate_limited"] += 1
                         logger.warning("  ⚠️  Google rate-limited, backing off...")
-                        # If we have a serp api key, we just fall through and let SERPAPI handle it
                         if not self._serpapi_key:
-                            await asyncio.sleep(random.uniform(10, 20))
+                            await asyncio.sleep(random.uniform(5, 10))
                         return ""
                     if resp.status != 200:
                         return ""
@@ -230,43 +233,56 @@ class GoogleDorker:
 
         logger.info(f"  🔍  Google dorker: searching {len(domain_leads)} domains for {len(no_email)} leads...")
 
-        async with aiohttp.ClientSession() as session:
-            for domain, domain_group in domain_leads.items():
-                # Phase 1: Domain-wide search
-                domain_emails = await self.search_domain(domain, session)
+        phase_timeout = float(os.environ.get("GOOGLE_DORK_PHASE_TIMEOUT", "120"))
 
-                # Match found emails to leads by name
-                if domain_emails:
-                    unmatched = list(domain_emails)
-                    for lead in domain_group:
-                        if lead.email and lead.email not in ("N/A", "N/A (invalid)"):
-                            continue
-                        best_email = None
-                        best_score = 0.0
-                        for email in unmatched:
-                            score = _match_email_to_name(email, lead.name)
-                            if score > best_score:
-                                best_score = score
-                                best_email = email
-                        if best_email and best_score >= 0.3:
-                            lead.email = best_email
+        async def _dorking_loop():
+            async with aiohttp.ClientSession() as session:
+                for domain, domain_group in domain_leads.items():
+                    # Bail early if rate-limited with no SerpAPI fallback
+                    if self._stats["rate_limited"] >= 3 and not self._serpapi_key:
+                        logger.info("  🔍  Google dorker: rate-limited without SerpAPI key, skipping remaining domains")
+                        break
+
+                    # Phase 1: Domain-wide search
+                    domain_emails = await self.search_domain(domain, session)
+
+                    # Match found emails to leads by name
+                    if domain_emails:
+                        unmatched = list(domain_emails)
+                        for lead in domain_group:
+                            if lead.email and lead.email not in ("N/A", "N/A (invalid)"):
+                                continue
+                            best_email = None
+                            best_score = 0.0
+                            for email in unmatched:
+                                score = _match_email_to_name(email, lead.name)
+                                if score > best_score:
+                                    best_score = score
+                                    best_email = email
+                            if best_email and best_score >= 0.3:
+                                lead.email = best_email
+                                lead.email_status = "dorked"
+                                unmatched.remove(best_email)
+                                self._stats["leads_enriched"] += 1
+                                logger.info(f"  🔍  Dorked email for {lead.name}: {best_email} (score={best_score:.2f})")
+
+                    # Phase 2: Per-person search for remaining leads (limited to 3 per domain)
+                    still_missing = [
+                        l for l in domain_group
+                        if not l.email or l.email in ("N/A", "N/A (invalid)")
+                    ]
+                    for lead in still_missing[:3]:
+                        email = await self.search_person(lead.name, domain, session)
+                        if email:
+                            lead.email = email
                             lead.email_status = "dorked"
-                            unmatched.remove(best_email)
                             self._stats["leads_enriched"] += 1
-                            logger.info(f"  🔍  Dorked email for {lead.name}: {best_email} (score={best_score:.2f})")
+                            logger.info(f"  🔍  Dorked email for {lead.name}: {email}")
 
-                # Phase 2: Per-person search for remaining leads (limited to 3 per domain)
-                still_missing = [
-                    l for l in domain_group
-                    if not l.email or l.email in ("N/A", "N/A (invalid)")
-                ]
-                for lead in still_missing[:3]:
-                    email = await self.search_person(lead.name, domain, session)
-                    if email:
-                        lead.email = email
-                        lead.email_status = "dorked"
-                        self._stats["leads_enriched"] += 1
-                        logger.info(f"  🔍  Dorked email for {lead.name}: {email}")
+        try:
+            await asyncio.wait_for(_dorking_loop(), timeout=phase_timeout)
+        except asyncio.TimeoutError:
+            logger.warning(f"  ⚠️  Google dorker phase hit timeout ({phase_timeout}s) — moving on")
 
         logger.info(
             f"  🔍  Google dorker complete: {self._stats['leads_enriched']} leads enriched, "

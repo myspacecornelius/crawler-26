@@ -63,14 +63,21 @@ def _run_campaign_sync(campaign_id: str, user_id: str):
             logger.error(f"User {user_id} not found")
             return
 
+        def _update_progress(stage: str, pct: int):
+            campaign.progress_stage = stage
+            campaign.progress_pct = pct
+            db.commit()
+
         try:
             # Load vertical config
+            _update_progress("initializing", 5)
             vertical = load_vertical(campaign.vertical)
             logger.info(f"Running campaign '{campaign.name}' with vertical '{vertical.name}'")
 
             # Run the crawl engine
             from engine import CrawlEngine
 
+            _update_progress("crawling", 10)
             engine_instance = CrawlEngine(
                 headless=True,
                 deep=True,
@@ -85,6 +92,8 @@ def _run_campaign_sync(campaign_id: str, user_id: str):
                 all_leads = loop.run_until_complete(engine_instance.run())
             finally:
                 loop.close()
+
+            _update_progress("storing", 80)
 
             # Store leads in database
             leads_stored = 0
@@ -129,6 +138,8 @@ def _run_campaign_sync(campaign_id: str, user_id: str):
 
             # Update campaign
             campaign.status = "completed"
+            campaign.progress_stage = "completed"
+            campaign.progress_pct = 100
             campaign.total_leads = leads_stored
             campaign.total_emails = emails_found
             campaign.credits_used = credits_used

@@ -40,8 +40,11 @@ async def launch_outreach(
     from ..models import Campaign, Lead
     from sqlalchemy import select
 
-    from outreach.manager import OutreachManager
-    from outreach.base import OutreachLead
+    try:
+        from outreach.manager import OutreachManager
+        from outreach.base import OutreachLead
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Outreach module not installed")
 
     # Verify campaign belongs to user
     async with async_session() as session:
@@ -106,7 +109,10 @@ async def start_outreach(
     user_id: str = Depends(get_current_user_id),
 ):
     """Start/activate an outreach campaign."""
-    from outreach.manager import OutreachManager
+    try:
+        from outreach.manager import OutreachManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Outreach module not installed")
     try:
         manager = OutreachManager(provider_name=data.provider, api_key=data.api_key)
         await manager.start(data.provider_campaign_id)
@@ -121,7 +127,10 @@ async def pause_outreach(
     user_id: str = Depends(get_current_user_id),
 ):
     """Pause an outreach campaign."""
-    from outreach.manager import OutreachManager
+    try:
+        from outreach.manager import OutreachManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Outreach module not installed")
     try:
         manager = OutreachManager(provider_name=data.provider, api_key=data.api_key)
         await manager.pause(data.provider_campaign_id)
@@ -138,7 +147,10 @@ async def get_outreach_stats(
     user_id: str = Depends(get_current_user_id),
 ):
     """Get outreach campaign analytics."""
-    from outreach.manager import OutreachManager
+    try:
+        from outreach.manager import OutreachManager
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Outreach module not installed")
     try:
         manager = OutreachManager(provider_name=provider, api_key=api_key)
         stats = await manager.stats(provider_campaign_id)
@@ -161,7 +173,10 @@ async def get_outreach_stats(
 @router.get("/templates")
 async def list_templates(user_id: str = Depends(get_current_user_id)):
     """List available outreach sequence templates."""
-    from outreach.templates import TEMPLATES, get_template
+    try:
+        from outreach.templates import TEMPLATES, get_template
+    except ImportError:
+        raise HTTPException(status_code=501, detail="Outreach module not installed")
     result = []
     for slug in TEMPLATES:
         seq = get_template(slug)

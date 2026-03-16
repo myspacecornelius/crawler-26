@@ -5,6 +5,7 @@ Run with: uvicorn api.main:app --reload --port 8000
 """
 
 import logging
+import sys
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,13 +15,22 @@ from fastapi.staticfiles import StaticFiles
 from .database import init_db
 from .routers import users, campaigns, leads, verticals, outreach, billing, crm, portfolio
 
+sys.path.insert(0, ".")
+from utils.config import validate_config
+
 logger = logging.getLogger("leadfactory.api")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize DB on startup."""
+    """Initialize DB on startup, validate config."""
     logger.info("🚀 Starting LeadFactory API...")
+
+    # Validate environment configuration
+    config_warnings = validate_config()
+    for warning in config_warnings:
+        logger.warning("⚠️  CONFIG: %s", warning)
+
     await init_db()
     logger.info("✅ Database initialized")
     yield
