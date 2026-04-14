@@ -1,0 +1,11 @@
+# ─── Proxy Configuration ─────────────────────────
+# Used by the stealth module for IP rotation.
+
+proxies: []
+  # - "http://user:pass@proxy1.example.com:8080"
+  # - "http://user:pass@proxy2.example.com:8080"
+
+rotation_strategy: "round_robin"   # round_robin | random
+
+# Enable/disable proxy usage
+enabled: false

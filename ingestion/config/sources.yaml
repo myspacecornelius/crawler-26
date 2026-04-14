@@ -1,0 +1,17 @@
+# ─── Offer Source Configuration ──────────────────
+# Define known offer directories and their scraping configs.
+# Each source has a name, URL, selectors, and pagination rules.
+
+sources: []
+  # Example:
+  # - name: "ExampleOfferHub"
+  #   url: "https://example.com/demo-incentives"
+  #   selectors:
+  #     card: ".offer-card"
+  #     title: ".offer-title"
+  #     reward: ".offer-reward"
+  #     cta: "a.offer-cta"
+  #   pagination:
+  #     type: "click"
+  #     selector: "button.next"
+  #     max_pages: 5

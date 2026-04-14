@@ -1,0 +1,14 @@
+# ─── Offer Confidence Scoring ────────────────────
+#
+# Scores how confident we are that a crawled item is a
+# real, active demo incentive. Weights must sum to 1.0.
+#
+# This is NOT a lead quality score. It answers:
+# "Is this actually a demo incentive offer, and is it current?"
+
+weights:
+  completeness: 0.20      # How many key fields are populated
+  reward_clarity: 0.25    # Is the reward amount explicit ($50 vs "incentive")
+  source_quality: 0.20    # How was it extracted (JSON-LD vs pattern match)
+  offer_validity: 0.20    # Does it structurally resemble a demo incentive
+  recency: 0.15           # How recently was this offer verified/fetched
